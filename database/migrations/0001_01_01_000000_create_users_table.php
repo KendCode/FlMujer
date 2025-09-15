@@ -23,9 +23,10 @@ return new class extends Migration
             $table->date('fecha_nacimiento')->nullable(); // ✅ Fecha nacimiento
             $table->date('fecha_ingreso')->nullable(); // ✅ Fecha ingreso
             $table->string('password');
-            $table->enum('estado', ['activo','inactivo'])->default('activo'); // ✅ Estado
-            $table->enum('rol', ['administrador','trabajadora_social','abogado','psicologo'])
-                  ->default('trabajadora_social'); // ✅ Rol
+            $table->enum('estado', ['activo', 'inactivo'])->default('activo'); // ✅ Estado
+            $table->enum('rol', ['administrador', 'trabajadora_social', 'abogado', 'psicologo'])
+                ->default('trabajadora_social'); // ✅ Rol
+            $table->string('foto')->default('fotos/default.png'); // ✅ Foto por defecto
             $table->rememberToken();
             $table->timestamps();
         });

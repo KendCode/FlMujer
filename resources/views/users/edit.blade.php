@@ -96,6 +96,21 @@
                 <p class="text-gray-500 text-sm">Si no deseas cambiarla, deja este campo vacío</p>
             </div>
 
+            <div class="mb-3">
+                <label class="form-label">Foto actual</label><br>
+                @if ($user->foto)
+                    <img src="{{ asset('storage/' . $user->foto) }}" alt="Foto de perfil" width="120"
+                        class="rounded">
+                @else
+                    <p>No tiene foto</p>
+                @endif
+            </div>
+
+            <div class="mb-3">
+                <label for="foto" class="form-label">Nueva foto (opcional)</label>
+                <input type="file" name="foto" id="foto" class="form-control">
+            </div>
+
             <div class="flex space-x-3 mt-4">
                 <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Actualizar</button>
                 <a href="{{ route('users.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded">Cancelar</a>

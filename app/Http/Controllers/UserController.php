@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -47,8 +48,13 @@ class UserController extends Controller
             'password' => 'required|min:6|confirmed',
             'rol' => 'required|in:administrador,trabajadora_social,abogado,psicologo',
             'estado' => 'required|in:activo,inactivo',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
-
+        // 📂 Subimos la foto si existe
+        $rutaFoto = null;
+        if ($request->hasFile('foto')) {
+            $rutaFoto = $request->file('foto')->store('fotos', 'public');
+        }
         User::create([
             'ci' => $request->ci,
             'name' => $request->name,
@@ -61,7 +67,11 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
             'rol' => $request->rol,
             'estado' => $request->estado,
+            'foto' => $request->hasFile('foto')
+                ? $request->file('foto')->store('fotos', 'public')
+                : 'fotos/default.png', // ✅ si no hay foto, usa una por defecto
         ]);
+
 
         return redirect()->route('users.index')->with('success', 'Usuario creado correctamente');
     }
@@ -85,6 +95,7 @@ class UserController extends Controller
             'password' => 'nullable|min:6|confirmed',
             'rol' => 'required|in:administrador,trabajadora_social,abogado,psicologo',
             'estado' => 'required|in:activo,inactivo',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
         $data = $request->only([
             'ci',
@@ -110,6 +121,19 @@ class UserController extends Controller
         } else {
             unset($data['password']);
         }
+
+        // ✅ Nueva foto
+        if ($request->hasFile('foto')) {
+            if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+                Storage::disk('public')->delete($user->foto);
+            }
+            $user->foto = $request->file('foto')->store('fotos', 'public');
+        }
+
+
+        // ✅ Actualizar datos
+        $user->fill($request->except(['password', 'foto']));
+
         $user->update($data);
 
         return redirect()->route('users.index')->with('success', 'Usuario actualizado correctamente');

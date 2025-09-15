@@ -4,15 +4,15 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PageController;
 use \App\Http\Middleware\CheckActiveUser;
 
 Route::get('/', function () {
     return view('welcome');
 });
-
-Route::get('/prueba', function () {
-    return 'Middleware funcionando ccccccc';
-})->middleware(CheckActiveUser::class);
+Route::get('/contacto', [PageController::class, 'contacto'])->name('contacto');
+Route::get('/testimonios', [PageController::class, 'testimonios'])->name('testimonios');
+Route::get('/actividades', [PageController::class, 'actividades'])->name('actividades');
 
 // Dashboard protegido: autenticado, email verificado y usuario activo
 Route::get('/dashboard', function () {
@@ -25,7 +25,10 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
+    Route::patch('/profile/photo', [ProfileController::class, 'updatePhoto'])
+    ->name('profile.update.photo');
+
+
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');

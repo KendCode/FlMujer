@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -56,5 +57,27 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+    public function updatePhoto(Request $request)
+    {
+        $request->validate([
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $user = $request->user();
+
+        if ($request->hasFile('foto')) {
+            // Si ya tiene una foto, la borramos
+            if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+                Storage::disk('public')->delete($user->foto);
+            }
+
+            // Guardar nueva foto
+            $path = $request->file('foto')->store('fotos', 'public');
+            $user->foto = $path;
+            $user->save();
+        }
+
+        return back()->with('success', 'Foto de perfil actualizada correctamente.');
     }
 }

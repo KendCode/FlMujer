@@ -34,6 +34,7 @@ class User extends Authenticatable
         'password',
         'estado',
         'rol',
+        'foto',
     ];
 
     protected $hidden = [
@@ -46,4 +47,13 @@ class User extends Authenticatable
         'fecha_nacimiento' => 'date',
         'fecha_ingreso' => 'date',
     ];
+    public function getFotoUrlAttribute()
+    {
+        if ($this->foto) {
+            return asset('storage/' . $this->foto);
+        }
+    
+        // Foto por defecto
+        return asset('storage/fotos/default.png');
+    }
 }
