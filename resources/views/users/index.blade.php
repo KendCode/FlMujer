@@ -1,173 +1,239 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Gestión de Usuarios') }}
-            </h2>
-            @if (auth()->user()->rol === 'administrador')
-                <a href="{{ route('users.create') }}"
-                   class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                   Crear Usuario
-                </a>
-            @endif
-        </div>
-    </x-slot>
+<!DOCTYPE html>
+<html lang="es">
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #F4F4F2;
+            /* Blanco */
+        }
 
-                    @if (session('success'))
-                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                            {{ session('success') }}
-                        </div>
-                    @endif
+        .header {
+            color: #037E8C;
+            /* Verde botella */
+        }
 
-                    @if (session('error'))
-                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                            {{ session('error') }}
-                        </div>
-                    @endif
+        .btn-create {
+            background-color: #13C0E5;
+            /* Celeste */
+            color: white;
+        }
 
-                    <!-- Información según rol -->
-                    @if (auth()->user()->rol === 'administrador')
-                        <div class="mb-4 p-3 bg-blue-50 rounded-lg">
-                            <p class="text-sm text-blue-800">
-                                <strong>Vista de Administrador:</strong> Puedes ver todos los usuarios (activos e inactivos)
-                            </p>
-                        </div>
-                    @else
-                        <div class="mb-4 p-3 bg-green-50 rounded-lg">
-                            <p class="text-sm text-green-800">
-                                <strong>Vista de {{ ucfirst(str_replace('_', ' ', auth()->user()->rol)) }}:</strong>
-                                Solo usuarios activos
-                            </p>
-                        </div>
-                    @endif
+        .btn-create:hover {
+            background-color: #037E8C;
+            /* Verde botella */
+        }
 
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full table-auto">
-                            <thead>
-                                <tr class="bg-gray-100">
-                                    <th class="px-4 py-2 text-left">CI</th>
-                                    <th class="px-4 py-2 text-left">Nombre Completo</th>
-                                    <th class="px-4 py-2 text-left">Email</th>
-                                    <th class="px-4 py-2 text-left">Rol</th>
-                                    @if ($showInactiveUsers)
-                                        <th class="px-4 py-2 text-left">Estado</th>
-                                    @endif
-                                    <th class="px-4 py-2 text-left">Teléfono</th>
-                                    <th class="px-4 py-2 text-left">Fecha Ingreso</th>
-                                    <th class="px-4 py-2 text-left">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($users as $user)
-                                    <tr class="border-b {{ $user->estado === 'inactivo' ? 'bg-red-50' : '' }}">
-                                        <td class="px-4 py-2">{{ $user->ci }}</td>
-                                        <td class="px-4 py-2">
-                                            {{ $user->name }} {{ $user->apellido }}
-                                            @if ($user->estado === 'inactivo')
-                                                <span class="text-red-500 text-xs">(Inactivo)</span>
-                                            @endif
-                                        </td>
-                                        <td class="px-4 py-2">{{ $user->email }}</td>
-                                        <td class="px-4 py-2">
-                                            <span class="px-2 py-1 rounded-full text-xs
-                                                @if ($user->rol === 'administrador') bg-purple-100 text-purple-800
-                                                @elseif($user->rol === 'trabajadora_social') bg-blue-100 text-blue-800
-                                                @elseif($user->rol === 'abogado') bg-green-100 text-green-800
-                                                @elseif($user->rol === 'psicologo') bg-yellow-100 text-yellow-800 @endif">
-                                                {{ ucfirst(str_replace('_', ' ', $user->rol)) }}
-                                            </span>
-                                        </td>
-                                        @if ($showInactiveUsers)
-                                            <td class="px-4 py-2">{{ $user->estado }}</td>
-                                        @endif
-                                        <td class="px-4 py-2">{{ $user->telefono ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2">
-                                            {{ $user->fecha_ingreso ? \Carbon\Carbon::parse($user->fecha_ingreso)->format('d/m/Y') : 'N/A' }}
-                                        </td>
-                                        <td class="px-4 py-2">
-                                            <div class="flex space-x-2">
-                                                @if (auth()->user()->rol === 'administrador')
-                                                    <a href="{{ route('users.edit', $user) }}"
-                                                       class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-xs">
-                                                       Editar
-                                                    </a>
+        .alert-success {
+            background-color: #d1e7dd;
+            /* Verde claro */
+            border-color: #c3e6cb;
+            /* Verde más oscuro */
+        }
 
-                                                    <form action="{{ route('users.toggle-status', $user) }}"
-                                                          method="POST" class="inline">
-                                                        @csrf
-                                                        @method('PATCH')
-                                                        <button type="submit"
-                                                                class="px-3 py-1 rounded text-xs text-white
-                                                                @if ($user->estado === 'activo') bg-red-500 hover:bg-red-600
-                                                                @else bg-green-500 hover:bg-green-600 @endif">
-                                                            @if ($user->estado === 'activo')
-                                                                Desactivar
-                                                            @else
-                                                                Activar
-                                                            @endif
-                                                        </button>
-                                                    </form>
+        .alert-error {
+            background-color: #f8d7da;
+            /* Rojo claro */
+            border-color: #f5c6cb;
+            /* Rojo más oscuro */
+        }
 
-                                                    @if ($user->id !== auth()->id())
-                                                        <form action="{{ route('users.destroy', $user) }}"
-                                                              method="POST" class="inline"
-                                                              onsubmit="return confirm('¿Estás seguro de eliminar este usuario?')">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit"
-                                                                    class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs">
-                                                                Eliminar
-                                                            </button>
-                                                        </form>
-                                                    @endif
-                                                @else
-                                                    <span class="text-gray-500 text-xs">Sin permisos</span>
-                                                @endif
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="8" class="px-4 py-8 text-center text-gray-500">
-                                            No hay usuarios para mostrar.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+        .info-admin {
+            background-color: #e7f3fe;
+            /* Azul claro */
+            border-left: 5px solid #2196F3;
+            /* Azul */
+        }
 
-                    <!-- Estadísticas (solo para admins) -->
-                    @if (auth()->user()->rol === 'administrador')
-                        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="bg-green-100 p-4 rounded">
-                                <h3 class="font-semibold text-green-800">Usuarios Activos</h3>
-                                <p class="text-2xl font-bold text-green-600">
-                                    {{ $users->where('estado', 'activo')->count() }}
-                                </p>
-                            </div>
-                            <div class="bg-red-100 p-4 rounded">
-                                <h3 class="font-semibold text-red-800">Usuarios Inactivos</h3>
-                                <p class="text-2xl font-bold text-red-600">
-                                    {{ $users->where('estado', 'inactivo')->count() }}
-                                </p>
-                            </div>
-                            <div class="bg-blue-100 p-4 rounded">
-                                <h3 class="font-semibold text-blue-800">Total Usuarios</h3>
-                                <p class="text-2xl font-bold text-blue-600">
-                                    {{ $users->count() }}
-                                </p>
-                            </div>
-                        </div>
-                    @endif
+        .info-user {
+            background-color: #d1e7dd;
+            /* Verde claro */
+            border-left: 5px solid #198754;
+            /* Verde */
+        }
 
-                </div>
+        .table thead th {
+            background-color: #e9ecef;
+            /* Gris claro */
+        }
+
+        .table tbody tr.inactive {
+            background-color: #f8d7da;
+            /* Rojo claro */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg" style="background-color: #037E8C;">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white fw-bold" href="{{ route('dashboard') }}">Mi Fundación</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon" style="filter: invert(100%);"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('profile.edit') }}">Perfil</a>
+                    </li>
+                    <li class="nav-item">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <a href="{{ route('logout') }}" class="nav-link text-white"
+                                onclick="event.preventDefault(); this.closest('form').submit();">Cerrar Sesión</a>
+                        </form>
+                    </li>
+                </ul>
             </div>
         </div>
+    </nav>
+
+    <div class="container py-5">
+        <h2 class="header mb-4">Gestión de Usuarios</h2>
+
+        <div class="d-flex justify-content-between mb-4">
+            @if (auth()->user()->rol === 'administrador')
+                <a href="{{ route('users.create') }}" class="btn btn-create">Crear Usuario</a>
+            @endif
+        </div>
+
+        <div class="bg-white shadow-sm rounded-lg p-4">
+            @if (session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+
+            @if (session('error'))
+                <div class="alert alert-error">{{ session('error') }}</div>
+            @endif
+
+            <!-- Información según rol -->
+            @if (auth()->user()->rol === 'administrador')
+                <div class="alert info-admin">
+                    <p class="mb-0"><strong>Vista de Administrador:</strong> Puedes ver todos los usuarios (activos e
+                        inactivos)</p>
+                </div>
+            @else
+                <div class="alert info-user">
+                    <p class="mb-0"><strong>Vista de
+                            {{ ucfirst(str_replace('_', ' ', auth()->user()->rol)) }}:</strong> Solo usuarios activos
+                    </p>
+                </div>
+            @endif
+
+            <div class="overflow-auto">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>CI</th>
+                            <th>Nombre Completo</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            @if ($showInactiveUsers)
+                                <th>Estado</th>
+                            @endif
+                            <th>Teléfono</th>
+                            <th>Fecha Ingreso</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($users as $user)
+                            <tr class="{{ $user->estado === 'inactivo' ? 'inactive' : '' }}">
+                                <td>{{ $user->ci }}</td>
+                                <td>
+                                    {{ $user->name }} {{ $user->apellido }}
+                                    @if ($user->estado === 'inactivo')
+                                        <span class="text-danger">(Inactivo)</span>
+                                    @endif
+                                </td>
+                                <td>{{ $user->email }}</td>
+                                <td>
+                                    <span
+                                        class="badge 
+                                        @if ($user->rol === 'administrador') bg-purple-100 text-purple-800
+                                        @elseif($user->rol === 'trabajadora_social') bg-blue-100 text-blue-800
+                                        @elseif($user->rol === 'abogado') bg-green-100 text-green-800
+                                        @elseif($user->rol === 'psicologo') bg-yellow-100 text-yellow-800 @endif">
+                                        {{ ucfirst(str_replace('_', ' ', $user->rol)) }}
+                                    </span>
+                                </td>
+                                @if ($showInactiveUsers)
+                                    <td>{{ $user->estado }}</td>
+                                @endif
+                                <td>{{ $user->telefono ?? 'N/A' }}</td>
+                                <td>{{ $user->fecha_ingreso ? \Carbon\Carbon::parse($user->fecha_ingreso)->format('d/m/Y') : 'N/A' }}
+                                </td>
+                                <td>
+                                    <div class="d-flex">
+                                        @if (auth()->user()->rol === 'administrador')
+                                            <a href="{{ route('users.edit', $user) }}"
+                                                class="btn btn-warning btn-sm me-2">Editar</a>
+
+                                            <form action="{{ route('users.toggle-status', $user) }}" method="POST"
+                                                class="me-2">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit"
+                                                    class="btn {{ $user->estado === 'activo' ? 'btn-danger' : 'btn-success' }} btn-sm">
+                                                    {{ $user->estado === 'activo' ? 'Desactivar' : 'Activar' }}
+                                                </button>
+                                            </form>
+
+                                            @if ($user->id !== auth()->id())
+                                                <form action="{{ route('users.destroy', $user) }}" method="POST"
+                                                    onsubmit="return confirm('¿Estás seguro de eliminar este usuario?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="btn btn-danger btn-sm">Eliminar</button>
+                                                </form>
+                                            @endif
+                                        @else
+                                            <span class="text-muted">Sin permisos</span>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="8" class="text-center text-muted">No hay usuarios para mostrar.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Estadísticas (solo para admins) -->
+            @if (auth()->user()->rol === 'administrador')
+                <div class="mt-4 d-flex justify-content-between">
+                    <div class="bg-success text-white p-3 rounded">
+                        <h5>Usuarios Activos</h5>
+                        <p class="mb-0">{{ $users->where('estado', 'activo')->count() }}</p>
+                    </div>
+                    <div class="bg-danger text-white p-3 rounded">
+                        <h5>Usuarios Inactivos</h5>
+                        <p class="mb-0">{{ $users->where('estado', 'inactivo')->count() }}</p>
+                    </div>
+                    <div class="bg-info text-white p-3 rounded">
+                        <h5>Total Usuarios</h5>
+                        <p class="mb-0">{{ $users->count() }}</p>
+                    </div>
+                </div>
+            @endif
+
+        </div>
     </div>
-</x-app-layout>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

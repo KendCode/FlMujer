@@ -1,47 +1,99 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundación Levántate Mujer - Iniciar Sesión</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #7ac943; /* Verde de tu ejemplo */
+        }
+        .login-container {
+            max-width: 400px;
+            margin: 80px auto;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            text-align: center;
+        }
+        .login-container img {
+            max-width: 100px;
+            margin-bottom: 15px;
+        }
+        .login-container h4 {
+            color: #007b8f;
+            font-weight: bold;
+        }
+        .btn-login {
+            background: #00aaff;
+            color: #fff;
+            font-weight: bold;
+        }
+        .btn-login:hover {
+            background: #008ecc;
+        }
+        .error-msg {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
 
+<div class="login-container">
+    <!-- Logo -->
+    <img src="{{ asset('img/flm_color.png') }}" alt="Logo Fundación">
+
+    <!-- Título -->
+    <h4>Inicia sesión en tu cuenta</h4>
+
+    <!-- Formulario -->
     <form method="POST" action="{{ route('login') }}">
         @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <!-- Usuario -->
+        <div class="mb-3 text-start">
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" required autofocus>
+            @error('email')
+                <div class="error-msg">{{ $message }}</div>
+            @enderror
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <!-- Contraseña -->
+        <div class="mb-3 text-start">
+            <label for="password" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+            @error('password')
+                <div class="error-msg">{{ $message }}</div>
+            @enderror
         </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
+        <!-- Recordarme -->
+        <div class="mb-3 form-check text-start">
+            <input type="checkbox" class="form-check-input" id="remember" name="remember">
+            <label class="form-check-label" for="remember">Recordarme</label>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
+        <!-- Botón -->
+        <button type="submit" class="btn btn-login w-100">Iniciar sesión</button>
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
+        <!-- Enlace para olvidar contraseña -->
+        <div class="mt-3">
+            <a href="{{ route('password.request') }}" class="text-decoration-none">Olvidaste tu contraseña?</a>
         </div>
+
+        <!-- Mensaje de error general -->
+        @if(session('error'))
+            <div class="error-msg">
+                {{ session('error') }}
+            </div>
+        @endif
     </form>
-</x-guest-layout>
+</div>
+
+</body>
+</html>

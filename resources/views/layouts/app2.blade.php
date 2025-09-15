@@ -107,9 +107,9 @@
                         <li class="nav-item">
                             <a href="{{ route('login') }}" class="nav-link">Iniciar Sesión</a>
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a href="{{ route('register') }}" class="nav-link">Registrarse</a>
-                        </li>
+                        </li> --}}
                     </ul>
 
                     <!-- 🔹 Ícono de usuario solo para funcionarios -->
