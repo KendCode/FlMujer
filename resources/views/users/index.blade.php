@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="es">
+@extends('layouts.sidebar')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Usuarios</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+@section('styles')
     <style>
         body {
             background-color: #F4F4F2;
@@ -66,41 +61,15 @@
             /* Rojo claro */
         }
     </style>
-</head>
+@endsection
 
-<body>
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg" style="background-color: #037E8C;">
-        <div class="container-fluid">
-            <a class="navbar-brand text-white fw-bold" href="{{ route('dashboard') }}">Mi Fundación</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon" style="filter: invert(100%);"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ route('dashboard') }}">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ route('profile.edit') }}">Perfil</a>
-                    </li>
-                    <li class="nav-item">
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <a href="{{ route('logout') }}" class="nav-link text-white"
-                                onclick="event.preventDefault(); this.closest('form').submit();">Cerrar Sesión</a>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+@section('content')
 
     <div class="container py-5">
         <h2 class="header mb-4">Gestión de Usuarios</h2>
 
         <div class="d-flex justify-content-between mb-4">
+            <h2 class="font-semibold text-xl">Gestión de Usuarios</h2>
             @if (auth()->user()->rol === 'administrador')
                 <a href="{{ route('users.create') }}" class="btn btn-create">Crear Usuario</a>
             @endif
@@ -159,12 +128,13 @@
                                 <td>
                                     <span
                                         class="badge 
-                                        @if ($user->rol === 'administrador') bg-purple-100 text-purple-800
-                                        @elseif($user->rol === 'trabajadora_social') bg-blue-100 text-blue-800
-                                        @elseif($user->rol === 'abogado') bg-green-100 text-green-800
-                                        @elseif($user->rol === 'psicologo') bg-yellow-100 text-yellow-800 @endif">
+    @if ($user->rol === 'administrador') bg-purple-100 text-purple-800
+    @elseif($user->rol === 'trabajadora_social') bg-blue-100 text-blue-800
+    @elseif($user->rol === 'abogado') bg-green-100 text-green-800
+    @elseif($user->rol === 'psicologo') bg-yellow-100 text-yellow-800 @endif">
                                         {{ ucfirst(str_replace('_', ' ', $user->rol)) }}
                                     </span>
+
                                 </td>
                                 @if ($showInactiveUsers)
                                     <td>{{ $user->estado }}</td>
@@ -232,8 +202,4 @@
 
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+@endsection

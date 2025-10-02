@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PageController;
 use \App\Http\Middleware\CheckActiveUser;
+use App\Http\Controllers\FichasConsultaController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -28,7 +29,7 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     Route::patch('/profile/photo', [ProfileController::class, 'updatePhoto'])
     ->name('profile.update.photo');
 
-
+// Rutas para USUARIOS - FUNCIONARIOS
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
@@ -36,6 +37,9 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::patch('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+
+// Rutas para FICHAS DE CONSULTA - PACIENTES
+    Route::get('fichasConsulta', [FichasConsultaController::class, 'index'])->name('fichasConsulta.index');
 });
 
 require __DIR__.'/auth.php';

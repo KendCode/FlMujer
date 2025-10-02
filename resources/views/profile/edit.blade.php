@@ -127,7 +127,7 @@
                 <div class="card">
                     <div class="card-header">Actualizar Foto</div>
                     <div class="card-body text-center">
-                        <img src="{{ Auth::user()->foto_url ?? asset('storage/fotos/default.png') }}"
+                        <img src="{{ Auth::user()->foto_url ?? asset('storage/fotos/default.jpg') }}"
                             alt="Foto de perfil" class="img-custom">
 
                         <form method="POST" action="{{ route('profile.update.photo') }}" enctype="multipart/form-data"

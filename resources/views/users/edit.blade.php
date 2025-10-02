@@ -1,120 +1,163 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="text-xl font-semibold">Editar Usuario</h2>
-    </x-slot>
+@extends('layouts.sidebar')
 
-    <div class="p-6">
-        <form action="{{ route('users.update', $user) }}" method="POST">
-            @csrf
-            @method('PUT')
+@section('styles')
+    <style>
+        body {
+            background-color: #F4F4F2;
+            font-family: Arial, sans-serif;
+        }
+        .card {
+            border-radius: 1.5rem;
+            border: none;
+            background-color: #fff;
+        }
+        .form-control:focus {
+            border-color: #037E8C;
+            box-shadow: 0 0 0 0.2rem rgba(3, 126, 140, 0.25);
+        }
+        label {
+            font-weight: 600;
+            color: #037E8C;
+        }
+        .btn-primary {
+            background-color: #13C0E5;
+            border-color: #13C0E5;
+        }
+        .btn-primary:hover {
+            background-color: #037E8C;
+            border-color: #037E8C;
+        }
+        .btn-success {
+            background-color: #7EC544;
+            border-color: #7EC544;
+        }
+        .btn-success:hover {
+            background-color: #037E8C;
+            border-color: #037E8C;
+        }
+        .btn-cancel {
+            background-color: #9ca3af;
+            border-color: #9ca3af;
+        }
+        .btn-cancel:hover {
+            background-color: #6b7280;
+            border-color: #6b7280;
+        }
+        .header-title {
+            color: #037E8C;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .foto-preview {
+            border-radius: 0.5rem;
+            border: 2px solid #13C0E5;
+            padding: 2px;
+        }
+    </style>
+@endsection
 
-            <div class="mb-3">
-                <label>CI</label>
-                <input type="text" name="ci" value="{{ old('ci', $user->ci) }}" class="border rounded w-full p-2"
-                    required>
-                @error('ci')
-                    <p class="text-red-500 text-sm">{{ $message }}</p>
-                @enderror
-            </div>
+@section('content')
+    <div class="container py-5">
+        <div class="card shadow-lg p-4 mx-auto" style="max-width: 700px;">
+            <h2 class="text-center header-title">Editar Usuario</h2>
 
-            <div class="mb-3">
-                <label>Nombre</label>
-                <input type="text" name="name" value="{{ old('name', $user->name) }}"
-                    class="border rounded w-full p-2" required>
-                @error('name')
-                    <p class="text-red-500 text-sm">{{ $message }}</p>
-                @enderror
-            </div>
+            <form action="{{ route('users.update', $user) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
 
-            <div class="mb-3">
-                <label>Apellido</label>
-                <input type="text" name="apellido" value="{{ old('apellido', $user->apellido) }}"
-                    class="border rounded w-full p-2" required>
-                @error('apellido')
-                    <p class="text-red-500 text-sm">{{ $message }}</p>
-                @enderror
-            </div>
+                <div class="mb-3">
+                    <label>CI</label>
+                    <input type="text" name="ci" value="{{ old('ci', $user->ci) }}" class="form-control" required>
+                    @error('ci') <p class="text-danger small">{{ $message }}</p> @enderror
+                </div>
 
-            <div class="mb-3">
-                <label>Email</label>
-                <input type="email" name="email" value="{{ old('email', $user->email) }}"
-                    class="border rounded w-full p-2" required>
-                @error('email')
-                    <p class="text-red-500 text-sm">{{ $message }}</p>
-                @enderror
-            </div>
+                <div class="mb-3">
+                    <label>Nombre</label>
+                    <input type="text" name="name" value="{{ old('name', $user->name) }}" class="form-control" required>
+                    @error('name') <p class="text-danger small">{{ $message }}</p> @enderror
+                </div>
 
-            <div class="mb-3">
-                <label>Teléfono</label>
-                <input type="text" name="telefono" value="{{ old('telefono', $user->telefono) }}"
-                    class="border rounded w-full p-2">
-            </div>
+                <div class="mb-3">
+                    <label>Apellido</label>
+                    <input type="text" name="apellido" value="{{ old('apellido', $user->apellido) }}" class="form-control" required>
+                    @error('apellido') <p class="text-danger small">{{ $message }}</p> @enderror
+                </div>
 
-            <div class="mb-3">
-                <label>Dirección</label>
-                <input type="text" name="direccion" value="{{ old('direccion', $user->direccion) }}"
-                    class="border rounded w-full p-2">
-            </div>
+                <div class="mb-3">
+                    <label>Email</label>
+                    <input type="email" name="email" value="{{ old('email', $user->email) }}" class="form-control" required>
+                    @error('email') <p class="text-danger small">{{ $message }}</p> @enderror
+                </div>
 
-            <div class="mb-3">
-                <label>Fecha Nacimiento</label>
-                <input type="date" name="fecha_nacimiento"
-                    value="{{ old('fecha_nacimiento', $user->fecha_nacimiento ? \Carbon\Carbon::parse($user->fecha_nacimiento)->format('Y-m-d') : '') }}"
-                    class="border rounded w-full p-2">
-            </div>
+                <div class="mb-3">
+                    <label>Teléfono</label>
+                    <input type="text" name="telefono" value="{{ old('telefono', $user->telefono) }}" class="form-control">
+                </div>
 
-            <div class="mb-3">
-                <label>Fecha Ingreso</label>
-                <input type="date" name="fecha_ingreso"
-                    value="{{ old('fecha_ingreso', $user->fecha_ingreso ? \Carbon\Carbon::parse($user->fecha_ingreso)->format('Y-m-d') : '') }}"
-                    class="border rounded w-full p-2">
-            </div>
+                <div class="mb-3">
+                    <label>Dirección</label>
+                    <input type="text" name="direccion" value="{{ old('direccion', $user->direccion) }}" class="form-control">
+                </div>
 
-            <div class="mb-3">
-                <label>Rol</label>
-                <select name="rol" class="border rounded w-full p-2" required>
-                    <option value="administrador" {{ $user->rol == 'administrador' ? 'selected' : '' }}>Administrador
-                    </option>
-                    <option value="trabajadora_social" {{ $user->rol == 'trabajadora_social' ? 'selected' : '' }}>
-                        Trabajadora Social</option>
-                    <option value="abogado" {{ $user->rol == 'abogado' ? 'selected' : '' }}>Abogado</option>
-                    <option value="psicologo" {{ $user->rol == 'psicologo' ? 'selected' : '' }}>Psicólogo</option>
-                </select>
-            </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label>Fecha Nacimiento</label>
+                        <input type="date" name="fecha_nacimiento"
+                            value="{{ old('fecha_nacimiento', $user->fecha_nacimiento ? \Carbon\Carbon::parse($user->fecha_nacimiento)->format('Y-m-d') : '') }}"
+                            class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label>Fecha Ingreso</label>
+                        <input type="date" name="fecha_ingreso"
+                            value="{{ old('fecha_ingreso', $user->fecha_ingreso ? \Carbon\Carbon::parse($user->fecha_ingreso)->format('Y-m-d') : '') }}"
+                            class="form-control">
+                    </div>
+                </div>
 
-            <div class="mb-3">
-                <label>Estado</label>
-                <select name="estado" class="border rounded w-full p-2" required>
-                    <option value="activo" {{ $user->estado == 'activo' ? 'selected' : '' }}>Activo</option>
-                    <option value="inactivo" {{ $user->estado == 'inactivo' ? 'selected' : '' }}>Inactivo</option>
-                </select>
-            </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label>Rol</label>
+                        <select name="rol" class="form-select" required>
+                            <option value="administrador" {{ $user->rol == 'administrador' ? 'selected' : '' }}>Administrador</option>
+                            <option value="trabajadora_social" {{ $user->rol == 'trabajadora_social' ? 'selected' : '' }}>Trabajadora Social</option>
+                            <option value="abogado" {{ $user->rol == 'abogado' ? 'selected' : '' }}>Abogado</option>
+                            <option value="psicologo" {{ $user->rol == 'psicologo' ? 'selected' : '' }}>Psicólogo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Estado</label>
+                        <select name="estado" class="form-select" required>
+                            <option value="activo" {{ $user->estado == 'activo' ? 'selected' : '' }}>Activo</option>
+                            <option value="inactivo" {{ $user->estado == 'inactivo' ? 'selected' : '' }}>Inactivo</option>
+                        </select>
+                    </div>
+                </div>
 
-            <div class="mb-3">
-                <label>Nueva Contraseña (opcional)</label>
-                <input type="password" name="password" class="border rounded w-full p-2">
-                <p class="text-gray-500 text-sm">Si no deseas cambiarla, deja este campo vacío</p>
-            </div>
+                <div class="mb-3">
+                    <label>Nueva Contraseña (opcional)</label>
+                    <input type="password" name="password" class="form-control">
+                    <p class="text-muted small">Si no deseas cambiarla, deja este campo vacío</p>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Foto actual</label><br>
-                @if ($user->foto)
-                    <img src="{{ asset('storage/' . $user->foto) }}" alt="Foto de perfil" width="120"
-                        class="rounded">
-                @else
-                    <p>No tiene foto</p>
-                @endif
-            </div>
+                <div class="mb-3">
+                    <label>Foto actual</label><br>
+                    @if ($user->foto)
+                        <img src="{{ asset('storage/' . $user->foto) }}" alt="Foto de perfil" width="120" class="foto-preview">
+                    @else
+                        <p>No tiene foto</p>
+                    @endif
+                </div>
 
-            <div class="mb-3">
-                <label for="foto" class="form-label">Nueva foto (opcional)</label>
-                <input type="file" name="foto" id="foto" class="form-control">
-            </div>
+                <div class="mb-4">
+                    <label>Nueva foto (opcional)</label>
+                    <input type="file" name="foto" class="form-control">
+                </div>
 
-            <div class="flex space-x-3 mt-4">
-                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Actualizar</button>
-                <a href="{{ route('users.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded">Cancelar</a>
-            </div>
-        </form>
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-primary btn-lg">Actualizar</button>
+                    <a href="{{ route('users.index') }}" class="btn btn-cancel btn-lg">Cancelar</a>
+                </div>
+            </form>
+        </div>
     </div>
-</x-app-layout>
+@endsection

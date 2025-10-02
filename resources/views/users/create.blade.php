@@ -1,79 +1,112 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">
-            Crear Usuario
-        </h2>
-    </x-slot>
+@extends('layouts.sidebar')
 
-    <div class="p-6 max-w-3xl mx-auto">
-        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-8">
-            <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
+@section('styles')
+    <style>
+        body {
+            background-color: #F4F4F2;
+            font-family: Arial, sans-serif;
+        }
+        .card {
+            border-radius: 1rem;
+            border: none;
+        }
+        .form-control:focus {
+            border-color: #037E8C;
+            box-shadow: 0 0 0 0.2rem rgba(3, 126, 140, 0.25);
+        }
+        .btn-primary {
+            background-color: #13C0E5;
+            border-color: #13C0E5;
+        }
+        .btn-primary:hover {
+            background-color: #037E8C;
+            border-color: #037E8C;
+        }
+        .btn-success {
+            background-color: #7EC544;
+            border-color: #7EC544;
+        }
+        .btn-success:hover {
+            background-color: #037E8C;
+            border-color: #037E8C;
+        }
+        label {
+            font-weight: 500;
+        }
+    </style>
+@endsection
+
+@section('content')
+    <div class="content py-5">
+        <div class="card shadow-lg p-4 mx-auto" style="max-width: 700px;">
+            <h2 class="mb-4 text-center" style="color: #037E8C;">Crear Usuario</h2>
+            <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <!-- CI -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">CI</label>
-                    <input type="text" name="ci" class="mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500" required>
+                <div class="mb-3">
+                    <label class="form-label">CI</label>
+                    <input type="text" name="ci" class="form-control" required>
                 </div>
 
                 <!-- Nombre -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre</label>
-                    <input type="text" name="name" class="mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500" required>
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" name="name" class="form-control" required>
                 </div>
 
                 <!-- Apellido -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Apellido</label>
-                    <input type="text" name="apellido" class="mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500" required>
+                <div class="mb-3">
+                    <label class="form-label">Apellido</label>
+                    <input type="text" name="apellido" class="form-control" required>
                 </div>
 
                 <!-- Email -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-                    <input type="email" name="email" class="mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500" required>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" required>
                 </div>
 
                 <!-- Teléfono -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Teléfono</label>
-                    <input type="text" name="telefono" class="mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500">
+                <div class="mb-3">
+                    <label class="form-label">Teléfono</label>
+                    <input type="text" name="telefono" class="form-control">
                 </div>
 
                 <!-- Dirección -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Dirección</label>
-                    <input type="text" name="direccion" class="mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500">
+                <div class="mb-3">
+                    <label class="form-label">Dirección</label>
+                    <input type="text" name="direccion" class="form-control">
                 </div>
 
                 <!-- Fechas -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fecha Nacimiento</label>
-                        <input type="date" name="fecha_nacimiento" class="mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Fecha Nacimiento</label>
+                        <input type="date" name="fecha_nacimiento" class="form-control">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fecha Ingreso</label>
-                        <input type="date" name="fecha_ingreso" class="mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500">
+                    <div class="col-md-6">
+                        <label class="form-label">Fecha Ingreso</label>
+                        <input type="date" name="fecha_ingreso" class="form-control">
                     </div>
                 </div>
 
                 <!-- Contraseña -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Contraseña</label>
-                        <input type="password" name="password" class="mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500" required>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Contraseña</label>
+                        <input type="password" name="password" class="form-control" required>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirmar Contraseña</label>
-                        <input type="password" name="password_confirmation" class="mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500" required>
+                    <div class="col-md-6">
+                        <label class="form-label">Confirmar Contraseña</label>
+                        <input type="password" name="password_confirmation" class="form-control" required>
                     </div>
                 </div>
 
                 <!-- Rol -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Rol</label>
-                    <select name="rol" class="mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500" required>
+                <div class="mb-3">
+                    <label class="form-label">Rol</label>
+                    <select name="rol" class="form-select" required>
                         <option value="administrador">Administrador</option>
                         <option value="trabajadora_social">Trabajadora Social</option>
                         <option value="abogado">Abogado</option>
@@ -82,27 +115,25 @@
                 </div>
 
                 <!-- Estado -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Estado</label>
-                    <select name="estado" class="mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500">
+                <div class="mb-3">
+                    <label class="form-label">Estado</label>
+                    <select name="estado" class="form-select">
                         <option value="activo">Activo</option>
                         <option value="inactivo">Inactivo</option>
                     </select>
                 </div>
 
                 <!-- Foto -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Foto de Perfil</label>
-                    <input type="file" name="foto" class="mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500">
+                <div class="mb-3">
+                    <label class="form-label">Foto de Perfil</label>
+                    <input type="file" name="foto" class="form-control">
                 </div>
 
                 <!-- Botón -->
-                <div class="pt-4">
-                    <button class="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition duration-300 ease-in-out">
-                        Guardar
-                    </button>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">Guardar</button>
                 </div>
             </form>
         </div>
     </div>
-</x-app-layout>
+@endsection
