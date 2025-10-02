@@ -40,6 +40,11 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
 
 // Rutas para FICHAS DE CONSULTA - PACIENTES
     Route::get('fichasConsulta', [FichasConsultaController::class, 'index'])->name('fichasConsulta.index');
+    Route::get('fichasConsulta/create', [FichasConsultaController::class, 'create'])->name('fichasConsulta.create');
+    Route::post('fichasConsulta', [FichasConsultaController::class, 'store'])->name('fichasConsulta.store');
+    // Route::get('fichasConsulta/{ficha}/edit', [FichasConsultaController::class, 'edit'])->name('fichasConsulta.edit');
+    // Route::put('fichasConsulta/{ficha}', [FichasConsultaController::class, 'update'])->name('fichasConsulta.update');
+    // Route::delete('fichasConsulta/{ficha}', [FichasConsultaController::class, 'destroy'])->name('fichasConsulta.destroy');
 });
 
 require __DIR__.'/auth.php';

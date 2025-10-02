@@ -146,8 +146,8 @@
             <div class="list-group list-group-flush">
                 <a href="{{ route('dashboard') }}" class="list-group-item"><i class="fas fa-home"></i><span>Inicio</span></a>
                 <a href="{{ route('users.index') }}" class="list-group-item"><i class="fas fa-users"></i><span>Usuarios</span></a>
+                <a href="{{ route('fichasConsulta.index') }}" class="list-group-item"><i class="fas fa-comments"></i><span>Consultas</span></a>
                 <a href="#" class="list-group-item"><i class="fas fa-user-md"></i><span>Pacientes</span></a>
-                <a href="#" class="list-group-item"><i class="fas fa-comments"></i><span>Consultas</span></a>
                 <a href="#" class="list-group-item"><i class="fas fa-calendar-alt"></i><span>Eventos</span></a>
                 <a href="{{ route('profile.edit') }}" class="list-group-item"><i class="fas fa-cog"></i><span>Configuración Perfil</span></a>
                 <form method="POST" action="{{ route('logout') }}">
