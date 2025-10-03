@@ -24,6 +24,9 @@ class UserController extends Controller
             $users = User::where('estado', 'activo')->paginate(10);
             $showInactiveUsers = false; // no mostramos la columna de estado
         }
+        $users = User::orderByRaw("FIELD(estado, 'activo', 'inactivo')")
+             ->orderBy('name', 'asc') // opcional: ordenar por nombre dentro de cada estado
+             ->get();
 
         return view('users.index', compact('users', 'showInactiveUsers'));
     }

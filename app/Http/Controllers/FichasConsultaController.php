@@ -36,7 +36,7 @@ class FichasConsultaController extends Controller
             'apMaterno' => 'nullable|string|max:100',
             'numCelular' => 'nullable|string|max:8',
             'fecha' => 'required|date',
-            'tipo' => 'required|string|max:100',
+            'tipo' => 'nullable|string|max:100', // si luego lo agregas
             'subTipo' => 'nullable|string|max:100',
             'descripcion' => 'nullable|string',
         ]);
@@ -50,16 +50,17 @@ class FichasConsultaController extends Controller
             'fecha' => $request->fecha,
             'instDeriva' => $request->instDeriva,
             'testimonio' => $request->testimonio,
-            'tipo' => $request->tipo,
-            'subTipo' => $request->subTipo,
-            'descripcion' => $request->descripcion,
+            'Penal' => $request->has('Penal') ? $request->Penal : null,
+            'Familiar' => $request->has('Familiar') ? $request->Familiar : null,
+            'OtrosProblemas' => $request->OtrosProblemas,
             'legal' => $request->has('legal'),
             'social' => $request->has('social'),
             'psicologico' => $request->has('psicologico'),
             'espiritual' => $request->has('espiritual'),
         ]);
 
-        return redirect()->route('fichasConsulta.index')->with('success', 'Ficha creada correctamente.');
+        return redirect()->route('fichasConsulta.index')
+            ->with('success', 'Ficha creada correctamente.');
     }
 
     /**
@@ -75,16 +76,53 @@ class FichasConsultaController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $ficha = FichasConsulta::findOrFail($id);
+        return view('fichasConsulta.edit', compact('ficha'));
     }
+
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        //
+        $ficha = FichasConsulta::findOrFail($id);
+
+        $request->validate([
+            'ci' => 'required|string|max:9|unique:fichas_consulta,ci,' . $ficha->idFicha . ',idFicha',
+            'nombre' => 'required|string|max:100',
+            'apPaterno' => 'required|string|max:100',
+            'apMaterno' => 'nullable|string|max:100',
+            'numCelular' => 'nullable|string|max:8',
+            'fecha' => 'required|date',
+            'instDeriva' => 'nullable|string|max:150',
+            'testimonio' => 'nullable|string',
+            'Penal' => 'nullable|array',
+            'Familiar' => 'nullable|array',
+            'OtrosProblemas' => 'nullable|string',
+        ]);
+
+        $ficha->update([
+            'ci' => $request->ci,
+            'nombre' => $request->nombre,
+            'apPaterno' => $request->apPaterno,
+            'apMaterno' => $request->apMaterno,
+            'numCelular' => $request->numCelular,
+            'fecha' => $request->fecha,
+            'instDeriva' => $request->instDeriva,
+            'testimonio' => $request->testimonio,
+            'Penal' => $request->Penal ?? [],
+            'Familiar' => $request->Familiar ?? [],
+            'OtrosProblemas' => $request->OtrosProblemas,
+            'legal' => $request->has('legal'),
+            'social' => $request->has('social'),
+            'psicologico' => $request->has('psicologico'),
+            'espiritual' => $request->has('espiritual'),
+        ]);
+
+        return redirect()->route('fichasConsulta.index')->with('success', 'Ficha actualizada correctamente.');
     }
+
 
     /**
      * Remove the specified resource from storage.

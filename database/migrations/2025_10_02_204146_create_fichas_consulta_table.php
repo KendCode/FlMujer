@@ -27,9 +27,10 @@ return new class extends Migration
             $table->text('testimonio')->nullable();
 
             // Problemática
-            $table->string('tipo', 100);
-            $table->string('subTipo', 100)->nullable();
-            $table->text('descripcion')->nullable();
+            $table->json('Penal')->nullable();
+            $table->json('Familiar')->nullable();
+            $table->text('OtrosProblemas')->nullable();
+
 
             // Orientación interna
             $table->boolean('legal')->default(false);
