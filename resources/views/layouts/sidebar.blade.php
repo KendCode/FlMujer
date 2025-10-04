@@ -5,11 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fundación Levántate Mujer - Panel</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Inyecta estilos de la vista -->
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Estilos propios -->
     @yield('styles')
     @stack('styles')
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -35,7 +41,7 @@
         }
 
         #wrapper.toggled #sidebar-wrapper {
-            width: 80px; /* Sidebar reducido */
+            width: 80px;
         }
 
         /* Perfil */
@@ -102,13 +108,15 @@
         /* Contenido */
         #page-content-wrapper {
             flex: 1;
-            margin-left: 250px; /* Empuja el contenido a la derecha */
+            margin-left: 250px;
             transition: all 0.3s ease;
             width: 100%;
+            z-index: 1;
+            position: relative;
         }
 
         #wrapper.toggled #page-content-wrapper {
-            margin-left: 80px; /* Ajuste cuando sidebar se reduce */
+            margin-left: 80px;
         }
 
         .logo {
@@ -116,22 +124,41 @@
             height: auto;
         }
 
+        .custom-select {
+            background-color: #7EC544;
+            color: #fff;
+            border: none;
+            padding: 12px 15px;
+        }
+
+        .custom-select:focus {
+            background-color: #037E8C;
+            color: #fff;
+            outline: none;
+        }
+
+        /* 🔥 Asegurar que los dropdowns estén arriba */
+        .dropdown-menu {
+            z-index: 2000 !important;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             #sidebar-wrapper {
-                left: -250px; /* Oculto por defecto */
+                left: -250px;
             }
 
             #wrapper.toggled #sidebar-wrapper {
-                left: 0; /* Se muestra sobre el contenido */
+                left: 0;
                 width: 250px;
             }
 
             #page-content-wrapper {
-                margin-left: 0 !important; /* En móviles no empuja contenido */
+                margin-left: 0 !important;
             }
         }
     </style>
+
 </head>
 
 <body>
@@ -141,18 +168,57 @@
             <div class="profile">
                 <img src="{{ Auth::user()->foto_url }}" alt="Foto de {{ Auth::user()->name }}" class="profile-img">
                 <h5>{{ Auth::user()->name }} {{ Auth::user()->apellido }}</h5>
-                <p class="mb-0">Rol: <span class="font-weight-bold text-warning">{{ ucfirst(Auth::user()->rol) }}</span></p>
+                <p class="mb-0">Rol: <span
+                        class="font-weight-bold text-warning">{{ ucfirst(Auth::user()->rol) }}</span></p>
             </div>
             <div class="list-group list-group-flush">
-                <a href="{{ route('dashboard') }}" class="list-group-item"><i class="fas fa-home"></i><span>Inicio</span></a>
-                <a href="{{ route('users.index') }}" class="list-group-item"><i class="fas fa-users"></i><span>Usuarios</span></a>
-                <a href="{{ route('fichasConsulta.index') }}" class="list-group-item"><i class="fas fa-comments"></i><span>Consultas</span></a>
-                <a href="#" class="list-group-item"><i class="fas fa-user-md"></i><span>Pacientes</span></a>
+                <a href="{{ route('dashboard') }}" class="list-group-item"><i
+                        class="fas fa-home"></i><span>Inicio</span></a>
+                <a href="{{ route('users.index') }}" class="list-group-item"><i
+                        class="fas fa-users"></i><span>Usuarios</span></a>
+                <a href="{{ route('fichasConsulta.index') }}" class="list-group-item"><i
+                        class="fas fa-comments"></i><span>Consultas</span></a>
+
+                <!-- Dropdown navegación estilo sidebar -->
+                <div class="dropdown w-100">
+                    <button class="list-group-item list-group-item-action dropdown-toggle text-start w-100"
+                        type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-cogs"></i> Navegación
+                    </button>
+                    <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
+                        <li>
+                            <a class="dropdown-item" href="{{ route('admin.carousels.index') }}">
+                                <i class="fas fa-images"></i> Carrusel de imágenes
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('admin.contenidos.index') }}">
+                                <i class="fas fa-file-alt"></i> Gestión de contenidos
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('admin.actividades.index') }}">
+                                <i class="fas fa-tasks"></i> Actividades
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('admin.testimonios.index') }}">
+                                <i class="fas fa-comments"></i> Testimonios
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+
+
                 <a href="#" class="list-group-item"><i class="fas fa-calendar-alt"></i><span>Eventos</span></a>
-                <a href="{{ route('profile.edit') }}" class="list-group-item"><i class="fas fa-cog"></i><span>Configuración Perfil</span></a>
+                <a href="{{ route('profile.edit') }}" class="list-group-item"><i
+                        class="fas fa-cog"></i><span>Configuración Perfil</span></a>
+
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <a href="{{ route('logout') }}" class="list-group-item" onclick="event.preventDefault(); this.closest('form').submit();">
+                    <a href="{{ route('logout') }}" class="list-group-item"
+                        onclick="event.preventDefault(); this.closest('form').submit();">
                         <i class="fas fa-sign-out-alt"></i><span>Cerrar Sesión</span>
                     </a>
                 </form>
@@ -163,7 +229,7 @@
         <div id="page-content-wrapper">
             <nav class="navbar navbar-expand-lg border-bottom">
                 <button class="btn btn-outline-success" id="menu-toggle">☰</button>
-                <div class="ml-auto">
+                <div class="ms-auto">
                     <img src="{{ asset('img/flm_color.png') }}" alt="Logo" class="logo">
                 </div>
             </nav>
@@ -174,13 +240,13 @@
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        $("#menu-toggle").click(function(e) {
+        document.getElementById("menu-toggle").addEventListener("click", function(e) {
             e.preventDefault();
-            $("#wrapper").toggleClass("toggled");
+            document.getElementById("wrapper").classList.toggle("toggled");
         });
     </script>
 </body>

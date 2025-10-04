@@ -7,10 +7,29 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PageController;
 use \App\Http\Middleware\CheckActiveUser;
 use App\Http\Controllers\FichasConsultaController;
+use App\Http\Controllers\Admin;
+use App\Http\Controllers\Admin\TestimonioController;
+use App\Http\Controllers\Admin\ContenidoController;
+use App\Http\Controllers\Admin\CarouselController;
+use App\Http\Controllers\Admin\ActividadController;
+use App\Models\Carousel;
+use App\Models\Actividad;
+use App\Models\Testimonio;
+use App\Models\Contenido;
 
-Route::get('/', function () {
+/*Route::get('/', function () {
     return view('welcome');
+});*/
+Route::get('/', function () {
+    $slides = Carousel::orderBy('orden')->get();
+    $actividades = Actividad::latest()->take(6)->get();
+    $testimonios = Testimonio::latest()->take(6)->get();
+    $contenidos = Contenido::all();
+
+    return view('welcome', compact('slides', 'actividades', 'testimonios', 'contenidos'));
 });
+
+
 Route::get('/contacto', [PageController::class, 'contacto'])->name('contacto');
 Route::get('/testimonios', [PageController::class, 'testimonios'])->name('testimonios');
 Route::get('/actividades', [PageController::class, 'actividades'])->name('actividades');
@@ -37,6 +56,15 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::patch('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+
+//RUTAS PARA GESTION DE CONTENIDO
+Route::prefix('admin')->name('admin.')->middleware('auth')->group(function(){
+    Route::resource('carousels', Admin\CarouselController::class);
+    Route::resource('actividades', Admin\ActividadController::class);
+    Route::resource('testimonios', Admin\TestimonioController::class);
+    Route::resource('contenidos', Admin\ContenidoController::class);
+});
+
 
 // Rutas para FICHAS DE CONSULTA - PACIENTES
     Route::get('fichasConsulta', [FichasConsultaController::class, 'index'])->name('fichasConsulta.index');
