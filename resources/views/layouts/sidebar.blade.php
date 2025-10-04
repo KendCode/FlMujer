@@ -185,24 +185,24 @@
                         type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-cogs"></i> Navegación
                     </button>
-                    <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
+                    <ul class="dropdown-menu w-100 " aria-labelledby="dropdownMenuButton">
                         <li>
-                            <a class="dropdown-item" href="{{ route('admin.carousels.index') }}">
+                            <a class="list-group-item-action dropdown-item " href="{{ route('admin.carousels.index') }}">
                                 <i class="fas fa-images"></i> Carrusel de imágenes
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="{{ route('admin.contenidos.index') }}">
+                            <a class="list-group-item-action dropdown-item " href="{{ route('admin.contenidos.index') }}">
                                 <i class="fas fa-file-alt"></i> Gestión de contenidos
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="{{ route('admin.actividades.index') }}">
+                            <a class="list-group-item-action dropdown-item " href="{{ route('admin.actividades.index') }}">
                                 <i class="fas fa-tasks"></i> Actividades
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="{{ route('admin.testimonios.index') }}">
+                            <a class="list-group-item-action dropdown-item " href="{{ route('admin.testimonios.index') }}">
                                 <i class="fas fa-comments"></i> Testimonios
                             </a>
                         </li>

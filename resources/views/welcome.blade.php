@@ -51,32 +51,45 @@
             object-fit: cover;
         }
 
-        .carousel-img {
+        .carousel-item img {
             width: 100%;
-            height: 60vh;
-            /* Altura adaptable */
+            height: 900vh;
+            max-height: 650px;
+            /* altura en pantallas grandes */
             object-fit: cover;
-            /* Evita que la imagen se deforme */
+            /* rellena sin deformar */
         }
 
-        @media (max-width: 768px) {
+        /* Tablets */
+        @media (max-width: 992px) {
+            .carousel-item img {
+                height: 50vh;
+            }
+
             .carousel-caption {
-                font-size: 0.9rem;
-                padding: 0.5rem;
-            }
-
-            .carousel-img {
-                height: 40vh;
+                font-size: 0.95rem;
             }
         }
 
+        /* Celulares */
         @media (max-width: 576px) {
-            .carousel-caption h5 {
-                font-size: 1rem;
+            .carousel-item img {
+                height: 35vh;
             }
 
-            .carousel-caption p {
+            .carousel-caption {
+                padding: 0.3rem 0.6rem;
                 font-size: 0.8rem;
+            }
+
+            .carousel-title {
+                font-size: 1rem;
+                /* título más pequeño */
+            }
+
+            .carousel-text {
+                font-size: 0.75rem;
+                /* descripción más pequeña */
             }
         }
     </style>
@@ -119,33 +132,33 @@
             </div>
         </nav>
     </header>
-    <!-- Sección Inicio con carousel -->
-    <main id="inicio">
-        <div id="myCarousel" class="carousel slide mb-6" data-bs-ride="carousel">
 
-            <!-- Indicadores -->
+    <main id="inicio">
+        <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+
+            <!-- Indicadores dinámicos -->
             <div class="carousel-indicators">
                 @foreach ($slides as $key => $slide)
-                    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="{{ $key }}"
-                        class="{{ $key == 0 ? 'active' : '' }}" aria-current="{{ $key == 0 ? 'true' : '' }}"
-                        aria-label="Slide {{ $key + 1 }}"></button>
+                    <button type="button" data-bs-target="#carouselExampleCaptions"
+                        data-bs-slide-to="{{ $key }}" class="{{ $key == 0 ? 'active' : '' }}"
+                        aria-current="{{ $key == 0 ? 'true' : '' }}" aria-label="Slide {{ $key + 1 }}"></button>
                 @endforeach
             </div>
 
-            <!-- Slides -->
+            <!-- Slides dinámicos -->
             <div class="carousel-inner">
                 @foreach ($slides as $key => $slide)
                     <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
                         <img src="{{ asset('storage/' . $slide->imagen) }}" class="d-block w-100 carousel-img"
-                            alt="{{ $slide->titulo }}" style="object-fit: cover; height: 60vh;">
+                            alt="{{ $slide->titulo }}">
 
                         @if ($slide->titulo || $slide->descripcion)
-                            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-2 rounded">
+                            <div class="carousel-caption bg-dark bg-opacity-50 p-2 rounded">
                                 @if ($slide->titulo)
-                                    <h5 class="fs-5 fs-md-3">{{ $slide->titulo }}</h5>
+                                    <h5 class="carousel-title">{{ $slide->titulo }}</h5>
                                 @endif
                                 @if ($slide->descripcion)
-                                    <p class="fs-6 fs-md-5">{{ $slide->descripcion }}</p>
+                                    <p class="carousel-text">{{ $slide->descripcion }}</p>
                                 @endif
                             </div>
                         @endif
@@ -154,20 +167,23 @@
             </div>
 
             <!-- Controles -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
+                data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Anterior</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
+                data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Siguiente</span>
             </button>
         </div>
     </main>
 
+
     <!-- Sección Actividades -->
     <section id="actividades" class="container py-5">
-        <h2 class="text-center mb-4" style="color:#037E8C;">Nuestras Actividades</h2>
+        <h2 class="text-center mb-4 fw-bold" style="color:#037E8C;">Nuestras Actividades</h2>
         <div class="row g-4">
             @foreach ($actividades as $actividad)
                 <div class="col-md-4">
@@ -193,12 +209,14 @@
                 <div class="col-md-4">
                     <div class="card shadow-sm h-100 border-0 rounded-4 text-center">
                         @if ($testimonio->imagen)
-                            <img src="{{ asset('storage/' . $testimonio->imagen) }}" class="rounded-circle mx-auto img-fluid mb-3"
+                            <img src="{{ asset('storage/' . $testimonio->imagen) }}"
+                                class="rounded-circle mx-auto img-fluid mb-3"
                                 style="width:100px;height:100px;object-fit:cover;">
                         @endif
                         <p class="fst-italic">{{ $testimonio->mensaje }}</p>
-                        <h6 class="fw-semibold" style="color:#7EC544;">— {{ $testimonio->nombre }}, {{ $testimonio->rol }}</h6>
-                        
+                        <h6 class="fw-semibold" style="color:#7EC544;">— {{ $testimonio->nombre }},
+                            {{ $testimonio->rol }}</h6>
+
                     </div>
                 </div>
             @endforeach
@@ -230,23 +248,10 @@
                 <p><i class="bi bi-phone-fill"></i> +591 690 02358</p>
             </div>
             <div class="col-md-6">
-                <form>
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="name" placeholder="Tu nombre" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Correo</label>
-                        <input type="email" class="form-control" id="email" placeholder="correo@ejemplo.com"
-                            required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="message" class="form-label">Mensaje</label>
-                        <textarea class="form-control" id="message" rows="4" placeholder="Escribe tu mensaje" required></textarea>
-                    </div>
-                    <button type="submit" class="btn w-100"
-                        style="background-color:#13C0E5; color:white;">Enviar</button>
-                </form>
+                <iframe width="100%" height="350" style="border:0; border-radius:8px;" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://www.google.com/maps?q=-16.544671,-68.187462&z=17&output=embed">
+                </iframe>
             </div>
         </div>
     </section>
