@@ -2,7 +2,7 @@
 
 @section('content')
 <h2>Editar Actividad</h2>
-<form action="{{ route('admin.actividades.update', $actividad->id) }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('admin.actividades.update', $actividad) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
     <div class="mb-3">

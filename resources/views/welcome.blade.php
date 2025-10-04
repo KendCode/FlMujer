@@ -43,6 +43,32 @@
             background-color: #037E8C;
         }
 
+        .img-container {
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+        }
+
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-bottom: 3px solid #037E8C;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .img-container img {
+            transform: scale(1.05);
+        }
+
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
 
         /* Fija altura del carousel y ajusta las imágenes */
         .carousel-img {
@@ -132,7 +158,7 @@
             </div>
         </nav>
     </header>
-
+    {{-- CARRUSEL DE IMAGENES --}}
     <main id="inicio">
         <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
 
@@ -183,24 +209,42 @@
 
     <!-- Sección Actividades -->
     <section id="actividades" class="container py-5">
-        <h2 class="text-center mb-4 fw-bold" style="color:#037E8C;">Nuestras Actividades</h2>
+        <h2 class="text-center mb-5 fw-bold" style="color:#037E8C;">Nuestras Actividades</h2>
         <div class="row g-4">
             @foreach ($actividades as $actividad)
                 <div class="col-md-4">
-                    <div class="card h-100 shadow-sm">
+                    <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
                         @if ($actividad->imagen)
-                            <img src="{{ asset('storage/' . $actividad->imagen) }}" class="card-img-top"
-                                alt="{{ $actividad->titulo }}">
+                            <div class="img-container">
+                                <img src="{{ asset('storage/' . $actividad->imagen) }}" class="card-img-top"
+                                    alt="{{ $actividad->titulo }}">
+                            </div>
                         @endif
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $actividad->titulo }}</h5>
-                            <p>{{ Str::limit($actividad->descripcion, 100) }}</p>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold card-title">{{ $actividad->titulo }}</h5>
+
+                            <!-- Texto limitado -->
+                            <p class="card-text text-muted short-text" id="short-{{ $actividad->id }}">
+                                {{ Str::limit($actividad->descripcion, 100) }}
+                            </p>
+
+                            <!-- Texto completo oculto -->
+                            <p class="card-text text-muted full-text d-none" id="full-{{ $actividad->id }}">
+                                {{ $actividad->descripcion }}
+                            </p>
+
+                            <button class="mt-auto btn btn-outline-info btn-sm rounded-pill toggle-btn"
+                                data-id="{{ $actividad->id }}">
+                                Ver más
+                            </button>
                         </div>
                     </div>
                 </div>
             @endforeach
         </div>
     </section>
+
+    <!-- Sección Testimonios -->
 
     <section id="testimonios" class="container py-5">
         <h2 class="text-center mb-5 fw-bold" style="color: #037E8C;">Testimonios</h2>
@@ -276,6 +320,33 @@
             <small style="color: #13C0E5;">Bryan Kender Mendoza Canaviri</small>
         </div>
     </footer>
+
+
+    <!-- Script para expandir texto -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.toggle-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const shortText = document.getElementById(`short-${id}`);
+                    const fullText = document.getElementById(`full-${id}`);
+
+                    const expanded = !fullText.classList.contains('d-none');
+
+                    if (expanded) {
+                        fullText.classList.add('d-none');
+                        shortText.classList.remove('d-none');
+                        this.textContent = 'Ver más';
+                    } else {
+                        fullText.classList.remove('d-none');
+                        shortText.classList.add('d-none');
+                        this.textContent = 'Ver menos';
+                    }
+                });
+            });
+        });
+    </script>
+
 
 </body>
 

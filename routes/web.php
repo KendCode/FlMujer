@@ -60,7 +60,9 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
 //RUTAS PARA GESTION DE CONTENIDO
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function(){
     Route::resource('carousels', Admin\CarouselController::class);
-    Route::resource('actividades', Admin\ActividadController::class);
+    Route::resource('actividades', Admin\ActividadController::class)->parameters([
+    'actividades' => 'actividad'
+]);
     Route::resource('testimonios', Admin\TestimonioController::class);
     Route::resource('contenidos', Admin\ContenidoController::class);
 });
