@@ -75,6 +75,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function(){
     Route::get('fichasConsulta/{ficha}/edit', [FichasConsultaController::class, 'edit'])->name('fichasConsulta.edit');
     Route::put('fichasConsulta/{ficha}', [FichasConsultaController::class, 'update'])->name('fichasConsulta.update');
     // Route::delete('fichasConsulta/{ficha}', [FichasConsultaController::class, 'destroy'])->name('fichasConsulta.destroy');
+
+    // Ruta FORMULARIO SITUACION DE VIOLENCIA INTRAFAMILIAR
+    Route::get('situacionIntrafamiliar/create', [FichasConsultaController::class, 'createSituacionIntrafamiliar'])->name('situacionIntrafamiliar.create');
 });
 
 require __DIR__.'/auth.php';

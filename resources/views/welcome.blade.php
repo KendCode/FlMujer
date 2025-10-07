@@ -266,11 +266,12 @@
             @endforeach
         </div>
     </section>
+    {{-- SECCION CONTENIDOS --}}
     <section id="contenidos" class="py-5">
-        <h2 class="text-center">Contenidos</h2>
+        <h2 class="text-center mb-5 fw-bold" style="color:#037E8C;">Contenidos</h2>
         @foreach ($contenidos as $contenido)
             <div class="mb-4 text-center">
-                <h3>{{ $contenido->titulo }}</h3>
+                <h3 class="card-title">{{ $contenido->titulo }}</h3>
                 <p>{{ $contenido->descripcion }}</p>
                 @if ($contenido->imagen)
                     <img src="{{ asset('storage/' . $contenido->imagen) }}" class="img-fluid"

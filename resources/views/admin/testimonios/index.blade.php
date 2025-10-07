@@ -2,7 +2,7 @@
 
 @section('content')
 <h2>Testimonios</h2>
-<a href="{{ route('admin.testimonios.create') }}" class="btn btn-primary mb-3">Agregar Testimonio</a>
+<a href="{{ route('admin.testimonios.create') }}" class="btn btn-success mb-3">Agregar Testimonio</a>
 
 <table class="table table-bordered">
     <thead>
