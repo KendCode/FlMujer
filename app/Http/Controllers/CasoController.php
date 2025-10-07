@@ -8,9 +8,15 @@ use App\Models\Caso;
 use App\Models\FormaViolencia;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-
+use App\Models\Pareja;
+use App\Models\Hijo;
 class CasoController extends Controller
 {
+    public function index()
+    {
+        $casos = Caso::with('pareja', 'hijos')->orderBy('created_at', 'desc')->get();
+        return view('casos.index', compact('casos'));
+    }
     public function create()
     {
         $formas = FormaViolencia::all();
@@ -20,68 +26,82 @@ class CasoController extends Controller
 
     public function store(Request $request)
     {
-        $rules = [
-            'nombres'=>'required|string|max:255',
-            'apellidos'=>'required|string|max:255',
-            'sexo'=>'nullable|in:M,F',
-            'edad_rango'=>'nullable|string',
-            'ci'=>'nullable|string|max:20',
-            'id_distrito'=>'nullable|integer|min:1|max:255',
-            'zona'=>'nullable|string|max:255',
-            'lugar_nacimiento'=>'nullable|string|max:255',
-            'reside_dentro_municipio'=>'nullable|boolean',
-            'tiempo_residencia'=>'nullable|string',
-            'estado_civil'=>'nullable|string',
-            'nivel_instruccion'=>'nullable|string',
-            'idioma'=>'nullable|string',
-            'formas_violencia'=>'nullable|array',
-            'formas_violencia.*'=>'integer|exists:formas_violencia,id',
-            'denuncio'=>'nullable|in:0,1',
-            'frecuencia_agresion'=>'nullable|string',
-            'problematica'=>'nullable|string',
-            'medidas_tomar_text'=>'nullable|string',
-        ];
+        // ✅ Validar los datos principales del formulario
+        $validated = $request->validate([
+            // Datos personales
+            'nombres' => 'required|string|max:100',
+            'apellidos' => 'required|string|max:100',
+            'sexo' => 'required|string|in:M,F',
+            'edad_rango' => 'required|string|max:20',
+            'ci' => 'nullable|string|max:20',
+            'id_distrito' => 'required|integer',
+            'otros' => 'nullable|string|max:100',
+            'zona' => 'nullable|string|max:100',
+            'calle' => 'nullable|string|max:100',
+            'numero' => 'nullable|string|max:20',
+            'telefono' => 'nullable|string|max:20',
+            'lugar_nacimiento' => 'nullable|string|max:100',
 
-        $validated = $request->validate($rules);
+            // Datos de pareja
+            'pareja_nombres' => 'nullable|string|max:100',
+            'pareja_apellidos' => 'nullable|string|max:100',
+            'pareja_sexo' => 'nullable|string|in:M,F',
+            'pareja_edad_rango' => 'nullable|string|max:20',
+            'estado_civil' => 'nullable|string|max:50',
+            'ocupacion' => 'nullable|string|max:50',
+            'situacion_ocupacional' => 'nullable|string|max:50',
 
-        DB::transaction(function() use ($request, &$caso) {
-            // crear paciente
-            $paciente = Paciente::create($request->only([
-                'nombres','apellidos','sexo','edad_rango','ci','id_distrito','zona','calle_numero','telefono','lugar_nacimiento','reside_dentro_municipio','tiempo_residencia','estado_civil','nivel_instruccion','idioma','ocupacion_id','situacion_ocupacional'
-            ]));
+            // Datos de hijos
+            'num_hijos_gestacion' => 'nullable|string|max:50',
+            'hijos_dependencia' => 'nullable|string|max:50',
+            'hijos' => 'nullable|array',
+        ]);
 
-            // generar nro_registro por año con "registro_counters" (evita race condition)
-            $year = now()->year;
-            $record = DB::table('registro_counters')->where('year', $year)->lockForUpdate()->first();
+        // ✅ Crear el caso principal
+        $caso = Caso::create([
+            'nombres' => $request->nombres,
+            'apellidos' => $request->apellidos,
+            'sexo' => $request->sexo,
+            'edad_rango' => $request->edad_rango,
+            'ci' => $request->ci,
+            'id_distrito' => $request->id_distrito,
+            'otros' => $request->otros,
+            'zona' => $request->zona,
+            'calle' => $request->calle,
+            'numero' => $request->numero,
+            'telefono' => $request->telefono,
+            'lugar_nacimiento' => $request->lugar_nacimiento,
+        ]);
 
-            if (!$record) {
-                DB::table('registro_counters')->insert(['year'=>$year,'last_number'=>1,'created_at'=>now(),'updated_at'=>now()]);
-                $num = 1;
-            } else {
-                DB::table('registro_counters')->where('year',$year)->update(['last_number' => DB::raw('last_number + 1')]);
-                $num = DB::table('registro_counters')->where('year',$year)->value('last_number');
-            }
-
-            $consec = str_pad($num, 4, '0', STR_PAD_LEFT);
-            $nro_registro = "{$year}-{$consec}";
-
-            $caso = Caso::create([
-                'nro_registro' => $nro_registro,
-                'paciente_id' => $paciente->id,
-                'usuario_id' => auth()->id() ?? null,
-                'fecha_registro' => now(),
-                'denuncio' => $request->has('denuncio') ? (bool)$request->denuncio : null,
-                'frecuencia_agresion' => $request->frecuencia_agresion,
-                'tipo_violencia_general' => $request->tipo_violencia_general,
-                'problematica' => $request->problematica,
-                'medidas_tomar_text' => $request->medidas_tomar_text,
+        // ✅ Crear los datos de pareja (si fueron enviados)
+        if ($request->filled('pareja_nombres')) {
+            $pareja = new Pareja([
+                'nombres' => $request->pareja_nombres,
+                'apellidos' => $request->pareja_apellidos,
+                'sexo' => $request->pareja_sexo,
+                'edad_rango' => $request->pareja_edad_rango,
+                'estado_civil' => $request->estado_civil,
+                'ocupacion' => $request->ocupacion,
+                'situacion_ocupacional' => $request->situacion_ocupacional,
             ]);
 
-            if ($request->filled('formas_violencia')) {
-                $caso->formasViolencia()->sync($request->formas_violencia);
-            }
-        });
+            $caso->pareja()->save($pareja);
+        }
 
-        return redirect()->route('casos.create')->with('success', 'Caso registrado exitosamente.');
+        // ✅ Crear los datos de los hijos (si existen)
+        if ($request->filled('hijos')) {
+            foreach ($request->hijos as $edad => $sexos) {
+                foreach ($sexos as $sexo) {
+                    Hijo::create([
+                        'caso_id' => $caso->id,
+                        'edad' => $edad,
+                        'sexo' => $sexo,
+                    ]);
+                }
+            }
+        }
+
+        // ✅ Redirigir con mensaje
+        return redirect()->route('casos.index')->with('success', 'El caso fue registrado correctamente.');
     }
 }

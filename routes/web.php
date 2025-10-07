@@ -78,8 +78,10 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function(){
     // Route::delete('fichasConsulta/{ficha}', [FichasConsultaController::class, 'destroy'])->name('fichasConsulta.destroy');
 
     // Ruta FORMULARIO SITUACION DE VIOLENCIA INTRAFAMILIAR
+    Route::get('/casos', [CasoController::class,'index'])->name('casos.index');
     Route::get('/casos/create', [CasoController::class,'create'])->name('casos.create');
     Route::post('/casos', [CasoController::class,'store'])->name('casos.store');
+    //Route::get('/casos/{caso}', [CasoController::class,'show'])->name('casos.show');
 });
 
 require __DIR__.'/auth.php';
