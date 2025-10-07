@@ -16,6 +16,7 @@ use App\Models\Carousel;
 use App\Models\Actividad;
 use App\Models\Testimonio;
 use App\Models\Contenido;
+use App\Http\Controllers\CasoController;
 
 /*Route::get('/', function () {
     return view('welcome');
@@ -77,7 +78,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function(){
     // Route::delete('fichasConsulta/{ficha}', [FichasConsultaController::class, 'destroy'])->name('fichasConsulta.destroy');
 
     // Ruta FORMULARIO SITUACION DE VIOLENCIA INTRAFAMILIAR
-    Route::get('situacionIntrafamiliar/create', [FichasConsultaController::class, 'createSituacionIntrafamiliar'])->name('situacionIntrafamiliar.create');
+    Route::get('/casos/create', [CasoController::class,'create'])->name('casos.create');
+    Route::post('/casos', [CasoController::class,'store'])->name('casos.store');
 });
 
 require __DIR__.'/auth.php';

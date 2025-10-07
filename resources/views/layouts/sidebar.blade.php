@@ -209,7 +209,7 @@
                     </ul>
                 </div>
 
-                <a href="{{ route('situacionIntrafamiliar.create') }}" class="list-group-item"><i class="fas fa-calendar-alt"></i><span>Situación de Violencia intrafamiliar</span></a>
+                <a href="{{ route('casos.create') }}" class="list-group-item"><i class="fas fa-calendar-alt"></i><span>Situación de Violencia intrafamiliar</span></a>
                 <a href="{{ route('profile.edit') }}" class="list-group-item"><i
                         class="fas fa-cog"></i><span>Configuración Perfil</span></a>
 
