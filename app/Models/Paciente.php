@@ -3,15 +3,32 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Caso;
 use App\Models\Pareja;
 use App\Models\Hijo;
 
 class Paciente extends Model
 {
-    protected $fillable = ['nombres','apellidos','sexo','edad_rango','ci','id_distrito','zona','calle_numero','telefono','lugar_nacimiento','reside_dentro_municipio','tiempo_residencia','estado_civil','nivel_instruccion','idioma','ocupacion_id','situacion_ocupacional'];
+    use HasFactory;
 
-    public function casos() { return $this->hasMany(Caso::class); }
-    public function pareja() { return $this->hasOne(Pareja::class); }
-    public function hijos() { return $this->hasMany(Hijo::class); }
+    protected $fillable = [
+        'nombres',
+        'apellidos',
+        'sexo',
+        'edad_rango',
+        'ci',
+        'id_distrito',
+        'otros',
+        'zona',
+        'calle',
+        'numero',
+        'telefono',
+        'lugar_nacimiento',
+        'lugar_nacimiento_op',
+        'estado_civil',
+        'nivel_instruccion',
+        'ocupacion',
+        'situacion_ocupacional',
+    ];
 }

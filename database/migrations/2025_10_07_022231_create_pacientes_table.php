@@ -13,25 +13,59 @@ return new class extends Migration
     {
         Schema::create('pacientes', function (Blueprint $table) {
             $table->id();
+
             $table->string('nombres');
             $table->string('apellidos');
-            $table->enum('sexo', ['M','F'])->nullable();
-            $table->string('edad_rango')->nullable(); // ej: "16-20"
-            $table->string('ci')->nullable()->unique();
-            $table->unsignedTinyInteger('id_distrito')->nullable();
+            $table->enum('sexo', ['M', 'F']);
+            $table->string('edad_rango'); // Ej: menor15, 16a20, etc.
+            $table->string('ci')->nullable();
+            $table->unsignedTinyInteger('id_distrito');
+            $table->string('otros')->nullable();
             $table->string('zona')->nullable();
-            $table->string('calle_numero')->nullable();
+            $table->string('calle')->nullable();
+            $table->string('numero')->nullable();
             $table->string('telefono')->nullable();
+
             $table->string('lugar_nacimiento')->nullable();
-            $table->boolean('reside_dentro_municipio')->default(true);
-            $table->string('tiempo_residencia')->nullable(); // "menos de 1 año", "2-5"...
-            $table->string('estado_civil')->nullable();
-            $table->string('nivel_instruccion')->nullable();
-            $table->string('idioma')->nullable();
-            $table->unsignedBigInteger('ocupacion_id')->nullable();
-            $table->string('situacion_ocupacional')->nullable();
+            $table->enum('lugar_nacimiento_op', ['dentro', 'fuera'])->nullable();
+
+            $table->enum('estado_civil', [
+                'soltero',
+                'conviviente',
+                'viudo',
+                'casado',
+                'separado',
+                'divorciado'
+            ])->nullable();
+
+            $table->enum('nivel_instruccion', [
+                'ninguno',
+                'primaria',
+                'secundaria',
+                'tecnico',
+                'tecnicoSuperior',
+                'licenciatura'
+            ])->nullable();
+
+            $table->enum('ocupacion', [
+                'obrero',
+                'empleada',
+                'trabajadorCuentaPropia',
+                'patrona',
+                'socioemprendedor',
+                'cooperativista',
+                'aprendizSinRemuneracion',
+                'aprendizConRemuneracion',
+                'laboresCasa',
+                'sinTrabajo',
+                'otros'
+            ])->nullable();
+
+            $table->enum('situacion_ocupacional', ['permanente', 'temporal'])->nullable();
+
             $table->timestamps();
         });
+
     }
 
     /**
