@@ -51,13 +51,35 @@
     </style>
 
     <h2>Registrar Caso de Violencia</h2>
-
     <form action="{{ route('casos.store') }}" method="POST">
         @csrf
+        <div class="card mb-3">
+            <div class="card-header">Regional</div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <label class="form-label">Regional que recibe el caso:</label>
+                        <input type="text" name="regional_recibe_caso" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Fecha</label>
+                        <input type="date" name="regional_fecha" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Nro. registro</label>
+                        <input type="number" name="regional_fecha" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Institución que deriva</label>
+                        <input type="text" name="regional_fecha" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- =====================
-                     SECCIÓN 1: DATOS PERSONALES PACIENTE
-                ===================== -->
+                             SECCIÓN 1: DATOS PERSONALES PACIENTE
+                        ===================== -->
 
         <div class="card mb-3">
             <div class="card-header">Datos Personales y Más Datos</div>
@@ -135,13 +157,13 @@
                                 <label class="form-check-label">Distrito 1</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="paciente_id_distrito" value="2"
-                                    required>
+                                <input class="form-check-input" type="radio" name="paciente_id_distrito"
+                                    value="2" required>
                                 <label class="form-check-label">Distrito 2</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="paciente_id_distrito" value="3"
-                                    required>
+                                <input class="form-check-input" type="radio" name="paciente_id_distrito"
+                                    value="3" required>
                                 <label class="form-check-label">Distrito 3</label>
                             </div>
                             <div class="form-check form-check-inline">
@@ -232,6 +254,42 @@
                             <label class="form-check-label">Fuera de municipio</label>
                         </div>
                     </div>
+                    <div class="col-md-4 mt-2">
+                        <label class="form-label d-block">Residencia Habitual</label>
+                        <div class="form-check form-check-inline mt-2">
+                            <input class="form-check-input" type="radio" name="paciente_lugar_nacimiento_op"
+                                value="dentro">
+                            <label class="form-check-label">Dentro del municipio</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="paciente_lugar_nacimiento_op"
+                                value="fuera">
+                            <label class="form-check-label">Fuera de municipio</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label class="form-label d-block">Tiempo de residencia en este municipio</label>
+                        <div class="form-check form-check-inline mt-2">
+                            <input class="form-check-input" type="radio" name="paciente_lugar_nacimiento_op"
+                                value="menosDeUnAno">
+                            <label class="form-check-label">Menos de 1 año</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="paciente_lugar_nacimiento_op"
+                                value="de2a5Anos">
+                            <label class="form-check-label">De 2 a 5 años</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="paciente_lugar_nacimiento_op"
+                                value="de6a10Anos">
+                            <label class="form-check-label">De 6 a 10 años</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="paciente_lugar_nacimiento_op"
+                                value="masDe10Anos">
+                            <label class="form-check-label">De y más años</label>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="row g-2 mt-3">
@@ -260,6 +318,21 @@
                             <option value="licenciatura">Licenciatura</option>
                         </select>
                     </div>
+                    <div class="col-md-6">
+                        <label for="paciente_nivel_instruccion" class="form-label">Idioma más hablado</label>
+                        <select class="form-select" id="paciente_nivel_instruccion" name="paciente_nivel_instruccion"
+                            required>
+                            <option value="">Seleccione...</option>
+                            <option value="castellano">Castellano</option>
+                            <option value="aymara">Aymara</option>
+                            <option value="quechua">Quechua</option>
+                            <option value="guarani">Guaraní</option>
+                            <option value="otroNativo">Otro nativo</option>
+                            <option value="extranjero">Extranjero</option>
+                        </select>
+                    </div>
+                    <input type="text" name="paciente_idoma_mas_hablado" class="form-control"
+                        placeholder="Especificar idioma más hablado">
                     <div class="col-md-6 mt-2">
                         <label for="paciente_ocupacion" class="form-label">Ocupación Principal</label>
                         <select class="form-select" id="paciente_ocupacion" name="paciente_ocupacion" required>
@@ -291,8 +364,8 @@
         </div>
 
         <!-- =====================
-                 SECCIÓN 2: DATOS PAREJA
-            ===================== -->
+                         SECCIÓN 2: DATOS PAREJA
+                    ===================== -->
         <div class="card mb-3">
             <div class="card-header">2. Datos de la pareja</div>
             <div class="card-body">
@@ -534,13 +607,13 @@
                         <select class="form-select" id="pareja_idioma" name="pareja_idioma" required>
                             <option value="">Seleccione</option>
                             <option value="castellano">Castellano</option>
-                            <option value="mara">Mara</option>
+                            <option value="aymara">Aymara</option>
                             <option value="quechua">Quechua</option>
                             <option value="guarani">Guaraní</option>
+                            <option value="extranjero">Extranjero</option>
                             <option value="otro">Otro</option>
                         </select>
                     </div>
-
                     <div class="col-md-6 mt-2">
                         <label for="pareja_especificar_idioma" class="form-label">Especificar Otro Idioma</label>
                         <input type="text" class="form-control" id="pareja_especificar_idioma"
@@ -618,8 +691,8 @@
         </div>
 
         <!-- =====================
-             SECCIÓN 3: DATOS HIJOS
-        ===================== -->
+                     SECCIÓN 3: DATOS HIJOS
+                ===================== -->
         <div class="card mb-3">
             <div class="card-header">3. Hijos</div>
             <div class="card-body">
@@ -627,13 +700,13 @@
                     <label for="hijos_num_gestacion" class="form-label">Número de hijos en gestación</label>
                     <select name="hijos_num_gestacion" id="hijos_num_gestacion" class="form-select">
                         <option value="">--Seleccione--</option>
+                        <option value="en_gestacion">En gestación</option>
                         <option value="solo_uno">Solo uno</option>
                         <option value="2_a_3">2 a 3</option>
                         <option value="4_a_5">4 a 5</option>
                         <option value="6_a_7">6 a 7</option>
                         <option value="8_mas">8 a más</option>
                         <option value="no_tiene_hijos">No tiene hijos</option>
-                        <option value="otra_opcion">Otra opción</option>
                     </select>
                 </div>
 
@@ -649,7 +722,7 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>&lt;4</td>
+                                <td>Menor de 4 años</td>
                                 <td>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox"
@@ -667,7 +740,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>5-10</td>
+                                <td>De 5 a 10 años</td>
                                 <td>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="hijos_edad_5_10_masculino"
@@ -684,7 +757,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>11-15</td>
+                                <td>De 11 a 15 años</td>
                                 <td>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="hijos_edad_11_15_masculino"
@@ -701,7 +774,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>16-20</td>
+                                <td>De 16 a 20 años</td>
                                 <td>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="hijos_edad_16_20_masculino"
@@ -718,7 +791,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>21+</td>
+                                <td>De 21 a más años </td>
                                 <td>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox"
@@ -754,8 +827,8 @@
         </div>
 
         <!-- =====================
-         SECCIÓN 4: TIPOS DE VIOLENCIA
-    ===================== -->
+                 SECCIÓN 4: TIPOS DE VIOLENCIA
+            ===================== -->
         <div class="card mb-3">
             <div class="card-header">4. Tipos de Violencia</div>
             <div class="card-body">
@@ -804,47 +877,26 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="violencia_frecuencia" class="form-label">Frecuencia de la Violencia</label>
-                    <select name="violencia_frecuencia" id="violencia_frecuencia" class="form-select" required>
+                    <label for="violencia_frecuencia" class="form-label">Tipo de Violencia</label>
+                    <select name="violencia_tipo" id="violencia_frecuencia" class="form-select" required>
                         <option value="">--Seleccione--</option>
-                        <option value="primera_vez">Primera vez</option>
-                        <option value="ocasional">Ocasional</option>
-                        <option value="frecuente">Frecuente</option>
-                        <option value="permanente">Permanente</option>
+                        <option value="violencia_intrafamiliar">Violencia Intrafamiliar</option>
+                        <option value="violencia_domestica">Violencia Domestica</option>
                     </select>
                 </div>
 
                 <div class="mb-3">
-                    <label for="violencia_tiempo_ocurrencia" class="form-label">Tiempo de Ocurrencia</label>
-                    <select name="violencia_tiempo_ocurrencia" id="violencia_tiempo_ocurrencia" class="form-select"
+                    <label for="violencia_tiempo_ocurrencia" class="form-label">Frecuancia de agresión</label>
+                    <select name="violencia_frecuancia_agresion" id="violencia_tiempo_ocurrencia" class="form-select"
                         required>
                         <option value="">--Seleccione--</option>
-                        <option value="menos_1_mes">Menos de 1 mes</option>
-                        <option value="1_a_3_meses">1 a 3 meses</option>
-                        <option value="4_a_6_meses">4 a 6 meses</option>
-                        <option value="7_a_12_meses">7 a 12 meses</option>
-                        <option value="mas_1_ano">Más de 1 año</option>
+                        <option value="primera_vez">Primera Vez</option>
+                        <option value="alguna_vez">Alguna Vez</option>
+                        <option value="ocacionalmente">Ocacionalmente</option>
+                        <option value="con_frecuencia">Con Frecuencia</option>
+                        <option value="siempre">Siempre</option>
                     </select>
                 </div>
-
-                <div class="mb-3">
-                    <label for="violencia_lugar_hechos" class="form-label">Lugar de los Hechos</label>
-                    <select name="violencia_lugar_hechos" id="violencia_lugar_hechos" class="form-select" required>
-                        <option value="">--Seleccione--</option>
-                        <option value="domicilio">Domicilio</option>
-                        <option value="via_publica">Vía pública</option>
-                        <option value="trabajo">Trabajo</option>
-                        <option value="centro_estudios">Centro de estudios</option>
-                        <option value="otro">Otro</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="violencia_descripcion_hechos" class="form-label">Descripción de los Hechos</label>
-                    <textarea name="violencia_descripcion_hechos" id="violencia_descripcion_hechos" class="form-control" rows="4"
-                        placeholder="Describa brevemente lo ocurrido..."></textarea>
-                </div>
-
                 <div class="mb-3">
                     <label class="form-label">¿Ha denunciado anteriormente?</label>
                     <div class="form-check">
@@ -862,12 +914,124 @@
                         </label>
                     </div>
                 </div>
+                <div class="mb-3">
+                    <label class="form-label">Razones por las que no hizo la denuncia</label>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="violencia_no_denuncia_por_amenaza"
+                            id="violencia_tipo_fisica" value="1">
+                        <label class="form-check-label" for="violencia_tipo_fisica">
+                            Por Amenaza
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="violencia_no_denuncia_por_temor"
+                            id="violencia_tipo_psicologica" value="1">
+                        <label class="form-check-label" for="violencia_tipo_psicologica">
+                            Por Temor
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="violencia_no_denuncia_por_verguenza"
+                            id="violencia_tipo_sexual" value="1">
+                        <label class="form-check-label" for="violencia_tipo_sexual">
+                            Por Vergüenza
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="violencia_no_denuncia_por_desconocimiento"
+                            id="violencia_tipo_economica" value="1">
+                        <label class="form-check-label" for="violencia_tipo_economica">
+                            Por Desconocimiento
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="violencia_no_denuncia_no_sabe_no_responde"
+                            id="violencia_tipo_patrimonial" value="1">
+                        <label class="form-check-label" for="violencia_tipo_patrimonial">
+                            No sabe / no responde
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="violencia_lugar_hechos" class="form-label">Motivo de la Agresión</label>
+                    <select name="violencia_motivo_agresion" id="violencia_lugar_hechos" class="form-select" required>
+                        <option value="">--Seleccione--</option>
+                        <option value="ebriedad">Ebriedad</option>
+                        <option value="infidelidad">Infidelidad</option>
+                        <option value="economico">Económico</option>
+                        <option value="celos">Celos</option>
+                        <option value="cultural">Cultural</option>
+                        <option value="adiccion">Adicción</option>
+                        <option value="intromision_familiar">Intromisión Familiar</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+                <div class="md-6 mt-2">
+                    <label for="pareja_especificar_idioma" class="form-label">Otros:</label>
+                    <input type="text" class="form-control" id="pareja_especificar_idioma"
+                        name="violencia_motivo_otros" placeholder="Especifique si seleccionó 'Otro'">
+                </div>
+
+                <div class="mb-3 mt-3">
+                    <label for="violencia_descripcion_hechos" class="form-label">Denuncias o proceso realizados
+                        (Problemática)</label>
+                    <textarea name="violencia_descripcion_hechos" id="violencia_descripcion_hechos" class="form-control" rows="4"
+                        placeholder="Describa problemática."></textarea>
+                </div>
 
                 <div class="mb-3">
-                    <label for="violencia_institucion_denuncia" class="form-label">Institución donde realizó la denuncia
-                        (si corresponde)</label>
+                    <label class="form-label">Atención que demanda</label>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="violencia_atencion_que_demanda"
+                            id="violencia_tipo_fisica" value="1">
+                        <label class="form-check-label" for="violencia_tipo_fisica">
+                            Apoyo a Victima
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="violencia_atencion_que_demanda"
+                            id="violencia_tipo_psicologica" value="1">
+                        <label class="form-check-label" for="violencia_tipo_psicologica">
+                            Apoyo a Pareja
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="violencia_atencion_que_demanda"
+                            id="violencia_tipo_sexual" value="1">
+                        <label class="form-check-label" for="violencia_tipo_sexual">
+                            Apoyo a agresor
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="violencia_atencion_que_demanda"
+                            id="violencia_tipo_economica" value="1">
+                        <label class="form-check-label" for="violencia_tipo_economica">
+                            Apoyo hijos
+                        </label>
+                    </div>
+
+
+                </div>
+
+                <div class="mb-3">
+                    <label for="violencia_institucion_denuncia" class="form-label">Medidas a tomar:</label>
                     <input type="text" name="violencia_institucion_denuncia" id="violencia_institucion_denuncia"
-                        class="form-control" placeholder="Nombre de la institución">
+                        class="form-control" placeholder="medidas a tomar">
+                </div>
+                <div class="mb-3">
+                    <label for="violencia_institucion_denuncia" class="form-label">Nombre de la persona que lleno el
+                        formulario</label>
+                    <input type="text" name="violencia_institucion_denuncia" id="violencia_institucion_denuncia"
+                        class="form-control" placeholder="nombre completo">
                 </div>
             </div>
         </div>
