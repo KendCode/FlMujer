@@ -21,6 +21,7 @@ use App\Http\Controllers\CasoController;
 /*Route::get('/', function () {
     return view('welcome');
 });*/
+
 Route::get('/', function () {
     $slides = Carousel::orderBy('orden')->get();
     $actividades = Actividad::latest()->take(6)->get();
@@ -47,9 +48,9 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::patch('/profile/photo', [ProfileController::class, 'updatePhoto'])
-    ->name('profile.update.photo');
+        ->name('profile.update.photo');
 
-// Rutas para USUARIOS - FUNCIONARIOS
+    // Rutas para USUARIOS - FUNCIONARIOS
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
@@ -58,18 +59,18 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::patch('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
 
-//RUTAS PARA GESTION DE CONTENIDO
-Route::prefix('admin')->name('admin.')->middleware('auth')->group(function(){
-    Route::resource('carousels', Admin\CarouselController::class);
-    Route::resource('actividades', Admin\ActividadController::class)->parameters([
-    'actividades' => 'actividad'
-]);
-    Route::resource('testimonios', Admin\TestimonioController::class);
-    Route::resource('contenidos', Admin\ContenidoController::class);
-});
+    //RUTAS PARA GESTION DE CONTENIDO
+    Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+        Route::resource('carousels', Admin\CarouselController::class);
+        Route::resource('actividades', Admin\ActividadController::class)->parameters([
+            'actividades' => 'actividad'
+        ]);
+        Route::resource('testimonios', Admin\TestimonioController::class);
+        Route::resource('contenidos', Admin\ContenidoController::class);
+    });
 
 
-// Rutas para FICHAS DE CONSULTA - PACIENTES
+    // Rutas para FICHAS DE CONSULTA - PACIENTES
     Route::get('fichasConsulta', [FichasConsultaController::class, 'index'])->name('fichasConsulta.index');
     Route::get('fichasConsulta/create', [FichasConsultaController::class, 'create'])->name('fichasConsulta.create');
     Route::post('fichasConsulta', [FichasConsultaController::class, 'store'])->name('fichasConsulta.store');
@@ -78,13 +79,16 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function(){
     // Route::delete('fichasConsulta/{ficha}', [FichasConsultaController::class, 'destroy'])->name('fichasConsulta.destroy');
 
     // Ruta FORMULARIO SITUACION DE VIOLENCIA INTRAFAMILIAR
-    Route::get('/casos', [CasoController::class,'index'])->name('casos.index');
-    Route::get('/casos/create', [CasoController::class,'create'])->name('casos.create');
-    Route::post('/casos', [CasoController::class,'store'])->name('casos.store');
+    Route::get('/casos', [CasoController::class, 'index'])->name('casos.index');
+    Route::get('/casos/create', [CasoController::class, 'create'])->name('casos.create');
+    Route::post('/casos', [CasoController::class, 'store'])->name('casos.store');
     //Route::get('/casos/{caso}', [CasoController::class,'show'])->name('casos.show');
-    Route::get('/casos/{caso}/edit', [CasoController::class,'edit'])->name('casos.edit');
-    Route::put('/casos/{caso}', [CasoController::class,'update'])->name('casos.update');
+    Route::get('/casos/{caso}/edit', [CasoController::class, 'edit'])->name('casos.edit');
+    Route::put('/casos/{caso}', [CasoController::class, 'update'])->name('casos.update');
     //Route::delete('/casos/{caso}', [CasoController::class,'destroy'])->name('casos.destroy');
+
+    Route::get('/casos/numero/proximo', [CasoController::class, 'obtenerProximoNumero'])->name('casos.proximo-numero');
+    Route::post('/casos/numero/validar', [CasoController::class, 'validarNumeroRegistro'])->name('casos.validar-numero');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

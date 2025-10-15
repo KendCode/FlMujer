@@ -12,7 +12,14 @@ class Caso extends Model
     protected $table = 'casos';
 
     protected $fillable = [
-        // DATOS DEL PACIENTE
+        // REGIONAL
+        'regional_recibe_caso',
+        'regional_fecha',
+        'nro_registro',
+        'nro_registro_manual',
+        'regional_institucion_derivante',
+
+        // PACIENTE
         'paciente_nombres',
         'paciente_apellidos',
         'paciente_ci',
@@ -25,13 +32,16 @@ class Caso extends Model
         'paciente_sexo',
         'paciente_lugar_nacimiento',
         'paciente_lugar_nacimiento_op',
+        'paciente_lugar_residencia_op',      // ✅ AGREGAR
+        'paciente_tiempo_residencia_op',     // ✅ AGREGAR
         'paciente_edad_rango',
         'paciente_nivel_instruccion',
+        'paciente_idioma_mas_hablado',       // ✅ AGREGAR
         'paciente_ocupacion',
         'paciente_situacion_ocupacional',
         'paciente_otros',
 
-        // DATOS DE LA PAREJA
+        // PAREJA
         'pareja_nombres',
         'pareja_apellidos',
         'pareja_ci',
@@ -56,7 +66,7 @@ class Caso extends Model
         'pareja_especificar_idioma',
         'pareja_otros',
 
-        // DATOS DE HIJOS
+        // HIJOS
         'hijos_num_gestacion',
         'hijos_dependencia',
         'hijos_edad_menor4_femenino',
@@ -70,18 +80,113 @@ class Caso extends Model
         'hijos_edad_21_mas_femenino',
         'hijos_edad_21_mas_masculino',
 
-        // DATOS DE VIOLENCIA
+        // VIOLENCIA
         'violencia_tipo_fisica',
         'violencia_tipo_psicologica',
         'violencia_tipo_sexual',
         'violencia_tipo_patrimonial',
         'violencia_tipo_economica',
+        'violencia_tipo',                            // ✅ AGREGAR
+        'violencia_frecuancia_agresion',             // ✅ AGREGAR
         'violencia_frecuencia',
         'violencia_lugar_hechos',
         'violencia_tiempo_ocurrencia',
         'violencia_descripcion_hechos',
         'violencia_denuncia_previa',
+        'violencia_no_denuncia_por_amenaza',         // ✅ AGREGAR
+        'violencia_no_denuncia_por_temor',           // ✅ AGREGAR
+        'violencia_no_denuncia_por_verguenza',       // ✅ AGREGAR
+        'violencia_no_denuncia_por_desconocimiento', // ✅ AGREGAR
+        'violencia_no_denuncia_no_sabe_no_responde', // ✅ AGREGAR
+        'violencia_motivo_agresion',                 // ✅ AGREGAR
+        'violencia_motivo_otros',                    // ✅ AGREGAR
+        'violencia_atencion_apoyo_victima',          // ✅ AGREGAR
+        'violencia_atencion_apoyo_pareja',           // ✅ AGREGAR
+        'violencia_atencion_apoyo_agresor',          // ✅ AGREGAR
+        'violencia_atencion_apoyo_hijos',            // ✅ AGREGAR
         'violencia_institucion_denuncia',
+        'formulario_responsable_nombre',             // ✅ AGREGAR
+    ];
+    protected $casts = [
+        'regional_fecha' => 'date',
+        'nro_registro_manual' => 'boolean',
+
+        // Hijos
+        'hijos_edad_menor4_femenino' => 'boolean',
+        'hijos_edad_menor4_masculino' => 'boolean',
+        'hijos_edad_5_10_femenino' => 'boolean',
+        'hijos_edad_5_10_masculino' => 'boolean',
+        'hijos_edad_11_15_femenino' => 'boolean',
+        'hijos_edad_11_15_masculino' => 'boolean',
+        'hijos_edad_16_20_femenino' => 'boolean',
+        'hijos_edad_16_20_masculino' => 'boolean',
+        'hijos_edad_21_mas_femenino' => 'boolean',
+        'hijos_edad_21_mas_masculino' => 'boolean',
+
+        // Violencia
+        'violencia_tipo_fisica' => 'boolean',
+        'violencia_tipo_psicologica' => 'boolean',
+        'violencia_tipo_sexual' => 'boolean',
+        'violencia_tipo_patrimonial' => 'boolean',
+        'violencia_tipo_economica' => 'boolean',
+        'violencia_no_denuncia_por_amenaza' => 'boolean',
+        'violencia_no_denuncia_por_temor' => 'boolean',
+        'violencia_no_denuncia_por_verguenza' => 'boolean',
+        'violencia_no_denuncia_por_desconocimiento' => 'boolean',
+        'violencia_no_denuncia_no_sabe_no_responde' => 'boolean',
+        'violencia_atencion_apoyo_victima' => 'boolean',
+        'violencia_atencion_apoyo_pareja' => 'boolean',
+        'violencia_atencion_apoyo_agresor' => 'boolean',
+        'violencia_atencion_apoyo_hijos' => 'boolean',
     ];
 
+    /**
+     * Genera el próximo número de registro automático
+     */
+    public static function generarNumeroRegistro($año = null)
+    {
+        $año = $año ?? date('y'); // Obtiene el año actual en formato 2 dígitos (25)
+
+        // Busca el último registro del año
+        $ultimoRegistro = self::where('nro_registro', 'LIKE', "FLM-{$año}%")
+            ->orderBy('nro_registro', 'desc')
+            ->first();
+
+        if ($ultimoRegistro) {
+            // Extrae el número secuencial del último registro
+            $ultimoNumero = (int) substr($ultimoRegistro->nro_registro, -6);
+            $nuevoNumero = $ultimoNumero + 1;
+        } else {
+            // Primer registro del año
+            $nuevoNumero = 1;
+        }
+
+        // Formatea: FLM-25000001
+        return sprintf('FLM-%s%06d', $año, $nuevoNumero);
+    }
+
+    /**
+     * Valida el formato del número de registro manual
+     */
+    public static function validarFormatoRegistro($registro)
+    {
+        // Valida formato: FLM-YYNNNNNN (ej: FLM-23000001)
+        return preg_match('/^FLM-\d{8}$/', $registro);
+    }
+
+    /**
+     * Boot method para generar número automáticamente si no existe
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($caso) {
+            // Si no tiene número de registro, lo genera automáticamente
+            if (empty($caso->nro_registro)) {
+                $caso->nro_registro = self::generarNumeroRegistro();
+                $caso->nro_registro_manual = false;
+            }
+        });
+    }
 }

@@ -51,8 +51,22 @@
     </style>
 
     <h2>Registrar Caso de Violencia</h2>
+    @if (session('success'))
+        <div class="alert alert-success mt-3">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="alert alert-danger mt-3">
+            {{ $errors->first() }}
+        </div>
+    @endif
     <form action="{{ route('casos.store') }}" method="POST">
         @csrf
+        <!-- =====================
+                                             SECCIÓN 0: DATOS DE LA REGIONAL
+                                        ===================== -->
         <div class="card mb-3">
             <div class="card-header">Regional</div>
             <div class="card-body">
@@ -65,21 +79,55 @@
                         <label class="form-label">Fecha</label>
                         <input type="date" name="regional_fecha" class="form-control" required>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Nro. registro</label>
-                        <input type="number" name="regional_fecha" class="form-control" required>
+
+                    <!-- ✅ NUEVO: Opción para elegir entre automático o manual -->
+                    <div class="col-md-12 mt-3">
+                        <label class="form-label d-block">Número de Registro</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="tipo_registro" id="registro_automatico"
+                                value="automatico" checked onchange="toggleRegistroManual()">
+                            <label class="form-check-label" for="registro_automatico">
+                                Generar Automáticamente
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="tipo_registro" id="registro_manual"
+                                value="manual" onchange="toggleRegistroManual()">
+                            <label class="form-check-label" for="registro_manual">
+                                Ingresar Manualmente
+                            </label>
+                        </div>
                     </div>
+
+                    <!-- Campo para ingreso manual (oculto por defecto) -->
+                    <div class="col-md-6 mt-2" id="campo_registro_manual" style="display: none;">
+                        <label class="form-label">Número de Registro Manual</label>
+                        <input type="text" name="nro_registro_manual_input" id="nro_registro_manual_input"
+                            class="form-control" placeholder="FLM-23000001" pattern="FLM-\d{8}"
+                            title="Formato: FLM-YYNNNNNN (ej: FLM-23000001)">
+                        <small class="form-text text-muted">
+                            Formato: FLM-YYNNNNNN (ej: FLM-23000001 para año 2023)
+                        </small>
+                    </div>
+
+                    <!-- Previsualización del número automático -->
+                    <div class="col-md-6 mt-2" id="preview_automatico">
+                        <label class="form-label">Próximo número automático:</label>
+                        <input type="text" class="form-control" id="preview_numero"
+                            value="{{ App\Models\Caso::generarNumeroRegistro() }}" readonly disabled>
+                    </div>
+
                     <div class="col-md-6">
                         <label class="form-label">Institución que deriva</label>
-                        <input type="text" name="regional_fecha" class="form-control" required>
+                        <input type="text" name="regional_institucion_derivante" class="form-control" required>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- =====================
-                             SECCIÓN 1: DATOS PERSONALES PACIENTE
-                        ===================== -->
+                                             SECCIÓN 1: DATOS PERSONALES PACIENTE
+                                        ===================== -->
 
         <div class="card mb-3">
             <div class="card-header">Datos Personales y Más Datos</div>
@@ -138,8 +186,8 @@
                                 <label class="form-check-label">36 a 50 años</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="paciente_edad_rango" value="mayor50"
-                                    required>
+                                <input class="form-check-input" type="radio" name="paciente_edad_rango"
+                                    value="mayor50" required>
                                 <label class="form-check-label">Más de 50 años</label>
                             </div>
                         </div>
@@ -152,8 +200,8 @@
                         <label class="form-label">Distrito</label><br>
                         <div class="d-flex flex-wrap gap-2">
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="paciente_id_distrito" value="1"
-                                    required>
+                                <input class="form-check-input" type="radio" name="paciente_id_distrito"
+                                    value="1" required>
                                 <label class="form-check-label">Distrito 1</label>
                             </div>
                             <div class="form-check form-check-inline">
@@ -257,12 +305,12 @@
                     <div class="col-md-4 mt-2">
                         <label class="form-label d-block">Residencia Habitual</label>
                         <div class="form-check form-check-inline mt-2">
-                            <input class="form-check-input" type="radio" name="paciente_lugar_nacimiento_op"
+                            <input class="form-check-input" type="radio" name="paciente_lugar_residencia_op"
                                 value="dentro">
                             <label class="form-check-label">Dentro del municipio</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="paciente_lugar_nacimiento_op"
+                            <input class="form-check-input" type="radio" name="paciente_lugar_residencia_op"
                                 value="fuera">
                             <label class="form-check-label">Fuera de municipio</label>
                         </div>
@@ -270,24 +318,24 @@
                     <div class="col-md-4 mt-2">
                         <label class="form-label d-block">Tiempo de residencia en este municipio</label>
                         <div class="form-check form-check-inline mt-2">
-                            <input class="form-check-input" type="radio" name="paciente_lugar_nacimiento_op"
+                            <input class="form-check-input" type="radio" name="paciente_tiempo_residencia_op"
                                 value="menosDeUnAno">
                             <label class="form-check-label">Menos de 1 año</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="paciente_lugar_nacimiento_op"
+                            <input class="form-check-input" type="radio" name="paciente_tiempo_residencia_op"
                                 value="de2a5Anos">
                             <label class="form-check-label">De 2 a 5 años</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="paciente_lugar_nacimiento_op"
+                            <input class="form-check-input" type="radio" name="paciente_tiempo_residencia_op"
                                 value="de6a10Anos">
                             <label class="form-check-label">De 6 a 10 años</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="paciente_lugar_nacimiento_op"
+                            <input class="form-check-input" type="radio" name="paciente_tiempo_residencia_op"
                                 value="masDe10Anos">
-                            <label class="form-check-label">De y más años</label>
+                            <label class="form-check-label">De 11 y más años</label>
                         </div>
                     </div>
                 </div>
@@ -319,9 +367,8 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label for="paciente_nivel_instruccion" class="form-label">Idioma más hablado</label>
-                        <select class="form-select" id="paciente_nivel_instruccion" name="paciente_nivel_instruccion"
-                            required>
+                        <label for="paciente_idioma_mas_hablado" class="form-label">Idioma más hablado</label>
+                        <select class="form-select" id="paciente_idioma_mas_hablado" name="paciente_idioma_mas_hablado">
                             <option value="">Seleccione...</option>
                             <option value="castellano">Castellano</option>
                             <option value="aymara">Aymara</option>
@@ -331,8 +378,11 @@
                             <option value="extranjero">Extranjero</option>
                         </select>
                     </div>
-                    <input type="text" name="paciente_idoma_mas_hablado" class="form-control"
-                        placeholder="Especificar idioma más hablado">
+                    <div class="col-md-6 mt-2">
+                        <label for="paciente_idioma_especificar" class="form-label">Especificar Otro Idioma</label>
+                        <input type="text" name="paciente_idioma_especificar" class="form-control"
+                            placeholder="Especificar si seleccionó 'Otro'">
+                    </div>
                     <div class="col-md-6 mt-2">
                         <label for="paciente_ocupacion" class="form-label">Ocupación Principal</label>
                         <select class="form-select" id="paciente_ocupacion" name="paciente_ocupacion" required>
@@ -364,8 +414,8 @@
         </div>
 
         <!-- =====================
-                         SECCIÓN 2: DATOS PAREJA
-                    ===================== -->
+                                         SECCIÓN 2: DATOS PAREJA
+                                    ===================== -->
         <div class="card mb-3">
             <div class="card-header">2. Datos de la pareja</div>
             <div class="card-body">
@@ -691,8 +741,8 @@
         </div>
 
         <!-- =====================
-                     SECCIÓN 3: DATOS HIJOS
-                ===================== -->
+                                     SECCIÓN 3: DATOS HIJOS
+                                ===================== -->
         <div class="card mb-3">
             <div class="card-header">3. Hijos</div>
             <div class="card-body">
@@ -827,8 +877,8 @@
         </div>
 
         <!-- =====================
-                 SECCIÓN 4: TIPOS DE VIOLENCIA
-            ===================== -->
+                                 SECCIÓN 4: TIPOS DE VIOLENCIA
+                            ===================== -->
         <div class="card mb-3">
             <div class="card-header">4. Tipos de Violencia</div>
             <div class="card-body">
@@ -980,15 +1030,15 @@
                 <div class="mb-3 mt-3">
                     <label for="violencia_descripcion_hechos" class="form-label">Denuncias o proceso realizados
                         (Problemática)</label>
-                    <textarea name="violencia_descripcion_hechos" id="violencia_descripcion_hechos" class="form-control" rows="4"
-                        placeholder="Describa problemática."></textarea>
+                    <textarea name="violencia_descripcion_hechos" id="violencia_descripcion_hechos" class="form-control"
+                        rows="4" placeholder="Describa problemática."></textarea>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Atención que demanda</label>
 
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="violencia_atencion_que_demanda"
+                        <input class="form-check-input" type="checkbox" name="violencia_atencion_apoyo_victima"
                             id="violencia_tipo_fisica" value="1">
                         <label class="form-check-label" for="violencia_tipo_fisica">
                             Apoyo a Victima
@@ -996,7 +1046,7 @@
                     </div>
 
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="violencia_atencion_que_demanda"
+                        <input class="form-check-input" type="checkbox" name="violencia_atencion_apoyo_pareja"
                             id="violencia_tipo_psicologica" value="1">
                         <label class="form-check-label" for="violencia_tipo_psicologica">
                             Apoyo a Pareja
@@ -1004,7 +1054,7 @@
                     </div>
 
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="violencia_atencion_que_demanda"
+                        <input class="form-check-input" type="checkbox" name="violencia_atencion_apoyo_agresor"
                             id="violencia_tipo_sexual" value="1">
                         <label class="form-check-label" for="violencia_tipo_sexual">
                             Apoyo a agresor
@@ -1012,7 +1062,7 @@
                     </div>
 
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="violencia_atencion_que_demanda"
+                        <input class="form-check-input" type="checkbox" name="violencia_atencion_apoyo_hijos"
                             id="violencia_tipo_economica" value="1">
                         <label class="form-check-label" for="violencia_tipo_economica">
                             Apoyo hijos
@@ -1030,7 +1080,7 @@
                 <div class="mb-3">
                     <label for="violencia_institucion_denuncia" class="form-label">Nombre de la persona que lleno el
                         formulario</label>
-                    <input type="text" name="violencia_institucion_denuncia" id="violencia_institucion_denuncia"
+                    <input type="text" name="formulario_responsable_nombre" id="violencia_institucion_denuncia"
                         class="form-control" placeholder="nombre completo">
                 </div>
             </div>
@@ -1038,15 +1088,32 @@
 
         <button class="btn btn-primary" type="submit">Registrar caso</button>
     </form>
-    @if (session('success'))
-        <div class="alert alert-success mt-3">
-            {{ session('success') }}
-        </div>
-    @endif
 
-    @if ($errors->any())
-        <div class="alert alert-danger mt-3">
-            {{ $errors->first() }}
-        </div>
-    @endif
+    <!-- JavaScript para toggle -->
+    <!-- JavaScript para toggle del registro -->
+    <script>
+        function toggleRegistroManual() {
+            const esManual = document.getElementById('registro_manual').checked;
+            const campoManual = document.getElementById('campo_registro_manual');
+            const previewAuto = document.getElementById('preview_automatico');
+            const inputManual = document.getElementById('nro_registro_manual_input');
+
+            if (esManual) {
+                campoManual.style.display = 'block';
+                previewAuto.style.display = 'none';
+                inputManual.required = true;
+            } else {
+                campoManual.style.display = 'none';
+                previewAuto.style.display = 'block';
+                inputManual.required = false;
+                inputManual.value = '';
+            }
+        }
+
+        // Inicializar al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleRegistroManual();
+        });
+    </script>
+    
 @endsection

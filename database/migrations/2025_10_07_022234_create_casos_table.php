@@ -14,7 +14,19 @@ return new class extends Migration
         Schema::create('casos', function (Blueprint $table) {
             $table->id();
 
+            // =====================
+            // SECCIÓN REGIONAL
+            // =====================
+            $table->string('regional_recibe_caso')->nullable();
+            $table->date('regional_fecha')->nullable();
+            $table->string('nro_registro')->unique(); // ✅ ÚNICO para evitar duplicados
+            $table->boolean('nro_registro_manual')->default(false); // ✅ NUEVO: indica si fue manual
+            $table->string('regional_institucion_derivante')->nullable();
+
+
+            // =====================
             // DATOS DEL PACIENTE
+            // =====================
             $table->string('paciente_nombres')->nullable();
             $table->string('paciente_apellidos')->nullable();
             $table->string('paciente_ci')->nullable();
@@ -27,13 +39,18 @@ return new class extends Migration
             $table->string('paciente_sexo')->nullable();
             $table->string('paciente_lugar_nacimiento')->nullable();
             $table->string('paciente_lugar_nacimiento_op')->nullable();
+            $table->string('paciente_lugar_residencia_op')->nullable(); // ✅ NUEVO
+            $table->string('paciente_tiempo_residencia_op')->nullable(); // ✅ NUEVO
             $table->string('paciente_edad_rango')->nullable();
             $table->string('paciente_nivel_instruccion')->nullable();
+            $table->string('paciente_idioma_mas_hablado')->nullable(); // ✅ CORREGIDO
             $table->string('paciente_ocupacion')->nullable();
             $table->string('paciente_situacion_ocupacional')->nullable();
             $table->text('paciente_otros')->nullable();
 
+            // =====================
             // DATOS DE LA PAREJA
+            // =====================
             $table->string('pareja_nombres')->nullable();
             $table->string('pareja_apellidos')->nullable();
             $table->string('pareja_ci')->nullable();
@@ -58,32 +75,70 @@ return new class extends Migration
             $table->string('pareja_especificar_idioma')->nullable();
             $table->text('pareja_otros')->nullable();
 
+            // =====================
             // DATOS DE HIJOS
+            // =====================
             $table->string('hijos_num_gestacion')->nullable();
             $table->string('hijos_dependencia')->nullable();
-            $table->string('hijos_edad_menor4_femenino')->nullable();
-            $table->string('hijos_edad_menor4_masculino')->nullable();
-            $table->string('hijos_edad_5_10_femenino')->nullable();
-            $table->string('hijos_edad_5_10_masculino')->nullable();
-            $table->string('hijos_edad_11_15_femenino')->nullable();
-            $table->string('hijos_edad_11_15_masculino')->nullable();
-            $table->string('hijos_edad_16_20_femenino')->nullable();
-            $table->string('hijos_edad_16_20_masculino')->nullable();
-            $table->string('hijos_edad_21_mas_femenino')->nullable();
-            $table->string('hijos_edad_21_mas_masculino')->nullable();
+            $table->boolean('hijos_edad_menor4_femenino')->nullable();
+            $table->boolean('hijos_edad_menor4_masculino')->nullable();
+            $table->boolean('hijos_edad_5_10_femenino')->nullable();
+            $table->boolean('hijos_edad_5_10_masculino')->nullable();
+            $table->boolean('hijos_edad_11_15_femenino')->nullable();
+            $table->boolean('hijos_edad_11_15_masculino')->nullable();
+            $table->boolean('hijos_edad_16_20_femenino')->nullable();
+            $table->boolean('hijos_edad_16_20_masculino')->nullable();
+            $table->boolean('hijos_edad_21_mas_femenino')->nullable();
+            $table->boolean('hijos_edad_21_mas_masculino')->nullable();
 
-            // DATOS DE VIOLENCIA
+            // =====================
+            // DATOS DE VIOLENCIA - TIPOS
+            // =====================
             $table->boolean('violencia_tipo_fisica')->nullable();
             $table->boolean('violencia_tipo_psicologica')->nullable();
             $table->boolean('violencia_tipo_sexual')->nullable();
             $table->boolean('violencia_tipo_patrimonial')->nullable();
             $table->boolean('violencia_tipo_economica')->nullable();
+            
+            // =====================
+            // DATOS DE VIOLENCIA - CARACTERÍSTICAS
+            // =====================
+            $table->string('violencia_tipo')->nullable(); // ✅ NUEVO (intrafamiliar/domestica)
+            $table->string('violencia_frecuancia_agresion')->nullable(); // ✅ NUEVO
             $table->string('violencia_frecuencia')->nullable();
             $table->string('violencia_lugar_hechos')->nullable();
             $table->string('violencia_tiempo_ocurrencia')->nullable();
             $table->text('violencia_descripcion_hechos')->nullable();
-            $table->boolean('violencia_denuncia_previa')->nullable();
+            $table->string('violencia_denuncia_previa')->nullable(); // ✅ CAMBIADO a string (si/no)
             $table->string('violencia_institucion_denuncia')->nullable();
+            
+            // =====================
+            // RAZONES DE NO DENUNCIA
+            // =====================
+            $table->boolean('violencia_no_denuncia_por_amenaza')->nullable(); // ✅ NUEVO
+            $table->boolean('violencia_no_denuncia_por_temor')->nullable(); // ✅ NUEVO
+            $table->boolean('violencia_no_denuncia_por_verguenza')->nullable(); // ✅ NUEVO
+            $table->boolean('violencia_no_denuncia_por_desconocimiento')->nullable(); // ✅ NUEVO
+            $table->boolean('violencia_no_denuncia_no_sabe_no_responde')->nullable(); // ✅ NUEVO
+            
+            // =====================
+            // MOTIVO Y ATENCIÓN
+            // =====================
+            $table->string('violencia_motivo_agresion')->nullable(); // ✅ NUEVO
+            $table->string('violencia_motivo_otros')->nullable(); // ✅ NUEVO
+            
+            // =====================
+            // ATENCIÓN DEMANDADA
+            // =====================
+            $table->boolean('violencia_atencion_apoyo_victima')->nullable(); // ✅ NUEVO
+            $table->boolean('violencia_atencion_apoyo_pareja')->nullable(); // ✅ NUEVO
+            $table->boolean('violencia_atencion_apoyo_agresor')->nullable(); // ✅ NUEVO
+            $table->boolean('violencia_atencion_apoyo_hijos')->nullable(); // ✅ NUEVO
+            
+            // =====================
+            // RESPONSABLE DEL FORMULARIO
+            // =====================
+            $table->string('formulario_responsable_nombre')->nullable(); // ✅ NUEVO
 
             $table->timestamps();
         });
