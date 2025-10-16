@@ -110,7 +110,7 @@
                                    Editar
                                 </a>
 
-                                {{-- <form action="{{ route('fichasConsulta.destroy', $ficha->idFicha) }}" 
+                                <form action="{{ route('fichasConsulta.destroy', $ficha->idFicha) }}" 
                                       method="POST" 
                                       style="display:inline-block;">
                                     @csrf
@@ -118,9 +118,9 @@
                                     <button type="submit" 
                                             class="btn btn-sm btn-danger" 
                                             onclick="return confirm('¿Desea eliminar esta ficha?')">
-                                        🗑 Eliminar
+                                        Eliminar
                                     </button>
-                                </form> --}}
+                                </form>
                             </td>
                         </tr>
                     @empty

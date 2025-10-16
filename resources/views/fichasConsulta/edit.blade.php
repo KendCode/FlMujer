@@ -15,6 +15,15 @@
             padding: 2rem;
         }
 
+        .form-control {
+            border: 1px solid #7EC544;
+        }
+
+        .form-control:focus {
+            border-color: #13C0E5;
+            box-shadow: 0 0 0 0.2rem rgba(19, 192, 229, 0.25);
+        }
+
         .btn-primary {
             background-color: #037E8C;
             border-color: #037E8C;
@@ -23,6 +32,40 @@
         .btn-primary:hover {
             background-color: #025F66;
             border-color: #025F66;
+        }
+
+        .btn-secondary {
+            background-color: #FF6B6B;
+            border-color: #FF6B6B;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #FF4C4C;
+            border-color: #FF4C4C;
+        }
+
+        .form-check-label {
+            color: #037E8C;
+        }
+
+        h5 {
+            color: #037E8C;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .col-md-6 {
+            flex: 1;
+            min-width: 250px;
+            margin-right: 20px;
+        }
+
+        .col-md-6:last-child {
+            margin-right: 0;
         }
     </style>
 @endsection
@@ -71,7 +114,6 @@
                         <label for="fecha" class="form-label">Fecha</label>
                         <input type="date" name="fecha" id="fecha" class="form-control"
                             value="{{ old('fecha', $ficha->fecha->format('Y-m-d')) }}" required>
-
                     </div>
 
                     <div class="col-md-12 mb-3">

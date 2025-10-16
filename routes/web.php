@@ -78,8 +78,8 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     Route::post('fichasConsulta', [FichasConsultaController::class, 'store'])->name('fichasConsulta.store');
     Route::get('fichasConsulta/{ficha}/edit', [FichasConsultaController::class, 'edit'])->name('fichasConsulta.edit');
     Route::put('fichasConsulta/{ficha}', [FichasConsultaController::class, 'update'])->name('fichasConsulta.update');
-    // Route::delete('fichasConsulta/{ficha}', [FichasConsultaController::class, 'destroy'])->name('fichasConsulta.destroy');
-
+    Route::delete('fichasConsulta/{ficha}', [FichasConsultaController::class, 'destroy'])->name('fichasConsulta.destroy');
+    
     // Ruta FORMULARIO SITUACION DE VIOLENCIA INTRAFAMILIAR
     Route::get('/casos', [CasoController::class, 'index'])->name('casos.index');
     Route::get('/casos/create', [CasoController::class, 'create'])->name('casos.create');

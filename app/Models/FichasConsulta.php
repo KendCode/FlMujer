@@ -17,7 +17,7 @@ class FichasConsulta extends Model
         'apPaterno',
         'apMaterno',
         'numCelular',
-        
+        'fecha',
         'instDeriva',
         'testimonio',
         'Penal',

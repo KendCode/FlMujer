@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\FichasConsulta;
-
+use Carbon\Carbon;
 class FichasConsultaController extends Controller
 {
     /**
@@ -35,7 +35,7 @@ class FichasConsultaController extends Controller
             'apPaterno' => 'required|string|max:100',
             'apMaterno' => 'nullable|string|max:100',
             'numCelular' => 'nullable|string|max:8',
-            'fecha' => 'required|date',
+            //'fecha' => 'required|date',
             'tipo' => 'nullable|string|max:100', // si luego lo agregas
             'subTipo' => 'nullable|string|max:100',
             'descripcion' => 'nullable|string',
@@ -47,7 +47,7 @@ class FichasConsultaController extends Controller
             'apPaterno' => $request->apPaterno,
             'apMaterno' => $request->apMaterno,
             'numCelular' => $request->numCelular,
-            'fecha' => $request->fecha,
+            'fecha' => $request->fecha ? Carbon::parse($request->fecha) : Carbon::now(),
             'instDeriva' => $request->instDeriva,
             'testimonio' => $request->testimonio,
             'Penal' => $request->has('Penal') ? $request->Penal : null,
@@ -129,6 +129,9 @@ class FichasConsultaController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $ficha = FichasConsulta::findOrFail($id);
+        $ficha->delete();
+
+        return redirect()->route('fichasConsulta.index')->with('success', 'Ficha eliminada correctamente.');
     }
 }
