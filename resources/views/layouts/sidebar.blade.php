@@ -11,6 +11,8 @@
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
 
     <!-- Estilos propios -->
     @yield('styles')
@@ -183,7 +185,7 @@
                 <div class="dropdown w-100">
                     <button class="list-group-item list-group-item-action dropdown-toggle text-start w-100"
                         type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-cogs"></i> Navegación
+                        <i class="fas fa-cogs"></i> Pagina Web
                     </button>
                     <ul class="dropdown-menu w-100 " aria-labelledby="dropdownMenuButton">
                         <li>
@@ -209,7 +211,8 @@
                     </ul>
                 </div>
 
-                <a href="{{ route('casos.create') }}" class="list-group-item"><i class="fas fa-calendar-alt"></i><span>Situación de Violencia intrafamiliar</span></a>
+                <a href="{{ route('casos.index') }}" class="list-group-item">
+                    <i class="fas fa-calendar-alt"></i><span>Situación de Violencia intrafamiliar</span></a>
                 <a href="{{ route('profile.edit') }}" class="list-group-item"><i
                         class="fas fa-cog"></i><span>Configuración Perfil</span></a>
 

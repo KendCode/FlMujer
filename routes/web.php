@@ -12,10 +12,12 @@ use App\Http\Controllers\Admin\TestimonioController;
 use App\Http\Controllers\Admin\ContenidoController;
 use App\Http\Controllers\Admin\CarouselController;
 use App\Http\Controllers\Admin\ActividadController;
+use App\Http\Controllers\FichaAtencionEvaluacionController;
 use App\Models\Carousel;
 use App\Models\Actividad;
 use App\Models\Testimonio;
 use App\Models\Contenido;
+use App\Models\FichaAtencionEvaluacion;
 use App\Http\Controllers\CasoController;
 
 /*Route::get('/', function () {
@@ -86,9 +88,17 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     Route::get('/casos/{caso}/edit', [CasoController::class, 'edit'])->name('casos.edit');
     Route::put('/casos/{caso}', [CasoController::class, 'update'])->name('casos.update');
     //Route::delete('/casos/{caso}', [CasoController::class,'destroy'])->name('casos.destroy');
-
     Route::get('/casos/numero/proximo', [CasoController::class, 'obtenerProximoNumero'])->name('casos.proximo-numero');
     Route::post('/casos/numero/validar', [CasoController::class, 'validarNumeroRegistro'])->name('casos.validar-numero');
+
+    // Ruta específica para Ficha de Atención si la necesitas
+    Route::prefix('casos/{caso}/fichaAtencion')->group(function () {
+        Route::get('create', [FichaAtencionEvaluacionController::class, 'create'])
+            ->name('casos.fichaAtencionEvaluacion.create');
+
+        Route::post('store', [FichaAtencionEvaluacionController::class, 'store'])
+            ->name('casos.fichaAtencionEvaluacion.store');
+    });
 });
 
 require __DIR__ . '/auth.php';

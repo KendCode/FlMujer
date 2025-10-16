@@ -16,11 +16,54 @@ class CasoController extends Controller
     /**
      * Muestra la lista de casos registrados.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $casos = Caso::latest()->paginate(10);
+        $query = Caso::query();
+
+        // Búsqueda por nombre, apellido, CI o registro
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('paciente_nombres', 'like', "%{$search}%")
+                    ->orWhere('paciente_apellidos', 'like', "%{$search}%")
+                    ->orWhere('nro_registro', 'like', "%{$search}%")
+                    ->orWhere('paciente_ci', 'like', "%{$search}%");
+            });
+        }
+
+        // Filtrar por distrito
+        if ($request->filled('distrito')) {
+            $query->where('paciente_id_distrito', $request->distrito);
+        }
+
+        // Filtrar por tipo de violencia
+        if ($request->filled('tipo_violencia')) {
+            $tipo = $request->tipo_violencia;
+            $query->where(function ($q) use ($tipo) {
+                if ($tipo == 'violencia_intrafamiliar') {
+                    $q->where('violencia_tipo_fisica', 1)
+                        ->orWhere('violencia_tipo_psicologica', 1);
+                } elseif ($tipo == 'violencia_domestica') {
+                    $q->where('violencia_tipo_economica', 1)
+                        ->orWhere('violencia_tipo_patrimonial', 1);
+                }
+            });
+        }
+
+        // Filtrar por fecha
+        if ($request->filled('fecha')) {
+            $query->whereDate('regional_fecha', $request->fecha);
+        }
+
+        // Paginación
+        $casos = $query->orderBy('regional_fecha', 'desc')->paginate(10);
+
+        // Mantener los filtros en la paginación
+        $casos->appends($request->all());
+
         return view('casos.index', compact('casos'));
     }
+
 
     /**
      * Muestra el formulario para crear un nuevo caso.
@@ -51,7 +94,7 @@ class CasoController extends Controller
                 'regex:/^FLM-\d{8}$/',
                 'unique:casos,nro_registro'
             ],
-            
+
             // PACIENTE
             'paciente_nombres' => 'required|string|max:255',
             'paciente_apellidos' => 'required|string|max:255',
@@ -279,7 +322,7 @@ class CasoController extends Controller
     public function validarNumeroRegistro(Request $request)
     {
         $numero = $request->input('numero');
-        
+
         // Validar formato
         if (!Caso::validarFormatoRegistro($numero)) {
             return response()->json([
@@ -290,7 +333,7 @@ class CasoController extends Controller
 
         // Validar si ya existe
         $existe = Caso::where('nro_registro', $numero)->exists();
-        
+
         if ($existe) {
             return response()->json([
                 'valido' => false,
@@ -317,8 +360,16 @@ class CasoController extends Controller
      */
     public function edit(Caso $caso)
     {
+        // Normalizamos para radios
+        if ($caso->violencia_denuncia_previa === 1 || $caso->violencia_denuncia_previa === '1' || $caso->violencia_denuncia_previa === true) {
+            $caso->violencia_denuncia_previa = 'si';
+        } elseif ($caso->violencia_denuncia_previa === 0 || $caso->violencia_denuncia_previa === '0' || $caso->violencia_denuncia_previa === false) {
+            $caso->violencia_denuncia_previa = 'no';
+        }
+
         return view('casos.edit', compact('caso'));
     }
+
 
     /**
      * Actualiza los datos de un caso existente.
@@ -404,7 +455,138 @@ class CasoController extends Controller
             'violencia_denuncia_previa' => $request->boolean('violencia_denuncia_previa'),
             'violencia_institucion_denuncia' => $request->input('violencia_institucion_denuncia'),
         ]);
+        // =====================
+        // PREPARAR DATOS
+        // =====================
+        $data = [];
 
+        // REGIONAL
+        $data['regional_recibe_caso'] = $request->input('regional_recibe_caso');
+        $data['regional_fecha'] = $request->input('regional_fecha');
+        $data['regional_institucion_derivante'] = $request->input('regional_institucion_derivante');
+
+        // NÚMERO DE REGISTRO (manual o automático)
+        if ($request->tipo_registro === 'manual') {
+            $data['nro_registro'] = $request->input('nro_registro_manual_input');
+            $data['nro_registro_manual'] = true;
+        } else {
+            $data['nro_registro_manual'] = false;
+        }
+
+        // DATOS DEL PACIENTE
+        $data['paciente_nombres'] = $request->input('paciente_nombres');
+        $data['paciente_apellidos'] = $request->input('paciente_apellidos');
+        $data['paciente_ci'] = $request->input('paciente_ci');
+        $data['paciente_telefono'] = $request->input('paciente_telefono');
+        $data['paciente_calle'] = $request->input('paciente_calle');
+        $data['paciente_numero'] = $request->input('paciente_numero');
+        $data['paciente_zona'] = $request->input('paciente_zona');
+        $data['paciente_id_distrito'] = $request->input('paciente_id_distrito');
+        $data['paciente_estado_civil'] = $request->input('paciente_estado_civil');
+        $data['paciente_sexo'] = $request->input('paciente_sexo');
+        $data['paciente_lugar_nacimiento'] = $request->input('paciente_lugar_nacimiento');
+        $data['paciente_lugar_nacimiento_op'] = $request->input('paciente_lugar_nacimiento_op');
+        $data['paciente_lugar_residencia_op'] = $request->input('paciente_lugar_residencia_op');
+        $data['paciente_tiempo_residencia_op'] = $request->input('paciente_tiempo_residencia_op');
+        $data['paciente_edad_rango'] = $request->input('paciente_edad_rango');
+        $data['paciente_nivel_instruccion'] = $request->input('paciente_nivel_instruccion');
+        $data['paciente_idioma_mas_hablado'] = $request->input('paciente_idioma_mas_hablado');
+        $data['paciente_ocupacion'] = $request->input('paciente_ocupacion');
+        $data['paciente_situacion_ocupacional'] = $request->input('paciente_situacion_ocupacional');
+        $data['paciente_otros'] = $request->input('paciente_otros');
+
+        // DATOS DE LA PAREJA
+        $data['pareja_nombres'] = $request->input('pareja_nombres');
+        $data['pareja_apellidos'] = $request->input('pareja_apellidos');
+        $data['pareja_ci'] = $request->input('pareja_ci');
+        $data['pareja_telefono'] = $request->input('pareja_telefono');
+        $data['pareja_calle'] = $request->input('pareja_calle');
+        $data['pareja_numero'] = $request->input('pareja_numero');
+        $data['pareja_zona'] = $request->input('pareja_zona');
+        $data['pareja_id_distrito'] = $request->input('pareja_id_distrito');
+        $data['pareja_estado_civil'] = $request->input('pareja_estado_civil');
+        $data['pareja_sexo'] = $request->input('pareja_sexo');
+        $data['pareja_lugar_nacimiento'] = $request->input('pareja_lugar_nacimiento');
+        $data['pareja_lugar_nacimiento_op'] = $request->input('pareja_lugar_nacimiento_op');
+        $data['pareja_edad_rango'] = $request->input('pareja_edad_rango');
+        $data['pareja_nivel_instruccion'] = $request->input('pareja_nivel_instruccion');
+        $data['pareja_ocupacion_principal'] = $request->input('pareja_ocupacion_principal');
+        $data['pareja_situacion_ocupacional'] = $request->input('pareja_situacion_ocupacional');
+        $data['pareja_parentesco'] = $request->input('pareja_parentesco');
+        $data['pareja_residencia'] = $request->input('pareja_residencia');
+        $data['pareja_tiempo_residencia'] = $request->input('pareja_tiempo_residencia');
+        $data['pareja_anos_convivencia'] = $request->input('pareja_anos_convivencia');
+        $data['pareja_idioma'] = $request->input('pareja_idioma');
+        $data['pareja_especificar_idioma'] = $request->input('pareja_especificar_idioma');
+        $data['pareja_otros'] = $request->input('pareja_otros');
+
+        // HIJOS
+        $data['hijos_num_gestacion'] = $request->input('hijos_num_gestacion');
+        $data['hijos_dependencia'] = $request->input('hijos_dependencia');
+
+        // =====================
+        // CHECKBOXES (booleanos)
+        // =====================
+        $checkboxes = [
+            // Hijos
+            'hijos_edad_menor4_masculino',
+            'hijos_edad_menor4_femenino',
+            'hijos_edad_5_10_masculino',
+            'hijos_edad_5_10_femenino',
+            'hijos_edad_11_15_masculino',
+            'hijos_edad_11_15_femenino',
+            'hijos_edad_16_20_masculino',
+            'hijos_edad_16_20_femenino',
+            'hijos_edad_21_mas_masculino',
+            'hijos_edad_21_mas_femenino',
+
+            // Tipos de violencia
+            'violencia_tipo_fisica',
+            'violencia_tipo_psicologica',
+            'violencia_tipo_sexual',
+            'violencia_tipo_patrimonial',
+            'violencia_tipo_economica',
+
+            // Razones de no denuncia
+            'violencia_no_denuncia_por_amenaza',
+            'violencia_no_denuncia_por_temor',
+            'violencia_no_denuncia_por_verguenza',
+            'violencia_no_denuncia_por_desconocimiento',
+            'violencia_no_denuncia_no_sabe_no_responde',
+
+            // Atención demandada
+            'violencia_atencion_apoyo_victima',
+            'violencia_atencion_apoyo_pareja',
+            'violencia_atencion_apoyo_agresor',
+            'violencia_atencion_apoyo_hijos',
+        ];
+
+        foreach ($checkboxes as $campo) {
+            $data[$campo] = $request->has($campo);
+        }
+
+        // RADIOS
+        $data['violencia_denuncia_previa'] = $request->input('violencia_denuncia_previa');
+
+        // CAMPOS FINALES
+        $data['violencia_tipo'] = $request->input('violencia_tipo');
+        $data['violencia_frecuancia_agresion'] = $request->input('violencia_frecuancia_agresion');
+        $data['violencia_motivo_agresion'] = $request->input('violencia_motivo_agresion');
+        $data['violencia_motivo_otros'] = $request->input('violencia_motivo_otros');
+        $data['violencia_descripcion_hechos'] = $request->input('violencia_descripcion_hechos');
+        $data['violencia_institucion_denuncia'] = $request->input('violencia_institucion_denuncia');
+        $data['formulario_responsable_nombre'] = $request->input('formulario_responsable_nombre');
+
+        try {
+            $caso->update($data);
+
+            return redirect()->route('casos.index')
+                ->with('success', "Caso actualizado exitosamente con número: {$caso->nro_registro}");
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Error al actualizar el caso: ' . $e->getMessage());
+        }
         return redirect()->route('casos.index')
             ->with('success', 'El caso fue actualizado correctamente.');
     }
