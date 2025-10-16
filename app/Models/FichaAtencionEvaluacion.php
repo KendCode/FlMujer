@@ -58,4 +58,8 @@ class FichaAtencionEvaluacion extends Model
         return $this->hasOne(FichaAtencionEvaluacion::class, 'caso_id')
                     ->latestOfMany('fecha');
     }
+    public function caso()
+    {
+        return $this->belongsTo(Caso::class, 'caso_id');
+    }
 }

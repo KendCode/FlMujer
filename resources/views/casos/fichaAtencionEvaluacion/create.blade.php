@@ -33,28 +33,41 @@
                     <input type="date" name="fecha" class="form-control"
                         value="{{ old('fecha', now()->format('Y-m-d')) }}" required>
                 </div>
+
                 <div class="col-md-4">
                     <label class="form-label">N° de Registro:</label>
-                    <input type="text" name="nro_registro" class="form-control"
-                        value="{{ old('nro_registro', $caso->nro_registro ?? '') }}" readonly disabled>
+                    {{-- Solo lectura para usuario --}}
+                    <input type="text" class="form-control" value="{{ $caso->nro_registro ?? '' }}" readonly>
+                    {{-- Campo oculto que se envía --}}
+                    <input type="hidden" name="nro_registro" value="{{ $caso->nro_registro ?? '' }}">
                     <small class="text-muted">El número de registro no se puede modificar</small>
                 </div>
+
                 <div class="col-md-4">
                     <label class="form-label">Edad:</label>
                     @php
                         $edades = [
-                            'menor15' => 'Menor de 15 años',
-                            '16a20' => '16 a 20 años',
-                            '21a25' => '21 a 25 años',
-                            '26a30' => '26 a 30 años',
-                            '31a35' => '31 a 35 años',
-                            '36a50' => '36 a 50 años',
-                            'mayor50' => 'Más de 50 años',
+                            1 => 'Menor de 15 años',
+                            2 => '16 a 20 años',
+                            3 => '21 a 25 años',
+                            4 => '26 a 30 años',
+                            5 => '31 a 35 años',
+                            6 => '36 a 50 años',
+                            7 => 'Más de 50 años',
                         ];
+
+                        // Valor actual de la ficha o caso
+                        $edadSeleccionada = old('edad', $caso->paciente_edad_rango ?? null);
                     @endphp
-                    <input type="text" class="form-control"
-                        value="{{ $edades[$caso->paciente_edad_rango] ?? 'No registrado' }}" readonly>
-                    <small class="text-muted">Calculada automáticamente</small>
+
+                    <select name="edad" class="form-control" required>
+                        <option value="">Seleccione un rango de edad</option>
+                        @foreach ($edades as $key => $label)
+                            <option value="{{ $key }}" {{ $edadSeleccionada == $key ? 'selected' : '' }}>
+                                {{ $label }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
 
             </div>
@@ -62,19 +75,21 @@
             {{-- Nombres y Apellidos --}}
             <div class="mb-3">
                 <label class="form-label">Nombres y Apellidos:</label>
-                <input type="text" name="nombres_apellidos" class="form-control"
-                    value="{{ old('nombres_apellidos', trim(($caso->paciente_nombres ?? '') . ' ' . ($caso->paciente_apellidos ?? ''))) }}"
-                    readonly>
+                {{-- Solo lectura visible --}}
+                <input type="text" class="form-control"
+                    value="{{ trim(($caso->paciente_nombres ?? '') . ' ' . ($caso->paciente_apellidos ?? '')) }}" readonly>
+                {{-- Campo oculto que se envía --}}
+                <input type="hidden" name="nombres_apellidos"
+                    value="{{ trim(($caso->paciente_nombres ?? '') . ' ' . ($caso->paciente_apellidos ?? '')) }}">
                 <small class="text-muted">Obtenido del caso</small>
             </div>
-
 
             {{-- Busco Ayuda --}}
             <div class="border rounded p-3 mb-3">
                 <h5 class="text-primary fw-bold">2. ¿Buscó ayuda?</h5>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label>¿Busco ayuda?</label><br>
+                        <label>¿Buscó ayuda?</label><br>
                         <input type="radio" name="busco_ayuda" value="Si"
                             {{ old('busco_ayuda') == 'Si' ? 'checked' : '' }}> Sí
                         <input type="radio" name="busco_ayuda" value="No" class="ms-2"
@@ -115,8 +130,7 @@
 
             {{-- Descripción del caso --}}
             <div class="mb-3">
-                <label class="form-label fw-bold text-primary">4. Descripción del caso (Puntos esenciales de la
-                    entrevista):</label>
+                <label class="form-label fw-bold text-primary">4. Descripción del caso:</label>
                 <textarea name="descripcion_caso" class="form-control" rows="4">{{ old('descripcion_caso') }}</textarea>
             </div>
 

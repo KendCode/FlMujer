@@ -93,11 +93,23 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
 
     // Ruta específica para Ficha de Atención si la necesitas
     Route::prefix('casos/{caso}/fichaAtencion')->group(function () {
+        Route::get('/', [FichaAtencionEvaluacionController::class, 'index'])
+            ->name('casos.fichaAtencionEvaluacion.index');
+
         Route::get('create', [FichaAtencionEvaluacionController::class, 'create'])
             ->name('casos.fichaAtencionEvaluacion.create');
 
         Route::post('store', [FichaAtencionEvaluacionController::class, 'store'])
             ->name('casos.fichaAtencionEvaluacion.store');
+
+        Route::get('{ficha}/edit', [FichaAtencionEvaluacionController::class, 'edit'])
+            ->name('casos.fichaAtencionEvaluacion.edit');
+
+        Route::put('{ficha}', [FichaAtencionEvaluacionController::class, 'update'])
+            ->name('casos.fichaAtencionEvaluacion.update');
+
+        Route::delete('{ficha}', [FichaAtencionEvaluacionController::class, 'destroy'])
+            ->name('casos.fichaAtencionEvaluacion.destroy');
     });
 });
 

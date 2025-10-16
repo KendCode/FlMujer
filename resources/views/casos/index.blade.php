@@ -160,7 +160,7 @@
                                                             Ficha de Atención
                                                         </a> --}}
                                                         <a class="dropdown-item"
-                                                            href="{{ route('casos.fichaAtencionEvaluacion.create', $caso->id) }}">
+                                                            href="{{ route('casos.fichaAtencionEvaluacion.index', $caso->id) }}">
                                                             Ficha de Atención y Evaluación Psicológica
                                                         </a>
                                                     </li>

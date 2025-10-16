@@ -9,6 +9,16 @@ use App\Models\Caso;
 
 class FichaAtencionEvaluacionController extends Controller
 {
+    public function index($casoId)
+    {
+        $caso = Caso::findOrFail($casoId);
+        $fichas = FichaAtencionEvaluacion::where('caso_id', $casoId)
+            ->orderBy('fecha', 'desc')
+            ->get();
+
+        return view('casos.fichaAtencionEvaluacion.index', compact('caso', 'fichas'));
+    }
+
     /**
      * Mostrar el formulario para crear una nueva ficha
      */
@@ -29,7 +39,7 @@ class FichaAtencionEvaluacionController extends Controller
         $validated = $request->validate([
             'fecha' => 'required|date',
             'nro_registro' => 'nullable|string|max:255',
-            'edad' => 'nullable|integer|min:1',
+            'edad' => 'nullable|integer',
             'nombres_apellidos' => 'required|string|max:255',
             'busco_ayuda' => 'nullable|in:Si,No',
             'donde_busco_ayuda' => 'nullable|string|max:255',
@@ -74,24 +84,25 @@ class FichaAtencionEvaluacionController extends Controller
     /**
      * Mostrar el formulario para editar una ficha
      */
-    public function edit($id)
+    public function edit($casoId, $fichaId)
     {
-        $ficha = FichaAtencionEvaluacion::with('caso')->findOrFail($id);
+        $ficha = FichaAtencionEvaluacion::with('caso')->findOrFail($fichaId);
+        $caso = $ficha->caso; 
         return view('casos.fichaAtencionEvaluacion.edit', compact('ficha'));
     }
 
     /**
      * Actualizar una ficha existente
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $casoId, $fichaId)
     {
-        $ficha = FichaAtencionEvaluacion::findOrFail($id);
+        $ficha = FichaAtencionEvaluacion::findOrFail($fichaId);
 
         // Validación
         $validated = $request->validate([
             'fecha' => 'required|date',
             'nro_registro' => 'nullable|string|max:255',
-            'edad' => 'nullable|integer|min:1',
+            'edad' => 'nullable|integer',
             'nombres_apellidos' => 'required|string|max:255',
             'busco_ayuda' => 'nullable|in:Si,No',
             'donde_busco_ayuda' => 'nullable|string|max:255',
@@ -112,26 +123,25 @@ class FichaAtencionEvaluacionController extends Controller
             'remito' => 'nullable|array',
             'remito.*' => 'string|in:Legal,Trabajo Social,Espiritual,Médico',
         ]);
-        
+
         // Actualizar la ficha
         $ficha->update($validated);
 
         return redirect()
-            ->route('casos.show', $ficha->caso_id)
+            ->route('casos.fichaAtencionEvaluacion.index', $ficha->caso_id)
             ->with('success', 'Ficha de atención y evaluación psicológica actualizada exitosamente.');
     }
 
     /**
      * Eliminar una ficha
      */
-    public function destroy($id)
+    public function destroy($casoId, $fichaId)
     {
-        $ficha = FichaAtencionEvaluacion::findOrFail($id);
-        $casoId = $ficha->caso_id;
+        $ficha = FichaAtencionEvaluacion::findOrFail($fichaId);
         $ficha->delete();
 
         return redirect()
-            ->route('casos.show', $casoId)
+            ->route('casos.fichaAtencionEvaluacion.index', $casoId)
             ->with('success', 'Ficha eliminada exitosamente.');
     }
 }

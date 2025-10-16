@@ -189,4 +189,8 @@ class Caso extends Model
             }
         });
     }
+    public function fichas()
+    {
+        return $this->hasMany(FichaAtencionEvaluacion::class, 'caso_id');
+    }
 }
