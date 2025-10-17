@@ -65,8 +65,8 @@
     <form action="{{ route('casos.store') }}" method="POST">
         @csrf
         <!-- =====================
-                                             SECCIÓN 0: DATOS DE LA REGIONAL
-                                        ===================== -->
+                                                         SECCIÓN 0: DATOS DE LA REGIONAL
+                                                    ===================== -->
         <div class="card mb-3">
             <div class="card-header">Regional</div>
             <div class="card-body">
@@ -119,15 +119,15 @@
 
                     <div class="col-md-6">
                         <label class="form-label">Institución que deriva</label>
-                        <input type="text" name="regional_institucion_derivante" class="form-control" required>
+                        <input type="text" name="regional_institucion_derivante" class="form-control">
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- =====================
-                                             SECCIÓN 1: DATOS PERSONALES PACIENTE
-                                        ===================== -->
+                                                         SECCIÓN 1: DATOS PERSONALES PACIENTE
+                                                    ===================== -->
 
         <div class="card mb-3">
             <div class="card-header">Datos Personales y Más Datos</div>
@@ -140,6 +140,16 @@
                     <div class="col-md-6">
                         <label class="form-label">Apellidos</label>
                         <input type="text" name="paciente_apellidos" class="form-control" required>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label class="form-label d-block">Edad</label>
+                        <div class="form-check form-check-inline">
+                            <input type="text" name="paciente_edad" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label class="form-label">CI</label>
+                        <input type="text" name="paciente_ci" class="form-control">
                     </div>
                     <div class="col-md-4 mt-2">
                         <label class="form-label d-block">Sexo</label>
@@ -156,8 +166,8 @@
                         <label class="form-label">Edad (rango)</label>
                         <div class="d-flex flex-wrap gap-2">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="paciente_edad_rango" value="menor15"
-                                    required>
+                                <input class="form-check-input" type="radio" name="paciente_edad_rango"
+                                    value="menor15" required>
                                 <label class="form-check-label">Menor de 15 años</label>
                             </div>
                             <div class="form-check">
@@ -192,10 +202,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 mt-2">
-                        <label class="form-label">CI</label>
-                        <input type="text" name="paciente_ci" class="form-control">
-                    </div>
+
                     <div class="col-md-8 mt-2">
                         <label class="form-label">Distrito</label><br>
                         <div class="d-flex flex-wrap gap-2">
@@ -337,6 +344,11 @@
                                 value="masDe10Anos">
                             <label class="form-check-label">De 11 y más años</label>
                         </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="paciente_tiempo_residencia_op"
+                                value="no_sabe_no_responde">
+                            <label class="form-check-label">No sabe / no responde</label>
+                        </div>
                     </div>
                 </div>
 
@@ -414,8 +426,8 @@
         </div>
 
         <!-- =====================
-                                         SECCIÓN 2: DATOS PAREJA
-                                    ===================== -->
+                                                     SECCIÓN 2: DATOS PAREJA
+                                                ===================== -->
         <div class="card mb-3">
             <div class="card-header">2. Datos de la pareja</div>
             <div class="card-body">
@@ -438,6 +450,16 @@
                             <input class="form-check-input" type="radio" name="pareja_sexo" value="F" required>
                             <label class="form-check-label">Mujer</label>
                         </div>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label class="form-label d-block">Edad</label>
+                        <div class="form-check form-check-inline">
+                            <input type="text" name="paciente_edad" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label class="form-label">CI</label>
+                        <input type="text" name="pareja_ci" class="form-control">
                     </div>
                     <div class="col-md-8 mt-2">
                         <label class="form-label">Edad (rango)</label>
@@ -483,11 +505,6 @@
                                 <label class="form-check-label" for="pareja_edad_46_a_50">46 a 50</label>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="col-md-4 mt-2">
-                        <label class="form-label">CI</label>
-                        <input type="text" name="pareja_ci" class="form-control">
                     </div>
 
                     <div class="col-md-8 mt-2">
@@ -600,28 +617,46 @@
                 </div>
 
                 <div class="row g-2 mt-3">
-                    <div class="col-md-6">
-                        <label for="pareja_residencia" class="form-label">3.7 Residencia Habitual</label>
-                        <select class="form-select" id="pareja_residencia" name="pareja_residencia" required>
-                            <option value="">Seleccione</option>
-                            <option value="dentro">Dentro de municipio</option>
-                            <option value="fuera">Fuera de municipio</option>
-                        </select>
+                    <div class="col-md-4 mt-2">
+                        <label class="form-label d-block">Residencia Habitual</label>
+                        <div class="form-check form-check-inline mt-2">
+                            <input class="form-check-input" type="radio" name="paciente_lugar_residencia_op"
+                                value="dentro">
+                            <label class="form-check-label">Dentro del municipio</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="paciente_lugar_residencia_op"
+                                value="fuera">
+                            <label class="form-check-label">Fuera de municipio</label>
+                        </div>
                     </div>
-
-                    <div class="col-md-6">
-                        <label for="pareja_tiempo_residencia" class="form-label">3.8 Tiempo de Residencia</label>
-                        <select class="form-select" id="pareja_tiempo_residencia" name="pareja_tiempo_residencia"
-                            required>
-                            <option value="">Seleccione</option>
-                            <option value="menos_de_un_ano">Menos de un año</option>
-                            <option value="2_a_5_anios">2 a 5 años</option>
-                            <option value="6_a_10_anios">6 a 10 años</option>
-                            <option value="11_y_mas">11 y más años</option>
-                            <option value="otro">Otro</option>
-                            <option value="no_saben">No saben</option>
-                            <option value="no_responde">No responde</option>
-                        </select>
+                    <div class="col-md-4 mt-2">
+                        <label class="form-label d-block">Tiempo de residencia en este municipio</label>
+                        <div class="form-check form-check-inline mt-2">
+                            <input class="form-check-input" type="radio" name="pareja_tiempo_residencia_op"
+                                value="menosDeUnAno">
+                            <label class="form-check-label">Menos de 1 año</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="pareja_tiempo_residencia_op"
+                                value="de2a5Anos">
+                            <label class="form-check-label">De 2 a 5 años</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="pareja_tiempo_residencia_op"
+                                value="de6a10Anos">
+                            <label class="form-check-label">De 6 a 10 años</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="pareja_tiempo_residencia_op"
+                                value="masDe10Anos">
+                            <label class="form-check-label">De 11 y más años</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="pareja_tiempo_residencia_op"
+                                value="no_sabe_no_responde">
+                            <label class="form-check-label">No sabe / no responde</label>
+                        </div>
                     </div>
 
                     <div class="col-md-6 mt-2">
@@ -741,8 +776,8 @@
         </div>
 
         <!-- =====================
-                                     SECCIÓN 3: DATOS HIJOS
-                                ===================== -->
+                                                 SECCIÓN 3: DATOS HIJOS
+                                            ===================== -->
         <div class="card mb-3">
             <div class="card-header">3. Hijos</div>
             <div class="card-body">
@@ -773,91 +808,138 @@
                         <tbody>
                             <tr>
                                 <td>Menor de 4 años</td>
+
+                                <!-- Masculino -->
                                 <td>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox"
-                                            name="hijos_edad_menor4_masculino" id="hijos_edad_menor4_masculino"
-                                            value="M">
-                                        <label class="form-check-label" for="hijos_edad_menor4_masculino"></label>
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        @for ($i = 0; $i < 5; $i++)
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    name="hijos_edad_menor4_masculino[]"
+                                                    id="hijos_edad_menor4_masculino_{{ $i }}" value="M">
+                                            </div>
+                                        @endfor
                                     </div>
                                 </td>
+
+                                <!-- Femenino -->
                                 <td>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="hijos_edad_menor4_femenino"
-                                            id="hijos_edad_menor4_femenino" value="F">
-                                        <label class="form-check-label" for="hijos_edad_menor4_femenino"></label>
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        @for ($i = 0; $i < 5; $i++)
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    name="hijos_edad_menor4_femenino[]"
+                                                    id="hijos_edad_menor4_femenino_{{ $i }}" value="F">
+                                            </div>
+                                        @endfor
                                     </div>
                                 </td>
                             </tr>
+
                             <tr>
                                 <td>De 5 a 10 años</td>
                                 <td>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="hijos_edad_5_10_masculino"
-                                            id="hijos_edad_5_10_masculino" value="M">
-                                        <label class="form-check-label" for="hijos_edad_5_10_masculino"></label>
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        @for ($i = 0; $i < 5; $i++)
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    name="hijos_edad_5_10_masculino[]"
+                                                    id="hijos_edad_5_10_masculino_{{ $i }}" value="M">
+                                            </div>
+                                        @endfor
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="hijos_edad_5_10_femenino"
-                                            id="hijos_edad_5_10_femenino" value="F">
-                                        <label class="form-check-label" for="hijos_edad_5_10_femenino"></label>
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        @for ($i = 0; $i < 5; $i++)
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    name="hijos_edad_5_10_femenino[]"
+                                                    id="hijos_edad_5_10_femenino_{{ $i }}" value="F">
+                                            </div>
+                                        @endfor
                                     </div>
                                 </td>
                             </tr>
+
                             <tr>
                                 <td>De 11 a 15 años</td>
                                 <td>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="hijos_edad_11_15_masculino"
-                                            id="hijos_edad_11_15_masculino" value="M">
-                                        <label class="form-check-label" for="hijos_edad_11_15_masculino"></label>
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        @for ($i = 0; $i < 5; $i++)
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    name="hijos_edad_11_15_masculino[]"
+                                                    id="hijos_edad_11_15_masculino_{{ $i }}" value="M">
+                                            </div>
+                                        @endfor
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="hijos_edad_11_15_femenino"
-                                            id="hijos_edad_11_15_femenino" value="F">
-                                        <label class="form-check-label" for="hijos_edad_11_15_femenino"></label>
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        @for ($i = 0; $i < 5; $i++)
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    name="hijos_edad_11_15_femenino[]"
+                                                    id="hijos_edad_11_15_femenino_{{ $i }}" value="F">
+                                            </div>
+                                        @endfor
                                     </div>
                                 </td>
                             </tr>
+
                             <tr>
                                 <td>De 16 a 20 años</td>
                                 <td>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="hijos_edad_16_20_masculino"
-                                            id="hijos_edad_16_20_masculino" value="M">
-                                        <label class="form-check-label" for="hijos_edad_16_20_masculino"></label>
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        @for ($i = 0; $i < 5; $i++)
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    name="hijos_edad_16_20_masculino[]"
+                                                    id="hijos_edad_16_20_masculino_{{ $i }}" value="M">
+                                            </div>
+                                        @endfor
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="hijos_edad_16_20_femenino"
-                                            id="hijos_edad_16_20_femenino" value="F">
-                                        <label class="form-check-label" for="hijos_edad_16_20_femenino"></label>
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        @for ($i = 0; $i < 5; $i++)
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    name="hijos_edad_16_20_femenino[]"
+                                                    id="hijos_edad_16_20_femenino_{{ $i }}" value="F">
+                                            </div>
+                                        @endfor
                                     </div>
                                 </td>
                             </tr>
+
                             <tr>
-                                <td>De 21 a más años </td>
+                                <td>De 21 a más años</td>
                                 <td>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox"
-                                            name="hijos_edad_21_mas_masculino" id="hijos_edad_21_mas_masculino"
-                                            value="M">
-                                        <label class="form-check-label" for="hijos_edad_21_mas_masculino"></label>
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        @for ($i = 0; $i < 5; $i++)
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    name="hijos_edad_21_mas_masculino[]"
+                                                    id="hijos_edad_21_mas_masculino_{{ $i }}" value="M">
+                                            </div>
+                                        @endfor
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="hijos_edad_21_mas_femenino"
-                                            id="hijos_edad_21_mas_femenino" value="F">
-                                        <label class="form-check-label" for="hijos_edad_21_mas_femenino"></label>
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        @for ($i = 0; $i < 5; $i++)
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    name="hijos_edad_21_mas_femenino[]"
+                                                    id="hijos_edad_21_mas_femenino_{{ $i }}" value="F">
+                                            </div>
+                                        @endfor
                                     </div>
                                 </td>
                             </tr>
+
                         </tbody>
                     </table>
                 </div>
@@ -877,8 +959,8 @@
         </div>
 
         <!-- =====================
-                                 SECCIÓN 4: TIPOS DE VIOLENCIA
-                            ===================== -->
+                                             SECCIÓN 4: TIPOS DE VIOLENCIA
+                                        ===================== -->
         <div class="card mb-3">
             <div class="card-header">4. Tipos de Violencia</div>
             <div class="card-body">
@@ -992,16 +1074,18 @@
                     </div>
 
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="violencia_no_denuncia_por_desconocimiento"
-                            id="violencia_tipo_economica" value="1">
+                        <input class="form-check-input" type="checkbox"
+                            name="violencia_no_denuncia_por_desconocimiento" id="violencia_tipo_economica"
+                            value="1">
                         <label class="form-check-label" for="violencia_tipo_economica">
                             Por Desconocimiento
                         </label>
                     </div>
 
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="violencia_no_denuncia_no_sabe_no_responde"
-                            id="violencia_tipo_patrimonial" value="1">
+                        <input class="form-check-input" type="checkbox"
+                            name="violencia_no_denuncia_no_sabe_no_responde" id="violencia_tipo_patrimonial"
+                            value="1">
                         <label class="form-check-label" for="violencia_tipo_patrimonial">
                             No sabe / no responde
                         </label>
@@ -1115,5 +1199,4 @@
             toggleRegistroManual();
         });
     </script>
-    
 @endsection

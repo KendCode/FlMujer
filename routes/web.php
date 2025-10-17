@@ -87,7 +87,7 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     //Route::get('/casos/{caso}', [CasoController::class,'show'])->name('casos.show');
     Route::get('/casos/{caso}/edit', [CasoController::class, 'edit'])->name('casos.edit');
     Route::put('/casos/{caso}', [CasoController::class, 'update'])->name('casos.update');
-    //Route::delete('/casos/{caso}', [CasoController::class,'destroy'])->name('casos.destroy');
+    Route::delete('/casos/{caso}', [CasoController::class,'destroy'])->name('casos.destroy');
     Route::get('/casos/numero/proximo', [CasoController::class, 'obtenerProximoNumero'])->name('casos.proximo-numero');
     Route::post('/casos/numero/validar', [CasoController::class, 'validarNumeroRegistro'])->name('casos.validar-numero');
 

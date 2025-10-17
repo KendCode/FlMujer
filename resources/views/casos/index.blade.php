@@ -1,5 +1,51 @@
 @extends('layouts.sidebar')
 
+<style>
+    /* ==== Estilo de la paginación ==== */
+    .pagination .page-link {
+        color: #13C0E5;
+        border-radius: 8px;
+        padding: 0.4rem 0.7rem;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+    }
+
+    .pagination .page-link:hover {
+        background-color: #13C0E5;
+        color: #fff;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #13C0E5;
+        border-color: #13C0E5;
+        color: #fff;
+    }
+
+    /* ==== Ajustar íconos de flechas ==== */
+    .pagination .page-link svg {
+        width: 0.85rem !important;
+        height: 0.85rem !important;
+        vertical-align: middle;
+    }
+
+    /* ==== Ajustar footer ==== */
+    .card-footer {
+        padding: 0.75rem 1rem;
+    }
+
+    .pagination-wrapper nav {
+        margin-bottom: 0;
+    }
+
+    .btn-group .btn,
+    .btn-group form button {
+        min-width: 42px;
+        /* tamaño uniforme mínimo */
+        height: 40px;
+        /* altura uniforme */
+        font-size: 14px;
+    }
+</style>
 @section('content')
     <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -42,7 +88,8 @@
                                 {{ request('tipo_violencia') == 'violencia_intrafamiliar' ? 'selected' : '' }}>Intrafamiliar
                             </option>
                             <option value="violencia_domestica"
-                                {{ request('tipo_violencia') == 'violencia_domestica' ? 'selected' : '' }}>Doméstica</option>
+                                {{ request('tipo_violencia') == 'violencia_domestica' ? 'selected' : '' }}>Doméstica
+                            </option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -137,28 +184,23 @@
                                         </span>
                                     </td> --}}
                                     <td>
-                                        <div class="btn-group" role="group">
+                                        <div class="btn-group align-items-stretch" role="group">
                                             {{-- Botón Ver --}}
-                                            <a href="#" class="btn btn-outline-primary" title="Ver detalles">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            {{-- <a href="{{ route('casos.show', $caso->id) }}" class="btn btn-outline-primary"
+                                            <a href="#"
+                                                class="btn btn-outline-primary d-flex align-items-center justify-content-center"
                                                 title="Ver detalles">
                                                 <i class="bi bi-eye"></i>
-                                            </a> --}}
+                                            </a>
 
                                             {{-- Dropdown para fichas --}}
                                             <div class="btn-group" role="group">
                                                 <button id="btnFichas{{ $caso->id }}" type="button"
-                                                    class="btn btn-outline-success dropdown-toggle"
+                                                    class="btn btn-outline-success dropdown-toggle d-flex align-items-center justify-content-center"
                                                     data-bs-toggle="dropdown" aria-expanded="false">
                                                     Fichas Psicológicas
                                                 </button>
                                                 <ul class="dropdown-menu" aria-labelledby="btnFichas{{ $caso->id }}">
                                                     <li>
-                                                        {{-- <a class="dropdown-item" href="#">
-                                                            Ficha de Atención
-                                                        </a> --}}
                                                         <a class="dropdown-item"
                                                             href="{{ route('casos.fichaAtencionEvaluacion.index', $caso->id) }}">
                                                             Ficha de Atención y Evaluación Psicológica
@@ -168,29 +210,32 @@
                                                         <a class="dropdown-item" href="#">
                                                             Ficha de seguimiento psicológico
                                                         </a>
-                                                        {{-- <a class="dropdown-item"
-                                                            href="{{ route('casos.fichas_evaluacion.create', $caso->id) }}">
-                                                            Ficha de Evaluación
-                                                        </a> --}}
                                                     </li>
                                                 </ul>
                                             </div>
 
-                                            {{-- Editar --}}
-                                            {{-- <a href="#" class="btn btn-outline-warning" title="Editar">
-                                                <i class="bi bi-pencil"></i>
-                                            </a> --}}
-                                            <a href="{{ route('casos.edit', $caso->id) }}" class="btn btn-outline-warning"
+                                            {{-- Botón Editar --}}
+                                            <a href="{{ route('casos.edit', $caso->id) }}"
+                                                class="btn btn-outline-warning d-flex align-items-center justify-content-center"
                                                 title="Editar">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
 
-                                            {{-- Eliminar --}}
-                                            <button type="button" class="btn btn-outline-danger" title="Eliminar"
-                                                onclick="confirmarEliminacion({{ $caso->id }})">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
+                                            {{-- Botón Eliminar --}}
+                                            <form id="delete-form-{{ $caso->id }}"
+                                                action="{{ route('casos.destroy', $caso->id) }}" method="POST"
+                                                style="margin: 0;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="btn btn-outline-danger d-flex align-items-center justify-content-center"
+                                                    title="Eliminar"
+                                                    onclick="return confirm('¿Estás seguro de que quieres eliminar este caso?');">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
                                         </div>
+
                                     </td>
 
                                 </tr>
@@ -209,19 +254,23 @@
                 </div>
             </div>
 
-            <div class="card-footer bg-white">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <small class="text-muted">
-                            Mostrando {{ $casos->firstItem() ?? 0 }} a {{ $casos->lastItem() ?? 0 }}
-                            de {{ $casos->total() }} casos
-                        </small>
-                    </div>
-                    <div>
-                        {{ $casos->links() }}
+            <div class="card-footer bg-light border-top">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                    <small class="text-muted mb-0">
+                        Mostrando
+                        <strong>{{ $casos->firstItem() ?? 0 }}</strong>
+                        a
+                        <strong>{{ $casos->lastItem() ?? 0 }}</strong>
+                        de
+                        <strong>{{ $casos->total() }}</strong> casos
+                    </small>
+
+                    <div class="pagination-wrapper">
+                        {{ $casos->onEachSide(1)->links('pagination::bootstrap-5') }}
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
