@@ -84,20 +84,22 @@ class CasoController extends Controller
         // =====================
         $validated = $request->validate([
             // REGIONAL
+            'tipo_atencion' => 'required|string|max:255',
             'regional_recibe_caso' => 'required|string|max:255',
             'regional_fecha' => 'required|date',
-            'regional_institucion_derivante' => 'required|string|max:255',
+            //'regional_institucion_derivante' => 'required|string|max:255',
             'tipo_registro' => 'required|in:automatico,manual',
             'nro_registro_manual_input' => [
                 'required_if:tipo_registro,manual',
                 'nullable',
-                'regex:/^FLM-\d{8}$/',
+                'regex:/^(FLM-\d{8}|[A-Z]{2,4}-\d{2}-\d{2}(-[A-Z0-9]+(\/[A-Z0-9]+)?)?)$/',
                 'unique:casos,nro_registro'
             ],
 
             // PACIENTE
             'paciente_nombres' => 'required|string|max:255',
             'paciente_apellidos' => 'required|string|max:255',
+            //'paciente_edad' => 'required|integer|min:0|max:120',
             'paciente_sexo' => 'required|in:M,F',
             'paciente_edad_rango' => 'required|string',
             'paciente_ci' => 'nullable|string|max:50',
@@ -114,12 +116,14 @@ class CasoController extends Controller
             'paciente_estado_civil' => 'required|string',
             'paciente_nivel_instruccion' => 'required|string',
             'paciente_idioma_mas_hablado' => 'required|string',
+            'paciente_idioma_especificar' => 'nullable|string|max:255',
             'paciente_ocupacion' => 'required|string',
             'paciente_situacion_ocupacional' => 'required|string',
 
             // PAREJA
             'pareja_nombres' => 'required|string|max:255',
             'pareja_apellidos' => 'required|string|max:255',
+            //'pareja_edad' => 'required|integer|min:0|max:120',
             'pareja_sexo' => 'required|in:M,F',
             'pareja_edad_rango' => 'required|string',
             'pareja_ci' => 'nullable|string|max:50',
@@ -131,10 +135,12 @@ class CasoController extends Controller
             'pareja_otros' => 'nullable|string',
             'pareja_lugar_nacimiento' => 'nullable|string|max:255',
             'pareja_lugar_nacimiento_op' => 'required|in:dentro,fuera',
-            'pareja_residencia' => 'required|string',
-            'pareja_tiempo_residencia' => 'required|string',
-            'pareja_estado_civil' => 'required|string',
-            'pareja_nivel_instruccion' => 'required|string',
+            'pareja_lugar_residencia_op' => 'nullable|in:dentro,fuera', // ✅ NUEVO
+            'pareja_tiempo_residencia_op' => 'nullable|string', // ✅ NUEVO
+            'pareja_residencia' => 'nullable|string',
+            'pareja_tiempo_residencia' => 'nullable|string',
+            'pareja_estado_civil' => 'nullable|string',
+            'pareja_nivel_instruccion' => 'nullable|string',
             'pareja_idioma' => 'required|string',
             'pareja_especificar_idioma' => 'nullable|string|max:255',
             'pareja_ocupacion_principal' => 'required|string',
@@ -154,6 +160,7 @@ class CasoController extends Controller
             'violencia_motivo_otros' => 'nullable|string|max:500',
             'violencia_descripcion_hechos' => 'nullable|string',
             'violencia_institucion_denuncia' => 'nullable|string|max:500',
+            'violencia_institucion_derivar' => 'nullable|string|max:500',
             'formulario_responsable_nombre' => 'nullable|string|max:255',
         ], [
             // MENSAJES PERSONALIZADOS
@@ -187,6 +194,7 @@ class CasoController extends Controller
         // DATOS DEL PACIENTE
         $data['paciente_nombres'] = $request->input('paciente_nombres');
         $data['paciente_apellidos'] = $request->input('paciente_apellidos');
+        $data['paciente_edad'] = $request->input('paciente_edad');
         $data['paciente_ci'] = $request->input('paciente_ci');
         $data['paciente_telefono'] = $request->input('paciente_telefono');
         $data['paciente_calle'] = $request->input('paciente_calle');
@@ -202,6 +210,7 @@ class CasoController extends Controller
         $data['paciente_edad_rango'] = $request->input('paciente_edad_rango');
         $data['paciente_nivel_instruccion'] = $request->input('paciente_nivel_instruccion');
         $data['paciente_idioma_mas_hablado'] = $request->input('paciente_idioma_mas_hablado');
+        $data['paciente_idioma_especificar'] = $request->input('paciente_idioma_especificar');
         $data['paciente_ocupacion'] = $request->input('paciente_ocupacion');
         $data['paciente_situacion_ocupacional'] = $request->input('paciente_situacion_ocupacional');
         $data['paciente_otros'] = $request->input('paciente_otros');
@@ -209,6 +218,7 @@ class CasoController extends Controller
         // DATOS DE LA PAREJA
         $data['pareja_nombres'] = $request->input('pareja_nombres');
         $data['pareja_apellidos'] = $request->input('pareja_apellidos');
+        $data['pareja_edad'] = $request->input('pareja_edad');
         $data['pareja_ci'] = $request->input('pareja_ci');
         $data['pareja_telefono'] = $request->input('pareja_telefono');
         $data['pareja_calle'] = $request->input('pareja_calle');
@@ -219,6 +229,8 @@ class CasoController extends Controller
         $data['pareja_sexo'] = $request->input('pareja_sexo');
         $data['pareja_lugar_nacimiento'] = $request->input('pareja_lugar_nacimiento');
         $data['pareja_lugar_nacimiento_op'] = $request->input('pareja_lugar_nacimiento_op');
+        $data['pareja_lugar_residencia_op'] = $request->input('pareja_lugar_residencia_op');
+        $data['pareja_tiempo_residencia_op'] = $request->input('pareja_tiempo_residencia_op');
         $data['pareja_edad_rango'] = $request->input('pareja_edad_rango');
         $data['pareja_nivel_instruccion'] = $request->input('pareja_nivel_instruccion');
         $data['pareja_ocupacion_principal'] = $request->input('pareja_ocupacion_principal');
@@ -285,6 +297,7 @@ class CasoController extends Controller
 
         // CAMPOS FINALES
         $data['violencia_institucion_denuncia'] = $request->input('violencia_institucion_denuncia');
+        $data['violencia_institucion_derivar'] = $request->input('violencia_institucion_derivar');
         $data['formulario_responsable_nombre'] = $request->input('formulario_responsable_nombre');
 
         // Campos legacy (si existen en tu migración)
@@ -323,11 +336,11 @@ class CasoController extends Controller
     {
         $numero = $request->input('numero');
 
-        // Validar formato
-        if (!Caso::validarFormatoRegistro($numero)) {
+        // Nueva validación flexible
+        if (!preg_match('/^[A-Z]{2,4}-\d{2}-\d{2}(-[A-Z0-9]+(\/[A-Z0-9]+)?)?$/', $numero)) {
             return response()->json([
                 'valido' => false,
-                'mensaje' => 'Formato incorrecto. Debe ser FLM-YYNNNNNN'
+                'mensaje' => 'Formato incorrecto. Ejemplo: CT-48-25-P/T o FLM-25000001'
             ]);
         }
 
@@ -346,6 +359,7 @@ class CasoController extends Controller
             'mensaje' => 'Número válido'
         ]);
     }
+
 
     /**
      * Muestra un caso específico.
@@ -459,7 +473,7 @@ class CasoController extends Controller
         // PREPARAR DATOS
         // =====================
         $data = [];
-
+        $data['tipo_atencion'] = $request->input('tipo_atencion');
         // REGIONAL
         $data['regional_recibe_caso'] = $request->input('regional_recibe_caso');
         $data['regional_fecha'] = $request->input('regional_fecha');

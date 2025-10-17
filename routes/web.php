@@ -19,6 +19,9 @@ use App\Models\Testimonio;
 use App\Models\Contenido;
 use App\Models\FichaAtencionEvaluacion;
 use App\Http\Controllers\CasoController;
+use App\Http\Controllers\FichaAgresorController;
+use App\Http\Controllers\FichaParejaController;
+use App\Http\Controllers\FichaVictimaController;
 
 /*Route::get('/', function () {
     return view('welcome');
@@ -90,6 +93,7 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     Route::delete('/casos/{caso}', [CasoController::class,'destroy'])->name('casos.destroy');
     Route::get('/casos/numero/proximo', [CasoController::class, 'obtenerProximoNumero'])->name('casos.proximo-numero');
     Route::post('/casos/numero/validar', [CasoController::class, 'validarNumeroRegistro'])->name('casos.validar-numero');
+    
 
     // Ruta específica para Ficha de Atención si la necesitas
     Route::prefix('casos/{caso}/fichaAtencion')->group(function () {
@@ -111,6 +115,11 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
         Route::delete('{ficha}', [FichaAtencionEvaluacionController::class, 'destroy'])
             ->name('casos.fichaAtencionEvaluacion.destroy');
     });
+    Route::get('/casos/fichaPreliminarVictima/{caso}', [FichaVictimaController::class, 'fichaPreliminarVictima'])->name('casos.fichaPreliminarVictima');
+    Route::get('/casos/fichaAtencionAgresor/{caso}', [FichaAgresorController::class, 'fichaAtencionAgresor'])->name('casos.fichaAtencionAgresor');
+    Route::get('/casos/fichaAtencionPareja/{caso}', [FichaParejaController::class, 'fichaAtencionPareja'])->name('casos.fichaAtencionPareja');
+    
+    
 });
 
 require __DIR__ . '/auth.php';

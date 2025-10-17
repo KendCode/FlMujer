@@ -13,6 +13,7 @@ class Caso extends Model
 
     protected $fillable = [
         // REGIONAL
+        'tipo_atencion',
         'regional_recibe_caso',
         'regional_fecha',
         'nro_registro',
@@ -23,6 +24,7 @@ class Caso extends Model
         'paciente_nombres',
         'paciente_apellidos',
         'paciente_ci',
+        'paciente_edad',
         'paciente_telefono',
         'paciente_calle',
         'paciente_numero',
@@ -37,6 +39,7 @@ class Caso extends Model
         'paciente_edad_rango',
         'paciente_nivel_instruccion',
         'paciente_idioma_mas_hablado',       // ✅ AGREGAR
+        'paciente_idioma_especificar',
         'paciente_ocupacion',
         'paciente_situacion_ocupacional',
         'paciente_otros',
@@ -44,6 +47,7 @@ class Caso extends Model
         // PAREJA
         'pareja_nombres',
         'pareja_apellidos',
+        'pareja_edad',
         'pareja_ci',
         'pareja_telefono',
         'pareja_calle',
@@ -54,6 +58,8 @@ class Caso extends Model
         'pareja_sexo',
         'pareja_lugar_nacimiento',
         'pareja_lugar_nacimiento_op',
+        'pareja_lugar_residencia_op',       // ✅ AGREGAR
+        'pareja_tiempo_residencia_op',      // ✅ AGREGAR
         'pareja_edad_rango',
         'pareja_nivel_instruccion',
         'pareja_ocupacion_principal',
@@ -105,12 +111,14 @@ class Caso extends Model
         'violencia_atencion_apoyo_agresor',          // ✅ AGREGAR
         'violencia_atencion_apoyo_hijos',            // ✅ AGREGAR
         'violencia_institucion_denuncia',
+        'violencia_institucion_derivar',
         'formulario_responsable_nombre',             // ✅ AGREGAR
     ];
     protected $casts = [
         'regional_fecha' => 'date',
         'nro_registro_manual' => 'boolean',
-
+        'paciente_edad' => 'integer', // ✅ NUEVO
+        'pareja_edad' => 'integer', // ✅ NUEVO
         // Hijos
         'hijos_edad_menor4_femenino' => 'boolean',
         'hijos_edad_menor4_masculino' => 'boolean',

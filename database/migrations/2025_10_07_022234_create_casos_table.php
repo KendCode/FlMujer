@@ -29,6 +29,7 @@ return new class extends Migration
             // =====================
             $table->string('paciente_nombres')->nullable();
             $table->string('paciente_apellidos')->nullable();
+            $table->integer('paciente_edad')->nullable(); // ✅ CAMBIADO a integer
             $table->string('paciente_ci')->nullable();
             $table->string('paciente_telefono')->nullable();
             $table->string('paciente_calle')->nullable();
@@ -44,6 +45,7 @@ return new class extends Migration
             $table->string('paciente_edad_rango')->nullable();
             $table->string('paciente_nivel_instruccion')->nullable();
             $table->string('paciente_idioma_mas_hablado')->nullable(); // ✅ CORREGIDO
+            $table->string('paciente_idioma_especificar')->nullable(); 
             $table->string('paciente_ocupacion')->nullable();
             $table->string('paciente_situacion_ocupacional')->nullable();
             $table->text('paciente_otros')->nullable();
@@ -54,6 +56,7 @@ return new class extends Migration
             $table->string('pareja_nombres')->nullable();
             $table->string('pareja_apellidos')->nullable();
             $table->string('pareja_ci')->nullable();
+            $table->integer('pareja_edad')->nullable(); // ✅ CAMBIADO a integer
             $table->string('pareja_telefono')->nullable();
             $table->string('pareja_calle')->nullable();
             $table->string('pareja_numero')->nullable();
@@ -63,6 +66,8 @@ return new class extends Migration
             $table->string('pareja_sexo')->nullable();
             $table->string('pareja_lugar_nacimiento')->nullable();
             $table->string('pareja_lugar_nacimiento_op')->nullable();
+            $table->string('pareja_lugar_residencia_op')->nullable(); // ✅ NUEVO
+            $table->string('pareja_tiempo_residencia_op')->nullable(); // ✅ NUEVO
             $table->string('pareja_edad_rango')->nullable();
             $table->string('pareja_nivel_instruccion')->nullable();
             $table->string('pareja_ocupacion_principal')->nullable();
@@ -111,6 +116,7 @@ return new class extends Migration
             $table->text('violencia_descripcion_hechos')->nullable();
             $table->string('violencia_denuncia_previa')->nullable(); // ✅ CAMBIADO a string (si/no)
             $table->string('violencia_institucion_denuncia')->nullable();
+            $table->string('violencia_institucion_derivar')->nullable();
             
             // =====================
             // RAZONES DE NO DENUNCIA
@@ -130,6 +136,7 @@ return new class extends Migration
             // =====================
             // ATENCIÓN DEMANDADA
             // =====================
+            $table->string('tipo_atencion')->nullable(); // TIPO DE ATENCION QUE FORMULARIO DE TRES SE USARA
             $table->boolean('violencia_atencion_apoyo_victima')->nullable(); // ✅ NUEVO
             $table->boolean('violencia_atencion_apoyo_pareja')->nullable(); // ✅ NUEVO
             $table->boolean('violencia_atencion_apoyo_agresor')->nullable(); // ✅ NUEVO
@@ -139,7 +146,6 @@ return new class extends Migration
             // RESPONSABLE DEL FORMULARIO
             // =====================
             $table->string('formulario_responsable_nombre')->nullable(); // ✅ NUEVO
-
             $table->timestamps();
         });
     }

@@ -200,17 +200,71 @@
                                                     Fichas Psicológicas
                                                 </button>
                                                 <ul class="dropdown-menu" aria-labelledby="btnFichas{{ $caso->id }}">
+                                                    {{-- Fichas generales --}}
                                                     <li>
                                                         <a class="dropdown-item"
                                                             href="{{ route('casos.fichaAtencionEvaluacion.index', $caso->id) }}">
-                                                            Ficha de Atención y Evaluación Psicológica
+                                                            📋 Ficha de Atención y Evaluación
                                                         </a>
                                                     </li>
                                                     <li>
                                                         <a class="dropdown-item" href="#">
-                                                            Ficha de seguimiento psicológico
+                                                            📝 Ficha de Seguimiento
                                                         </a>
                                                     </li>
+
+                                                    {{-- Ficha específica según tipo de atención --}}
+                                                    @if ($caso->tipo_atencion)
+                                                        <li>
+                                                            <hr class="dropdown-divider">
+                                                        </li>
+                                                        <li>
+                                                            <h6 class="dropdown-header">Ficha específica:</h6>
+                                                        </li>
+
+                                                        @switch($caso->tipo_atencion)
+                                                            @case('victima')
+                                                                <li>
+                                                                    <a class="dropdown-item"
+                                                                        href="{{ route('casos.fichaPreliminarVictima', $caso->id) }}">
+                                                                        🧍‍♀️ Ficha - Víctima
+                                                                    </a>
+                                                                </li>
+                                                            @break
+
+                                                            @case('pareja')
+                                                                <li>
+                                                                    <a class="dropdown-item"
+                                                                        href="{{ route('casos.fichaAtencionPareja', $caso->id) }}">
+                                                                        💑 Ficha - Pareja
+                                                                    </a>
+                                                                </li>
+                                                            @break
+
+                                                            @case('agresor')
+                                                                <li>
+                                                                    <a class="dropdown-item"
+                                                                        href="{{ route('casos.fichaAtencionAgresor', $caso->id) }}">
+                                                                        ⚠️ Ficha - Agresor
+                                                                    </a>
+                                                                </li>
+                                                            @break
+
+                                                            @case('hijos')
+                                                                <li>
+                                                                    <a class="dropdown-item" href="#">
+                                                                        👶 Ficha - Hijos
+                                                                    </a>
+                                                                </li>
+                                                            @break
+                                                        @endswitch
+                                                    @else
+                                                        <li>
+                                                            <hr class="dropdown-divider">
+                                                        </li>
+                                                        <li><span class="dropdown-item text-muted small">⚠️ Sin tipo
+                                                                específico</span></li>
+                                                    @endif
                                                 </ul>
                                             </div>
 
@@ -239,78 +293,78 @@
                                     </td>
 
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="10" class="text-center py-4">
-                                        <div class="text-muted">
-                                            <i class="bi bi-inbox fs-1"></i>
-                                            <p class="mt-2">No hay casos registrados</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card-footer bg-light border-top">
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
-                    <small class="text-muted mb-0">
-                        Mostrando
-                        <strong>{{ $casos->firstItem() ?? 0 }}</strong>
-                        a
-                        <strong>{{ $casos->lastItem() ?? 0 }}</strong>
-                        de
-                        <strong>{{ $casos->total() }}</strong> casos
-                    </small>
-
-                    <div class="pagination-wrapper">
-                        {{ $casos->onEachSide(1)->links('pagination::bootstrap-5') }}
+                                @empty
+                                    <tr>
+                                        <td colspan="10" class="text-center py-4">
+                                            <div class="text-muted">
+                                                <i class="bi bi-inbox fs-1"></i>
+                                                <p class="mt-2">No hay casos registrados</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+
+                <div class="card-footer bg-light border-top">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                        <small class="text-muted mb-0">
+                            Mostrando
+                            <strong>{{ $casos->firstItem() ?? 0 }}</strong>
+                            a
+                            <strong>{{ $casos->lastItem() ?? 0 }}</strong>
+                            de
+                            <strong>{{ $casos->total() }}</strong> casos
+                        </small>
+
+                        <div class="pagination-wrapper">
+                            {{ $casos->onEachSide(1)->links('pagination::bootstrap-5') }}
+                        </div>
+                    </div>
+                </div>
+
             </div>
-
         </div>
-    </div>
 
-    @push('scripts')
-        <script>
-            function confirmarEliminacion(id) {
-                if (confirm('¿Está seguro de eliminar este caso? Esta acción no se puede deshacer.')) {
-                    document.getElementById('delete-form-' + id).submit();
+        @push('scripts')
+            <script>
+                function confirmarEliminacion(id) {
+                    if (confirm('¿Está seguro de eliminar este caso? Esta acción no se puede deshacer.')) {
+                        document.getElementById('delete-form-' + id).submit();
+                    }
                 }
-            }
 
-            document.getElementById('btnLimpiar').addEventListener('click', function() {
-                document.getElementById('searchInput').value = '';
-                document.getElementById('filterDistrito').value = '';
-                document.getElementById('filterTipoViolencia').value = '';
-                document.getElementById('filterFecha').value = '';
-                window.location.href = "{{ route('casos.index') }}";
-            });
-
-            // Búsqueda en tiempo real (opcional)
-            document.getElementById('searchInput').addEventListener('keyup', function(e) {
-                let searchTerm = e.target.value.toLowerCase();
-                let rows = document.querySelectorAll('#tablaCasos tbody tr');
-
-                rows.forEach(row => {
-                    let text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                document.getElementById('btnLimpiar').addEventListener('click', function() {
+                    document.getElementById('searchInput').value = '';
+                    document.getElementById('filterDistrito').value = '';
+                    document.getElementById('filterTipoViolencia').value = '';
+                    document.getElementById('filterFecha').value = '';
+                    window.location.href = "{{ route('casos.index') }}";
                 });
-            });
 
-            // Filtrado por distrito, tipo de violencia y fecha
-            document.getElementById('filterDistrito').addEventListener('change', function(e) {
-                let distrito = e.target.value;
-                let rows = document.querySelectorAll('#tablaCasos tbody tr');
-                rows.forEach(row => {
-                    let rowDistrito = row.querySelector('td:nth-child(6) .badge').textContent.replace(
-                        'Distrito ', '');
-                    row.style.display = distrito === '' || rowDistrito === distrito ? '' : 'none';
+                // Búsqueda en tiempo real (opcional)
+                document.getElementById('searchInput').addEventListener('keyup', function(e) {
+                    let searchTerm = e.target.value.toLowerCase();
+                    let rows = document.querySelectorAll('#tablaCasos tbody tr');
+
+                    rows.forEach(row => {
+                        let text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(searchTerm) ? '' : 'none';
+                    });
                 });
-            });
-        </script>
-    @endpush
-@endsection
+
+                // Filtrado por distrito, tipo de violencia y fecha
+                document.getElementById('filterDistrito').addEventListener('change', function(e) {
+                    let distrito = e.target.value;
+                    let rows = document.querySelectorAll('#tablaCasos tbody tr');
+                    rows.forEach(row => {
+                        let rowDistrito = row.querySelector('td:nth-child(6) .badge').textContent.replace(
+                            'Distrito ', '');
+                        row.style.display = distrito === '' || rowDistrito === distrito ? '' : 'none';
+                    });
+                });
+            </script>
+        @endpush
+    @endsection

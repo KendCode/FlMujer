@@ -26,8 +26,8 @@
             @method('PUT')
 
             <!-- =====================
-                                 SECCIÓN 0: DATOS DE LA REGIONAL
-                            ===================== -->
+                                     SECCIÓN 0: DATOS DE LA REGIONAL
+                                ===================== -->
             <div class="card mb-3">
                 <div class="card-header bg-primary text-white">
                     <i class="bi bi-building"></i> Regional
@@ -64,8 +64,8 @@
             </div>
 
             <!-- =====================
-                                 SECCIÓN 1: DATOS PERSONALES PACIENTE
-                            ===================== -->
+                                     SECCIÓN 1: DATOS PERSONALES PACIENTE
+                                ===================== -->
             <div class="card mb-3">
                 <div class="card-header bg-info text-white">
                     <i class="bi bi-person"></i> Datos Personales del Paciente
@@ -295,8 +295,8 @@
             </div>
 
             <!-- =====================
-                                 SECCIÓN 2: DATOS PAREJA
-                            ===================== -->
+                                     SECCIÓN 2: DATOS PAREJA
+                                ===================== -->
             <div class="card mb-3">
                 <div class="card-header bg-warning">
                     <i class="bi bi-people"></i> Datos de la Pareja
@@ -559,8 +559,8 @@
             </div>
 
             <!-- =====================
-                                 SECCIÓN 3: DATOS HIJOS
-                            ===================== -->
+                                     SECCIÓN 3: DATOS HIJOS
+                                ===================== -->
             <div class="card mb-3">
                 <div class="card-header bg-success text-white">
                     <i class="bi bi-person-hearts"></i> Hijos
@@ -715,8 +715,8 @@
             </div>
 
             <!-- =====================
-                                 SECCIÓN 4: TIPOS DE VIOLENCIA
-                            ===================== -->
+                                     SECCIÓN 4: TIPOS DE VIOLENCIA
+                                ===================== -->
             <div class="card mb-3">
                 <div class="card-header bg-danger text-white">
                     <i class="bi bi-exclamation-triangle"></i> Tipos de Violencia
@@ -896,43 +896,47 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Atención que demanda</label>
+                        <label class="form-label">Atención que demanda <span class="text-danger">*</span></label>
 
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="violencia_atencion_apoyo_victima"
-                                id="atencion_victima" value="1"
-                                {{ old('violencia_atencion_apoyo_victima', $caso->violencia_atencion_apoyo_victima) == 1 ? 'checked' : '' }}>
+                            <input class="form-check-input" type="radio" name="tipo_atencion" id="atencion_victima"
+                                value="victima"
+                                {{ old('tipo_atencion', $caso->tipo_atencion) == 'victima' ? 'checked' : '' }} required>
                             <label class="form-check-label" for="atencion_victima">
-                                Apoyo a Víctima
+                                🧍‍♀️ Apoyo a Víctima
                             </label>
                         </div>
 
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="violencia_atencion_apoyo_pareja"
-                                id="atencion_pareja" value="1"
-                                {{ old('violencia_atencion_apoyo_pareja', $caso->violencia_atencion_apoyo_pareja) == 1 ? 'checked' : '' }}>
+                            <input class="form-check-input" type="radio" name="tipo_atencion" id="atencion_pareja"
+                                value="pareja"
+                                {{ old('tipo_atencion', $caso->tipo_atencion) == 'pareja' ? 'checked' : '' }}>
                             <label class="form-check-label" for="atencion_pareja">
-                                Apoyo a Pareja
+                                💑 Apoyo a Pareja
                             </label>
                         </div>
 
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="violencia_atencion_apoyo_agresor"
-                                id="atencion_agresor" value="1"
-                                {{ old('violencia_atencion_apoyo_agresor', $caso->violencia_atencion_apoyo_agresor) == 1 ? 'checked' : '' }}>
+                            <input class="form-check-input" type="radio" name="tipo_atencion" id="atencion_agresor"
+                                value="agresor"
+                                {{ old('tipo_atencion', $caso->tipo_atencion) == 'agresor' ? 'checked' : '' }}>
                             <label class="form-check-label" for="atencion_agresor">
-                                Apoyo a agresor
+                                ⚠️ Apoyo a Agresor
                             </label>
                         </div>
 
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="violencia_atencion_apoyo_hijos"
-                                id="atencion_hijos" value="1"
-                                {{ old('violencia_atencion_apoyo_hijos', $caso->violencia_atencion_apoyo_hijos) == 1 ? 'checked' : '' }}>
+                            <input class="form-check-input" type="radio" name="tipo_atencion" id="atencion_hijos"
+                                value="hijos"
+                                {{ old('tipo_atencion', $caso->tipo_atencion) == 'hijos' ? 'checked' : '' }}>
                             <label class="form-check-label" for="atencion_hijos">
-                                Apoyo hijos
+                                👶 Apoyo a Hijos
                             </label>
                         </div>
+
+                        @error('tipo_atencion')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
