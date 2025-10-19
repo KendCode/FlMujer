@@ -33,11 +33,21 @@
 
 
             {{-- Fecha --}}
-            <div class="mb-3">
-                <label class="form-label">Fecha:</label>
-                <input type="date" name="fecha" class="form-control"
-                    value="{{ old('fecha', $ficha->fecha->format('Y-m-d')) }}" required>
+            <div class="row">
+                {{-- Fecha --}}
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Fecha:</label>
+                    <input type="date" name="fecha" class="form-control"
+                        value="{{ old('fecha', $ficha->fecha->format('Y-m-d')) }}" required>
+                </div>
+
+                {{-- Edad --}}
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Edad</label>
+                    <input type="text" name="edad" class="form-control" value="{{ old('edad', $ficha->edad) }}">
+                </div>
             </div>
+
 
             {{-- Nombres y Apellidos --}}
             <div class="mb-3">

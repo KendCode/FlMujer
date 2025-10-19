@@ -65,8 +65,8 @@
     <form action="{{ route('casos.store') }}" method="POST">
         @csrf
         <!-- =====================
-                                                                                 SECCIÓN 0: DATOS DE LA REGIONAL
-                                                                            ===================== -->
+                           SECCIÓN 0: DATOS DE LA REGIONAL
+                                     ===================== -->
         <div class="card mb-3">
             <div class="card-header">Regional</div>
             <div class="card-body">
@@ -81,6 +81,7 @@
                     </div>
 
                     <!-- ✅ NUEVO: Opción para elegir entre automático o manual -->
+                    <!-- ✅ Opción para elegir entre automático o manual -->
                     <div class="col-md-12 mt-3">
                         <label class="form-label d-block">Número de Registro</label>
                         <div class="form-check form-check-inline">
@@ -99,26 +100,34 @@
                         </div>
                     </div>
 
+                    <!-- Vista previa del número automático -->
+                    <div class="col-md-6 mt-2" id="preview_automatico">
+                        <label class="form-label">Número que se generará automáticamente</label>
+                        <div class="input-group">
+                            <input type="text" id="numero_preview" class="form-control bg-light" readonly
+                                placeholder="Cargando...">
+                            <button type="button" class="btn btn-outline-secondary" onclick="cargarPreviewNumero()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <small class="form-text text-muted">Este número se asignará al guardar el caso</small>
+                    </div>
+
                     <!-- Campo para ingreso manual (oculto por defecto) -->
                     <div class="col-md-6 mt-2" id="campo_registro_manual" style="display: none;">
                         <label class="form-label">Número de Registro Manual</label>
                         <input type="text" name="nro_registro_manual_input" id="nro_registro_manual_input"
-                            class="form-control" placeholder="CT-48-25-P/T"
-                            pattern="^[A-Z]{2,4}-\d{2}-\d{2}(-[A-Z0-9]+(/[A-Z0-9]+)?)?$"
-                            title="Ejemplos válidos: CT-48-25-P/T, CT-07-25-7, CT-06-25-T, FLM-25000001">
-                        <small class="form-text text-muted">
-                            Formato válido: CT-48-25-P/T, CT-07-25-7, CT-06-25-T, FLM-25000001
+                            class="form-control" placeholder="CT-EA-001-25" pattern="^CT-EA-\d{3}-\d{2}$"
+                            title="Formato válido: CT-EA-001-25">
+                        <div id="feedback_manual" style="display: none;">
+                            <small class="form-text"></small>
+                        </div>
+                        <small class="form-text text-muted" id="help_text">
+                            Formato: CT-EA-[número único 001-999]-[año 00-99]
                         </small>
-
                     </div>
 
 
-                    <!-- Previsualización del número automático -->
-                    <div class="col-md-6 mt-2" id="preview_automatico">
-                        <label class="form-label">Próximo número automático:</label>
-                        <input type="text" class="form-control" id="preview_numero"
-                            value="{{ App\Models\Caso::generarNumeroRegistro() }}" readonly disabled>
-                    </div>
 
                     <div class="col-md-6">
                         <label class="form-label">Institución que deriva</label>
@@ -129,8 +138,8 @@
         </div>
 
         <!-- =====================
-                                                                                 SECCIÓN 1: DATOS PERSONALES PACIENTE
-                                                                            ===================== -->
+            SECCIÓN 1: DATOS PERSONALES PACIENTE
+                 ===================== -->
 
         <div class="card mb-3">
             <div class="card-header">Datos Personales y Más Datos</div>
@@ -429,8 +438,8 @@
         </div>
 
         <!-- =====================
-                                                                             SECCIÓN 2: DATOS PAREJA
-                                                                        ===================== -->
+                                                                                                 SECCIÓN 2: DATOS PAREJA
+                                                                                            ===================== -->
         <div class="card mb-3">
             <div class="card-header">2. Datos de la pareja</div>
             <div class="card-body">
@@ -779,8 +788,8 @@
         </div>
 
         <!-- =====================
-                                                                         SECCIÓN 3: DATOS HIJOS
-                                                                    ===================== -->
+                                                                                             SECCIÓN 3: DATOS HIJOS
+                                                                                        ===================== -->
         <div class="card mb-3">
             <div class="card-header">3. Hijos</div>
             <div class="card-body">
@@ -809,45 +818,44 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <!-- MENOR DE 4 AÑOS -->
                             <tr>
                                 <td>Menor de 4 años</td>
 
-                                <!-- Masculino -->
+                                <!-- ✅ Masculino - Agregar [] al name -->
                                 <td>
                                     <div class="d-flex gap-2 justify-content-center">
                                         @for ($i = 0; $i < 5; $i++)
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox"
-                                                    name="hijos_edad_menor4_masculino"
-                                                    id="hijos_edad_menor4_masculino_{{ $i }}" value="M">
+                                                <input class="form-check-input" type="checkbox" name="hijos_menor4_m[]"
+                                                    id="hijos_menor4_m_{{ $i }}" value="1">
                                             </div>
                                         @endfor
                                     </div>
                                 </td>
 
-                                <!-- Femenino -->
+                                <!-- ✅ Femenino - Agregar [] al name -->
                                 <td>
                                     <div class="d-flex gap-2 justify-content-center">
                                         @for ($i = 0; $i < 5; $i++)
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox"
-                                                    name="hijos_edad_menor4_femenino"
-                                                    id="hijos_edad_menor4_femenino_{{ $i }}" value="F">
+                                                <input class="form-check-input" type="checkbox" name="hijos_menor4_f[]"
+                                                    id="hijos_menor4_f_{{ $i }}" value="1">
                                             </div>
                                         @endfor
                                     </div>
                                 </td>
                             </tr>
 
+                            <!-- DE 5 A 10 AÑOS -->
                             <tr>
                                 <td>De 5 a 10 años</td>
                                 <td>
                                     <div class="d-flex gap-2 justify-content-center">
                                         @for ($i = 0; $i < 5; $i++)
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox"
-                                                    name="hijos_edad_5_10_masculino"
-                                                    id="hijos_edad_5_10_masculino_{{ $i }}" value="M">
+                                                <input class="form-check-input" type="checkbox" name="hijos_5a10_m[]"
+                                                    id="hijos_5a10_m_{{ $i }}" value="1">
                                             </div>
                                         @endfor
                                     </div>
@@ -856,24 +864,23 @@
                                     <div class="d-flex gap-2 justify-content-center">
                                         @for ($i = 0; $i < 5; $i++)
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox"
-                                                    name="hijos_edad_5_10_femenino"
-                                                    id="hijos_edad_5_10_femenino_{{ $i }}" value="F">
+                                                <input class="form-check-input" type="checkbox" name="hijos_5a10_f[]"
+                                                    id="hijos_5a10_f_{{ $i }}" value="1">
                                             </div>
                                         @endfor
                                     </div>
                                 </td>
                             </tr>
 
+                            <!-- DE 11 A 15 AÑOS -->
                             <tr>
                                 <td>De 11 a 15 años</td>
                                 <td>
                                     <div class="d-flex gap-2 justify-content-center">
                                         @for ($i = 0; $i < 5; $i++)
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox"
-                                                    name="hijos_edad_11_15_masculino"
-                                                    id="hijos_edad_11_15_masculino_{{ $i }}" value="M">
+                                                <input class="form-check-input" type="checkbox" name="hijos_11a15_m[]"
+                                                    id="hijos_11a15_m_{{ $i }}" value="1">
                                             </div>
                                         @endfor
                                     </div>
@@ -882,24 +889,23 @@
                                     <div class="d-flex gap-2 justify-content-center">
                                         @for ($i = 0; $i < 5; $i++)
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox"
-                                                    name="hijos_edad_11_15_femenino"
-                                                    id="hijos_edad_11_15_femenino_{{ $i }}" value="F">
+                                                <input class="form-check-input" type="checkbox" name="hijos_11a15_f[]"
+                                                    id="hijos_11a15_f_{{ $i }}" value="1">
                                             </div>
                                         @endfor
                                     </div>
                                 </td>
                             </tr>
 
+                            <!-- DE 16 A 20 AÑOS -->
                             <tr>
                                 <td>De 16 a 20 años</td>
                                 <td>
                                     <div class="d-flex gap-2 justify-content-center">
                                         @for ($i = 0; $i < 5; $i++)
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox"
-                                                    name="hijos_edad_16_20_masculino"
-                                                    id="hijos_edad_16_20_masculino_{{ $i }}" value="M">
+                                                <input class="form-check-input" type="checkbox" name="hijos_16a20_m[]"
+                                                    id="hijos_16a20_m_{{ $i }}" value="1">
                                             </div>
                                         @endfor
                                     </div>
@@ -908,24 +914,23 @@
                                     <div class="d-flex gap-2 justify-content-center">
                                         @for ($i = 0; $i < 5; $i++)
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox"
-                                                    name="hijos_edad_16_20_femenino"
-                                                    id="hijos_edad_16_20_femenino_{{ $i }}" value="F">
+                                                <input class="form-check-input" type="checkbox" name="hijos_16a20_f[]"
+                                                    id="hijos_16a20_f_{{ $i }}" value="1">
                                             </div>
                                         @endfor
                                     </div>
                                 </td>
                             </tr>
 
+                            <!-- DE 21 A MÁS AÑOS -->
                             <tr>
                                 <td>De 21 a más años</td>
                                 <td>
                                     <div class="d-flex gap-2 justify-content-center">
                                         @for ($i = 0; $i < 5; $i++)
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox"
-                                                    name="hijos_edad_21_mas_masculino"
-                                                    id="hijos_edad_21_mas_masculino_{{ $i }}" value="M">
+                                                <input class="form-check-input" type="checkbox" name="hijos_21mas_m[]"
+                                                    id="hijos_21mas_m_{{ $i }}" value="1">
                                             </div>
                                         @endfor
                                     </div>
@@ -934,15 +939,13 @@
                                     <div class="d-flex gap-2 justify-content-center">
                                         @for ($i = 0; $i < 5; $i++)
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox"
-                                                    name="hijos_edad_21_mas_femenino"
-                                                    id="hijos_edad_21_mas_femenino_{{ $i }}" value="F">
+                                                <input class="form-check-input" type="checkbox" name="hijos_21mas_f[]"
+                                                    id="hijos_21mas_f_{{ $i }}" value="1">
                                             </div>
                                         @endfor
                                     </div>
                                 </td>
                             </tr>
-
                         </tbody>
                     </table>
                 </div>
@@ -962,8 +965,8 @@
         </div>
 
         <!-- =====================
-                                                                     SECCIÓN 4: TIPOS DE VIOLENCIA
-                                                                ===================== -->
+                                                                                         SECCIÓN 4: TIPOS DE VIOLENCIA
+                                                                                    ===================== -->
         <div class="card mb-3">
             <div class="card-header">4. Tipos de Violencia</div>
             <div class="card-body">
@@ -1164,14 +1167,14 @@
 
                 <div class="mb-3">
                     <label for="violencia_institucion_denuncia" class="form-label">Medidas a tomar:</label>
-                    <input type="text" name="violencia_medidas_tomas" id="violencia_institucion_denuncia"
+                    <input type="text" name="violencia_medidas_tomar" id="violencia_institucion_denuncia"
                         class="form-control" placeholder="medidas a tomar">
                 </div>
-                <div class="mb-3">
+                {{-- <div class="mb-3">
                     <label for="violencia_institucion_derivar" class="form-label">Institución a derivar:</label>
                     <input type="text" name="violencia_institucion_derivar" id="violencia_institucion_derivar"
                         class="form-control" placeholder="institucion a derivar">
-                </div>
+                </div> --}}
                 <div class="mb-3">
                     <label for="violencia_institucion_denuncia" class="form-label">Nombre de la persona que lleno el
                         formulario</label>
@@ -1181,18 +1184,184 @@
             </div>
         </div>
 
-        <button class="btn btn-primary" type="submit">Registrar caso</button>
+
+        <div class="d-flex gap-3 mb-4">
+            <button type="submit"
+                style="background-color: #037E8C; color: white; border: none; border-radius: 5px; padding: 10px 15px;">
+                <i class="fas fa-save me-1"></i> Registrar caso
+            </button>
+            <a href="{{ route('casos.index') }}"
+                style="background-color: #6c757d; color: white; border: none; border-radius: 5px; padding: 10px 15px; text-decoration: none; display: inline-block;">
+                <i class="fas fa-times me-1"></i> Cancelar
+            </a>
+        </div>
     </form>
 
     <!-- JavaScript para toggle del registro -->
     <script>
+        // Al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarPreviewNumero();
+        });
+
+        /**
+         * Alternar entre modo automático y manual
+         */
         function toggleRegistroManual() {
+            const esManual = document.getElementById('registro_manual').checked;
             const campoManual = document.getElementById('campo_registro_manual');
             const previewAutomatico = document.getElementById('preview_automatico');
-            const registroManual = document.getElementById('registro_manual').checked;
+            const inputManual = document.getElementById('nro_registro_manual_input');
 
-            campoManual.style.display = registroManual ? 'block' : 'none';
-            previewAutomatico.style.display = registroManual ? 'none' : 'block';
+            if (esManual) {
+                // Mostrar campo manual
+                campoManual.style.display = 'block';
+                previewAutomatico.style.display = 'none';
+                inputManual.required = true;
+                inputManual.focus();
+            } else {
+                // Mostrar preview automático
+                campoManual.style.display = 'none';
+                previewAutomatico.style.display = 'block';
+                inputManual.required = false;
+                inputManual.value = '';
+                inputManual.classList.remove('is-valid', 'is-invalid');
+                cargarPreviewNumero();
+            }
+        }
+
+        /**
+         * Cargar el preview del número automático
+         */
+        function cargarPreviewNumero() {
+            const previewInput = document.getElementById('numero_preview');
+            previewInput.value = 'Cargando...';
+
+            fetch('{{ route('casos.obtener-proximo-numero') }}', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        previewInput.value = data.numero;
+                    } else {
+                        previewInput.value = 'Error al cargar';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    previewInput.value = 'Error al cargar';
+                });
+        }
+
+        /**
+         * Validación en tiempo real del número manual
+         */
+        let timeoutValidacion;
+        const inputManual = document.getElementById('nro_registro_manual_input');
+
+        if (inputManual) {
+            inputManual.addEventListener('input', function(e) {
+                const valor = e.target.value.toUpperCase();
+                e.target.value = valor;
+
+                // Validar formato mientras escribe
+                const regex = /^CT-EA-\d{3}-\d{2}$/;
+
+                clearTimeout(timeoutValidacion);
+
+                if (valor) {
+                    if (!regex.test(valor)) {
+                        e.target.classList.add('is-invalid');
+                        e.target.classList.remove('is-valid');
+                        mostrarMensajeFeedback('Formato incorrecto: CT-EA-001-25', 'error');
+                    } else {
+                        // Validar unicidad con AJAX después de 500ms
+                        e.target.classList.remove('is-invalid', 'is-valid');
+                        mostrarMensajeFeedback('Verificando disponibilidad...', 'info');
+
+                        timeoutValidacion = setTimeout(() => {
+                            validarNumeroAjax(valor, e.target);
+                        }, 500);
+                    }
+                } else {
+                    e.target.classList.remove('is-invalid', 'is-valid');
+                    ocultarMensajeFeedback();
+                }
+            });
+        }
+
+        /**
+         * Validar número mediante AJAX
+         */
+        function validarNumeroAjax(numero, input) {
+            fetch('{{ route('casos.validar-numero-registro') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        numero: numero
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.valido) {
+                        input.classList.remove('is-invalid');
+                        input.classList.add('is-valid');
+                        mostrarMensajeFeedback('✓ ' + data.mensaje, 'success');
+                    } else {
+                        input.classList.remove('is-valid');
+                        input.classList.add('is-invalid');
+                        mostrarMensajeFeedback('✗ ' + data.mensaje, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    input.classList.add('is-invalid');
+                    mostrarMensajeFeedback('Error al validar. Intente nuevamente.', 'error');
+                });
+        }
+
+        /**
+         * Mostrar mensaje de feedback
+         */
+        function mostrarMensajeFeedback(mensaje, tipo) {
+            const feedbackDiv = document.getElementById('feedback_manual');
+            const feedbackText = feedbackDiv.querySelector('small');
+            const helpText = document.getElementById('help_text');
+
+            if (feedbackDiv && feedbackText) {
+                feedbackDiv.style.display = 'block';
+                helpText.style.display = 'none';
+
+                feedbackText.textContent = mensaje;
+
+                if (tipo === 'error') {
+                    feedbackText.className = 'form-text text-danger';
+                } else if (tipo === 'success') {
+                    feedbackText.className = 'form-text text-success';
+                } else if (tipo === 'info') {
+                    feedbackText.className = 'form-text text-info';
+                }
+            }
+        }
+
+        /**
+         * Ocultar mensaje de feedback
+         */
+        function ocultarMensajeFeedback() {
+            const feedbackDiv = document.getElementById('feedback_manual');
+            const helpText = document.getElementById('help_text');
+
+            if (feedbackDiv && helpText) {
+                feedbackDiv.style.display = 'none';
+                helpText.style.display = 'block';
+            }
         }
     </script>
 @endsection

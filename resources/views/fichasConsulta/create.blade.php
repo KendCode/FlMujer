@@ -176,7 +176,10 @@
                     <input class="form-check-input" type="checkbox" id="espiritual" name="espiritual">
                     <label class="form-check-label" for="espiritual">Espiritual</label>
                 </div>
-
+                <div class="form-group">
+                    <label>Institución a derivar</label>
+                    <input type="text" name="institucion_a_derivar" class="form-control">
+                </div>
                 <div class="button-group">
                     <button type="submit" class="btn btn-primary">Guardar Ficha</button>
                     <a href="{{ route('fichasConsulta.index') }}" class="btn btn-cancel">Cancelar</a>

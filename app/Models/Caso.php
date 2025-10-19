@@ -75,16 +75,16 @@ class Caso extends Model
         // HIJOS
         'hijos_num_gestacion',
         'hijos_dependencia',
-        'hijos_edad_menor4_femenino',
-        'hijos_edad_menor4_masculino',
-        'hijos_edad_5_10_femenino',
-        'hijos_edad_5_10_masculino',
-        'hijos_edad_11_15_femenino',
-        'hijos_edad_11_15_masculino',
-        'hijos_edad_16_20_femenino',
-        'hijos_edad_16_20_masculino',
-        'hijos_edad_21_mas_femenino',
-        'hijos_edad_21_mas_masculino',
+        'hijos_menor4_m',
+        'hijos_menor4_f',
+        'hijos_5a10_m',
+        'hijos_5a10_f',
+        'hijos_11a15_m',
+        'hijos_11a15_f',
+        'hijos_16a20_m',
+        'hijos_16a20_f',
+        'hijos_21mas_m',
+        'hijos_21mas_f',
 
         // VIOLENCIA
         'violencia_tipo_fisica',
@@ -112,6 +112,7 @@ class Caso extends Model
         'violencia_atencion_apoyo_hijos',            // ✅ AGREGAR
         'violencia_institucion_denuncia',
         'violencia_institucion_derivar',
+        'violencia_medidas_tomar',                   // ✅ AGREGAR
         'formulario_responsable_nombre',             // ✅ AGREGAR
     ];
     protected $casts = [
@@ -120,16 +121,7 @@ class Caso extends Model
         'paciente_edad' => 'integer', // ✅ NUEVO
         'pareja_edad' => 'integer', // ✅ NUEVO
         // Hijos
-        'hijos_edad_menor4_femenino' => 'boolean',
-        'hijos_edad_menor4_masculino' => 'boolean',
-        'hijos_edad_5_10_femenino' => 'boolean',
-        'hijos_edad_5_10_masculino' => 'boolean',
-        'hijos_edad_11_15_femenino' => 'boolean',
-        'hijos_edad_11_15_masculino' => 'boolean',
-        'hijos_edad_16_20_femenino' => 'boolean',
-        'hijos_edad_16_20_masculino' => 'boolean',
-        'hijos_edad_21_mas_femenino' => 'boolean',
-        'hijos_edad_21_mas_masculino' => 'boolean',
+       
 
         // Violencia
         'violencia_tipo_fisica' => 'boolean',
@@ -151,36 +143,29 @@ class Caso extends Model
     /**
      * Genera el próximo número de registro automático
      */
-    public static function generarNumeroRegistro($año = null)
+    public static function generarNumeroRegistro()
     {
-        $año = $año ?? date('y'); // Obtiene el año actual en formato 2 dígitos (25)
+        // Obtener el último registro del año actual
+        $añoActual = date('y'); // Ej: "25" para 2025
 
-        // Busca el último registro del año
-        $ultimoRegistro = self::where('nro_registro', 'LIKE', "FLM-{$año}%")
+        $ultimoCaso = self::where('nro_registro', 'like', "CT-EA-%-{$añoActual}")
             ->orderBy('nro_registro', 'desc')
             ->first();
 
-        if ($ultimoRegistro) {
-            // Extrae el número secuencial del último registro
-            $ultimoNumero = (int) substr($ultimoRegistro->nro_registro, -6);
+        if ($ultimoCaso) {
+            // Extraer el número del último registro
+            preg_match('/CT-EA-(\d{3})-\d{2}/', $ultimoCaso->nro_registro, $matches);
+            $ultimoNumero = isset($matches[1]) ? (int)$matches[1] : 0;
             $nuevoNumero = $ultimoNumero + 1;
         } else {
             // Primer registro del año
             $nuevoNumero = 1;
         }
 
-        // Formatea: FLM-25000001
-        return sprintf('FLM-%s%06d', $año, $nuevoNumero);
+        // Formatear con ceros a la izquierda
+        return sprintf('CT-EA-%03d-%s', $nuevoNumero, $añoActual);
     }
 
-    /**
-     * Valida el formato del número de registro manual
-     */
-    public static function validarFormatoRegistro($registro)
-    {
-        // Valida formato: FLM-YYNNNNNN (ej: FLM-23000001)
-        return preg_match('/^FLM-\d{8}$/', $registro);
-    }
 
     /**
      * Boot method para generar número automáticamente si no existe

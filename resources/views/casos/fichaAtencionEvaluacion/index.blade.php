@@ -36,20 +36,7 @@
                                 <td>{{ $ficha->id }}</td>
                                 <td>{{ $ficha->fecha->format('d-m-Y') }}</td>
                                 <td>{{ $ficha->nombres_apellidos }}</td>
-                                <td>
-                                    @php
-                                        $edades = [
-                                            1 => 'Menor de 15 años',
-                                            2 => '16 a 20 años',
-                                            3 => '21 a 25 años',
-                                            4 => '26 a 30 años',
-                                            5 => '31 a 35 años',
-                                            6 => '36 a 50 años',
-                                            7 => 'Más de 50 años',
-                                        ];
-                                    @endphp
-                                    {{ $edades[$ficha->edad] ?? 'N/A' }}
-                                </td>
+                                <td>{{ $ficha->edad }}</td>
 
                                 <td>{{ Str::limit($ficha->motivo_consulta, 30) }}</td>
                                 <td>

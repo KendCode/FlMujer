@@ -37,7 +37,7 @@ return new class extends Migration
             $table->boolean('social')->default(false);
             $table->boolean('psicologico')->default(false);
             $table->boolean('espiritual')->default(false);
-
+            $table->string('institucion_a_derivar')->nullable();
             $table->timestamps();
         });
     }

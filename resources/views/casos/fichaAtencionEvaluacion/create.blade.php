@@ -43,31 +43,11 @@
                     <small class="text-muted">El número de registro no se puede modificar</small>
                 </div>
 
-                <div class="col-md-4">
-                    <label class="form-label">Edad:</label>
-                    @php
-                        $edades = [
-                            1 => 'Menor de 15 años',
-                            2 => '16 a 20 años',
-                            3 => '21 a 25 años',
-                            4 => '26 a 30 años',
-                            5 => '31 a 35 años',
-                            6 => '36 a 50 años',
-                            7 => 'Más de 50 años',
-                        ];
-
-                        // Valor actual de la ficha o caso
-                        $edadSeleccionada = old('edad', $caso->paciente_edad_rango ?? null);
-                    @endphp
-
-                    <select name="edad" class="form-control" required>
-                        <option value="">Seleccione un rango de edad</option>
-                        @foreach ($edades as $key => $label)
-                            <option value="{{ $key }}" {{ $edadSeleccionada == $key ? 'selected' : '' }}>
-                                {{ $label }}
-                            </option>
-                        @endforeach
-                    </select>
+                 <div class="col-md-4">
+                        <label class="form-label d-block">Edad</label>
+                        <div class="form-check form-check-inline">
+                            <input type="text" name="paciente_edad" class="form-control">
+                        </div>
                 </div>
 
             </div>

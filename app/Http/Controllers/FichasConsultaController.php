@@ -30,7 +30,7 @@ class FichasConsultaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'ci' => 'required|string|unique:fichas_consulta,ci|max:9',
+            'ci' => 'nullable|string|unique:fichas_consulta,ci|max:9',
             'nombre' => 'required|string|max:100',
             'apPaterno' => 'required|string|max:100',
             'apMaterno' => 'nullable|string|max:100',
@@ -57,6 +57,7 @@ class FichasConsultaController extends Controller
             'social' => $request->has('social'),
             'psicologico' => $request->has('psicologico'),
             'espiritual' => $request->has('espiritual'),
+            'institucion_a_derivar' => $request->institucion_a_derivar,
         ]);
 
         return redirect()->route('fichasConsulta.index')
@@ -89,12 +90,12 @@ class FichasConsultaController extends Controller
         $ficha = FichasConsulta::findOrFail($id);
 
         $request->validate([
-            'ci' => 'required|string|max:9|unique:fichas_consulta,ci,' . $ficha->idFicha . ',idFicha',
+            'ci' => 'nullable|string|max:9|unique:fichas_consulta,ci,' . $ficha->idFicha . ',idFicha',
             'nombre' => 'required|string|max:100',
             'apPaterno' => 'required|string|max:100',
             'apMaterno' => 'nullable|string|max:100',
             'numCelular' => 'nullable|string|max:8',
-            'fecha' => 'required|date',
+            'fecha' => 'nullable|date',
             'instDeriva' => 'nullable|string|max:150',
             'testimonio' => 'nullable|string',
             'Penal' => 'nullable|array',
@@ -118,6 +119,7 @@ class FichasConsultaController extends Controller
             'social' => $request->has('social'),
             'psicologico' => $request->has('psicologico'),
             'espiritual' => $request->has('espiritual'),
+            'institucion_a_derivar' => $request->institucion_a_derivar,
         ]);
 
         return redirect()->route('fichasConsulta.index')->with('success', 'Ficha actualizada correctamente.');

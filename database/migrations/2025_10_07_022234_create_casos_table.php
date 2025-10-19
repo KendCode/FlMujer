@@ -45,7 +45,7 @@ return new class extends Migration
             $table->string('paciente_edad_rango')->nullable();
             $table->string('paciente_nivel_instruccion')->nullable();
             $table->string('paciente_idioma_mas_hablado')->nullable(); // ✅ CORREGIDO
-            $table->string('paciente_idioma_especificar')->nullable(); 
+            $table->string('paciente_idioma_especificar')->nullable();
             $table->string('paciente_ocupacion')->nullable();
             $table->string('paciente_situacion_ocupacional')->nullable();
             $table->text('paciente_otros')->nullable();
@@ -85,16 +85,17 @@ return new class extends Migration
             // =====================
             $table->string('hijos_num_gestacion')->nullable();
             $table->string('hijos_dependencia')->nullable();
-            $table->boolean('hijos_edad_menor4_femenino')->nullable();
-            $table->boolean('hijos_edad_menor4_masculino')->nullable();
-            $table->boolean('hijos_edad_5_10_femenino')->nullable();
-            $table->boolean('hijos_edad_5_10_masculino')->nullable();
-            $table->boolean('hijos_edad_11_15_femenino')->nullable();
-            $table->boolean('hijos_edad_11_15_masculino')->nullable();
-            $table->boolean('hijos_edad_16_20_femenino')->nullable();
-            $table->boolean('hijos_edad_16_20_masculino')->nullable();
-            $table->boolean('hijos_edad_21_mas_femenino')->nullable();
-            $table->boolean('hijos_edad_21_mas_masculino')->nullable();
+
+            $table->unsignedTinyInteger('hijos_menor4_m')->default(0);
+            $table->unsignedTinyInteger('hijos_menor4_f')->default(0);
+            $table->unsignedTinyInteger('hijos_5a10_m')->default(0);
+            $table->unsignedTinyInteger('hijos_5a10_f')->default(0);
+            $table->unsignedTinyInteger('hijos_11a15_m')->default(0);
+            $table->unsignedTinyInteger('hijos_11a15_f')->default(0);
+            $table->unsignedTinyInteger('hijos_16a20_m')->default(0);
+            $table->unsignedTinyInteger('hijos_16a20_f')->default(0);
+            $table->unsignedTinyInteger('hijos_21mas_m')->default(0);
+            $table->unsignedTinyInteger('hijos_21mas_f')->default(0);
 
             // =====================
             // DATOS DE VIOLENCIA - TIPOS
@@ -104,7 +105,7 @@ return new class extends Migration
             $table->boolean('violencia_tipo_sexual')->nullable();
             $table->boolean('violencia_tipo_patrimonial')->nullable();
             $table->boolean('violencia_tipo_economica')->nullable();
-            
+
             // =====================
             // DATOS DE VIOLENCIA - CARACTERÍSTICAS
             // =====================
@@ -117,7 +118,7 @@ return new class extends Migration
             $table->string('violencia_denuncia_previa')->nullable(); // ✅ CAMBIADO a string (si/no)
             $table->string('violencia_institucion_denuncia')->nullable();
             $table->string('violencia_institucion_derivar')->nullable();
-            
+
             // =====================
             // RAZONES DE NO DENUNCIA
             // =====================
@@ -126,13 +127,13 @@ return new class extends Migration
             $table->boolean('violencia_no_denuncia_por_verguenza')->nullable(); // ✅ NUEVO
             $table->boolean('violencia_no_denuncia_por_desconocimiento')->nullable(); // ✅ NUEVO
             $table->boolean('violencia_no_denuncia_no_sabe_no_responde')->nullable(); // ✅ NUEVO
-            
+
             // =====================
             // MOTIVO Y ATENCIÓN
             // =====================
             $table->string('violencia_motivo_agresion')->nullable(); // ✅ NUEVO
             $table->string('violencia_motivo_otros')->nullable(); // ✅ NUEVO
-            
+
             // =====================
             // ATENCIÓN DEMANDADA
             // =====================
@@ -141,7 +142,7 @@ return new class extends Migration
             $table->boolean('violencia_atencion_apoyo_pareja')->nullable(); // ✅ NUEVO
             $table->boolean('violencia_atencion_apoyo_agresor')->nullable(); // ✅ NUEVO
             $table->boolean('violencia_atencion_apoyo_hijos')->nullable(); // ✅ NUEVO
-            
+            $table->text('violencia_medidas_tomar')->nullable(); // ✅ NUEVO
             // =====================
             // RESPONSABLE DEL FORMULARIO
             // =====================

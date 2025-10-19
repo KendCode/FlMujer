@@ -204,7 +204,11 @@
                         <label class="form-check-label">Espiritual</label>
                     </div>
                 </div>
-
+                <div class="mb-3">
+                    <label for="institucion_a_derivar" class="form-label">Institución a Derivar</label>
+                    <input type="text" name="institucion_a_derivar" id="institucion_a_derivar" class="form-control"
+                        value="{{ old('institucion_a_derivar', $ficha->institucion_a_derivar) }}">
+                </div>
                 <div class="d-flex justify-content-between">
                     <a href="{{ route('fichasConsulta.index') }}" class="btn btn-secondary">Cancelar</a>
                     <button type="submit" class="btn btn-primary">Actualizar</button>

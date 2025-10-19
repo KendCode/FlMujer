@@ -208,13 +208,13 @@
                                                         </a>
                                                     </li>
                                                     <li>
-                                                        <a class="dropdown-item" href="#">
+                                                        <a class="dropdown-item" href="{{ route('casos.fichaSeguimientoPsicologico.create', $caso->id) }}">
                                                             📝 Ficha de Seguimiento
                                                         </a>
                                                     </li>
 
                                                     {{-- Ficha específica según tipo de atención --}}
-                                                    @if ($caso->tipo_atencion)
+                                                    @if (!empty($caso->tipo_atencion))
                                                         <li>
                                                             <hr class="dropdown-divider">
                                                         </li>
@@ -222,48 +222,43 @@
                                                             <h6 class="dropdown-header">Ficha específica:</h6>
                                                         </li>
 
-                                                        @switch($caso->tipo_atencion)
-                                                            @case('victima')
-                                                                <li>
-                                                                    <a class="dropdown-item"
-                                                                        href="{{ route('casos.fichaPreliminarVictima', $caso->id) }}">
-                                                                        🧍‍♀️ Ficha - Víctima
-                                                                    </a>
-                                                                </li>
-                                                            @break
-
-                                                            @case('pareja')
-                                                                <li>
-                                                                    <a class="dropdown-item"
-                                                                        href="{{ route('casos.fichaAtencionPareja', $caso->id) }}">
-                                                                        💑 Ficha - Pareja
-                                                                    </a>
-                                                                </li>
-                                                            @break
-
-                                                            @case('agresor')
-                                                                <li>
-                                                                    <a class="dropdown-item"
-                                                                        href="{{ route('casos.fichaAtencionAgresor', $caso->id) }}">
-                                                                        ⚠️ Ficha - Agresor
-                                                                    </a>
-                                                                </li>
-                                                            @break
-
-                                                            @case('hijos')
-                                                                <li>
-                                                                    <a class="dropdown-item" href="#">
-                                                                        👶 Ficha - Hijos
-                                                                    </a>
-                                                                </li>
-                                                            @break
-                                                        @endswitch
+                                                        @if ($caso->tipo_atencion === 'victima')
+                                                            <li>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('casos.fichaPreliminarVictima', $caso->id) }}">
+                                                                    🧍‍♀️ Ficha - Víctima
+                                                                </a>
+                                                            </li>
+                                                        @elseif($caso->tipo_atencion === 'pareja')
+                                                            <li>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('casos.fichaAtencionPareja', $caso->id) }}">
+                                                                    💑 Ficha - Pareja
+                                                                </a>
+                                                            </li>
+                                                        @elseif($caso->tipo_atencion === 'agresor')
+                                                            <li>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('casos.fichaAtencionAgresor', $caso->id) }}">
+                                                                    ⚠️ Ficha - Agresor
+                                                                </a>
+                                                            </li>
+                                                        @elseif($caso->tipo_atencion === 'hijos')
+                                                            <li>
+                                                                <a class="dropdown-item" href="#">
+                                                                    👶 Ficha - Hijos
+                                                                </a>
+                                                            </li>
+                                                        @endif
                                                     @else
                                                         <li>
                                                             <hr class="dropdown-divider">
                                                         </li>
-                                                        <li><span class="dropdown-item text-muted small">⚠️ Sin tipo
-                                                                específico</span></li>
+                                                        <li>
+                                                            <span class="dropdown-item text-muted small">
+                                                                ⚠️ Sin tipo de atención asignado
+                                                            </span>
+                                                        </li>
                                                     @endif
                                                 </ul>
                                             </div>
@@ -293,78 +288,78 @@
                                     </td>
 
                                 </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="10" class="text-center py-4">
-                                            <div class="text-muted">
-                                                <i class="bi bi-inbox fs-1"></i>
-                                                <p class="mt-2">No hay casos registrados</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                            @empty
+                                <tr>
+                                    <td colspan="10" class="text-center py-4">
+                                        <div class="text-muted">
+                                            <i class="bi bi-inbox fs-1"></i>
+                                            <p class="mt-2">No hay casos registrados</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
-
-                <div class="card-footer bg-light border-top">
-                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
-                        <small class="text-muted mb-0">
-                            Mostrando
-                            <strong>{{ $casos->firstItem() ?? 0 }}</strong>
-                            a
-                            <strong>{{ $casos->lastItem() ?? 0 }}</strong>
-                            de
-                            <strong>{{ $casos->total() }}</strong> casos
-                        </small>
-
-                        <div class="pagination-wrapper">
-                            {{ $casos->onEachSide(1)->links('pagination::bootstrap-5') }}
-                        </div>
-                    </div>
-                </div>
-
             </div>
+
+            <div class="card-footer bg-light border-top">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                    <small class="text-muted mb-0">
+                        Mostrando
+                        <strong>{{ $casos->firstItem() ?? 0 }}</strong>
+                        a
+                        <strong>{{ $casos->lastItem() ?? 0 }}</strong>
+                        de
+                        <strong>{{ $casos->total() }}</strong> casos
+                    </small>
+
+                    <div class="pagination-wrapper">
+                        {{ $casos->onEachSide(1)->links('pagination::bootstrap-5') }}
+                    </div>
+                </div>
+            </div>
+
         </div>
+    </div>
 
-        @push('scripts')
-            <script>
-                function confirmarEliminacion(id) {
-                    if (confirm('¿Está seguro de eliminar este caso? Esta acción no se puede deshacer.')) {
-                        document.getElementById('delete-form-' + id).submit();
-                    }
+    @push('scripts')
+        <script>
+            function confirmarEliminacion(id) {
+                if (confirm('¿Está seguro de eliminar este caso? Esta acción no se puede deshacer.')) {
+                    document.getElementById('delete-form-' + id).submit();
                 }
+            }
 
-                document.getElementById('btnLimpiar').addEventListener('click', function() {
-                    document.getElementById('searchInput').value = '';
-                    document.getElementById('filterDistrito').value = '';
-                    document.getElementById('filterTipoViolencia').value = '';
-                    document.getElementById('filterFecha').value = '';
-                    window.location.href = "{{ route('casos.index') }}";
+            document.getElementById('btnLimpiar').addEventListener('click', function() {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('filterDistrito').value = '';
+                document.getElementById('filterTipoViolencia').value = '';
+                document.getElementById('filterFecha').value = '';
+                window.location.href = "{{ route('casos.index') }}";
+            });
+
+            // Búsqueda en tiempo real (opcional)
+            document.getElementById('searchInput').addEventListener('keyup', function(e) {
+                let searchTerm = e.target.value.toLowerCase();
+                let rows = document.querySelectorAll('#tablaCasos tbody tr');
+
+                rows.forEach(row => {
+                    let text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
                 });
+            });
 
-                // Búsqueda en tiempo real (opcional)
-                document.getElementById('searchInput').addEventListener('keyup', function(e) {
-                    let searchTerm = e.target.value.toLowerCase();
-                    let rows = document.querySelectorAll('#tablaCasos tbody tr');
-
-                    rows.forEach(row => {
-                        let text = row.textContent.toLowerCase();
-                        row.style.display = text.includes(searchTerm) ? '' : 'none';
-                    });
+            // Filtrado por distrito, tipo de violencia y fecha
+            document.getElementById('filterDistrito').addEventListener('change', function(e) {
+                let distrito = e.target.value;
+                let rows = document.querySelectorAll('#tablaCasos tbody tr');
+                rows.forEach(row => {
+                    let rowDistrito = row.querySelector('td:nth-child(6) .badge').textContent.replace(
+                        'Distrito ', '');
+                    row.style.display = distrito === '' || rowDistrito === distrito ? '' : 'none';
                 });
-
-                // Filtrado por distrito, tipo de violencia y fecha
-                document.getElementById('filterDistrito').addEventListener('change', function(e) {
-                    let distrito = e.target.value;
-                    let rows = document.querySelectorAll('#tablaCasos tbody tr');
-                    rows.forEach(row => {
-                        let rowDistrito = row.querySelector('td:nth-child(6) .badge').textContent.replace(
-                            'Distrito ', '');
-                        row.style.display = distrito === '' || rowDistrito === distrito ? '' : 'none';
-                    });
-                });
-            </script>
-        @endpush
-    @endsection
+            });
+        </script>
+    @endpush
+@endsection

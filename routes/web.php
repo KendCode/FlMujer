@@ -82,7 +82,7 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     Route::get('fichasConsulta/{ficha}/edit', [FichasConsultaController::class, 'edit'])->name('fichasConsulta.edit');
     Route::put('fichasConsulta/{ficha}', [FichasConsultaController::class, 'update'])->name('fichasConsulta.update');
     Route::delete('fichasConsulta/{ficha}', [FichasConsultaController::class, 'destroy'])->name('fichasConsulta.destroy');
-    
+
     // Ruta FORMULARIO SITUACION DE VIOLENCIA INTRAFAMILIAR
     Route::get('/casos', [CasoController::class, 'index'])->name('casos.index');
     Route::get('/casos/create', [CasoController::class, 'create'])->name('casos.create');
@@ -90,10 +90,12 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     //Route::get('/casos/{caso}', [CasoController::class,'show'])->name('casos.show');
     Route::get('/casos/{caso}/edit', [CasoController::class, 'edit'])->name('casos.edit');
     Route::put('/casos/{caso}', [CasoController::class, 'update'])->name('casos.update');
-    Route::delete('/casos/{caso}', [CasoController::class,'destroy'])->name('casos.destroy');
-    Route::get('/casos/numero/proximo', [CasoController::class, 'obtenerProximoNumero'])->name('casos.proximo-numero');
-    Route::post('/casos/numero/validar', [CasoController::class, 'validarNumeroRegistro'])->name('casos.validar-numero');
-    
+    Route::delete('/casos/{caso}', [CasoController::class, 'destroy'])->name('casos.destroy');
+    Route::get('/casos/obtener-proximo-numero', [CasoController::class, 'obtenerProximoNumero'])
+        ->name('casos.obtener-proximo-numero');
+
+    Route::post('/casos/validar-numero-registro', [CasoController::class, 'validarNumeroRegistro'])
+        ->name('casos.validar-numero-registro');
 
     // Ruta específica para Ficha de Atención si la necesitas
     Route::prefix('casos/{caso}/fichaAtencion')->group(function () {
@@ -118,8 +120,6 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     Route::get('/casos/fichaPreliminarVictima/{caso}', [FichaVictimaController::class, 'fichaPreliminarVictima'])->name('casos.fichaPreliminarVictima');
     Route::get('/casos/fichaAtencionAgresor/{caso}', [FichaAgresorController::class, 'fichaAtencionAgresor'])->name('casos.fichaAtencionAgresor');
     Route::get('/casos/fichaAtencionPareja/{caso}', [FichaParejaController::class, 'fichaAtencionPareja'])->name('casos.fichaAtencionPareja');
-    
-    
 });
 
 require __DIR__ . '/auth.php';
