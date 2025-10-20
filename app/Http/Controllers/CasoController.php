@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use App\Models\Pareja;
 use App\Models\Hijo;
 use App\Models\FichaAgresor;
+use App\Models\FichaVictima;
 
 class CasoController extends Controller
 {
@@ -678,7 +679,7 @@ class CasoController extends Controller
     }
 
     //********FICHA PRELIMINAR */
-    
+
     // Guardar ficha
     public function guardarFichaPreliminarHGV(Request $request, $id)
     {
@@ -742,16 +743,183 @@ class CasoController extends Controller
 
         return view('casos.fichaPreliminarAgresor', compact('caso'));
     }
+    /**
+     * ========================================
+     *  FICHA PRELIMINAR - PAREJA
+     * ========================================
+     */
+
+    // 🔹 Muestra el formulario de ficha preliminar de pareja
     public function fichaPreliminarPareja($id)
     {
-        $caso = Caso::findOrFail($id); // Buscar el caso específico
-
+        $caso = Caso::findOrFail($id);
         return view('casos.fichaPreliminarPareja', compact('caso'));
     }
+
+    // 🔹 Guarda la ficha de pareja en la base de datos
+    public function storeFichaPreliminarPareja(Request $request, $casoId)
+    {
+        $caso = Caso::findOrFail($casoId);
+
+        $validated = $request->validate([
+            'observaciones' => 'nullable|string',
+            'grupo_familiar' => 'nullable|array',
+            'grupo_familiar.*.nombre' => 'nullable|string',
+            'grupo_familiar.*.parentesco' => 'nullable|string',
+            'grupo_familiar.*.edad' => 'nullable|integer',
+            'grupo_familiar.*.sexo' => 'nullable|string',
+            'grupo_familiar.*.grado' => 'nullable|string',
+            'grupo_familiar.*.estado_civil' => 'nullable|string',
+            'grupo_familiar.*.ocupacion' => 'nullable|string',
+            'grupo_familiar.*.lugar' => 'nullable|string',
+            'grupo_familiar.*.observacion' => 'nullable|string',
+            'indicadores_pareja' => 'nullable|array',
+            'indicadores_hijos' => 'nullable|array',
+            'fase.primera' => 'nullable|string',
+            'fase.segunda' => 'nullable|string',
+            'fase.tercera' => 'nullable|string',
+            'fase.cuarta' => 'nullable|string',
+            'observacion_fase' => 'nullable|string',
+            'medidas' => 'nullable|string',
+            'fecha' => 'nullable|date',
+            'responsable' => 'nullable|string|max:255',
+        ]);
+
+        \App\Models\FichaPareja::create([
+            'caso_id' => $caso->id,
+            'nro_caso' => $caso->nro_registro,
+            'nombres_apellidos' => trim($caso->paciente_nombres . ' ' . $caso->paciente_apellidos),
+            'observaciones' => $validated['observaciones'] ?? null,
+            'grupo_familiar' => $validated['grupo_familiar'] ?? null,
+            'indicadores_pareja' => $validated['indicadores_pareja'] ?? null,
+            'indicadores_hijos' => $validated['indicadores_hijos'] ?? null,
+            'fase_primera' => $validated['fase']['primera'] ?? null,
+            'fase_segunda' => $validated['fase']['segunda'] ?? null,
+            'fase_tercera' => $validated['fase']['tercera'] ?? null,
+            'fase_cuarta' => $validated['fase']['cuarta'] ?? null,
+            'observacion_fase' => $validated['observacion_fase'] ?? null,
+            'medidas' => $validated['medidas'] ?? null,
+            'fecha' => $validated['fecha'] ?? now(),
+            'responsable' => $validated['responsable'] ?? null,
+        ]);
+
+        return redirect()
+            ->route('casos.show', $casoId)
+            ->with('success', 'Ficha de evaluación preliminar de pareja guardada correctamente.');
+    }
+
     public function fichaPreliminarVictima($id)
     {
         $caso = Caso::findOrFail($id); // Buscar el caso específico
-
-        return view('casos.fichaPreliminarVictima', compact('caso'));
+        $ficha = \App\Models\FichaVictima::where('caso_id', $id)->first();
+        return view('casos.fichaPreliminarVictima', compact('caso', 'ficha'));
     }
+    // 🔹 Guardar ficha
+    public function storeFichaPreliminarVIF(Request $request, $casoId)
+    {
+        $caso = Caso::findOrFail($casoId);
+
+        $validated = $request->validate([
+            'nro_caso' => 'nullable|string|max:50',
+            'nombres_apellidos' => 'nullable|string|max:255',
+            'emergencia_nombre' => 'nullable|string|max:255',
+            'emergencia_telefono' => 'nullable|string|max:50',
+            'emergencia_parentesco' => 'nullable|string|max:100',
+            'grupo_familiar' => 'nullable|array',
+            'grupo_familiar.*.nombre' => 'nullable|string',
+            'grupo_familiar.*.parentesco' => 'nullable|string',
+            'grupo_familiar.*.edad' => 'nullable|integer',
+            'grupo_familiar.*.sexo' => 'nullable|string',
+            'grupo_familiar.*.grado' => 'nullable|string',
+            'grupo_familiar.*.estado_civil' => 'nullable|string',
+            'grupo_familiar.*.ocupacion' => 'nullable|string',
+            'grupo_familiar.*.lugar' => 'nullable|string',
+            'grupo_familiar.*.observacion' => 'nullable|string',
+            'indicadores_decision' => 'nullable|array',
+            'indicadores_persona' => 'nullable|array',
+            'indicadores_derechos' => 'nullable|array',
+            'fases' => 'nullable|array',
+            'observaciones' => 'nullable|string',
+            'medidas' => 'nullable|string',
+            'fecha' => 'nullable|date',
+            'recepcion' => 'nullable|string|max:255',
+        ]);
+
+        // 🔹 Verificar si ya existe una ficha para este caso
+        $ficha = FichaVictima::where('caso_id', $casoId)->first();
+
+        if ($ficha) {
+            // Si ya existe, actualizamos
+            $ficha->update([
+                'nro_caso' => $validated['nro_caso'] ?? $caso->nro_registro,
+                'nombres_apellidos' => $validated['nombres_apellidos'] ?? trim($caso->paciente_nombres . ' ' . $caso->paciente_apellidos),
+                'emergencia_nombre' => $validated['emergencia_nombre'] ?? null,
+                'emergencia_telefono' => $validated['emergencia_telefono'] ?? null,
+                'emergencia_parentesco' => $validated['emergencia_parentesco'] ?? null,
+                'grupo_familiar' => $validated['grupo_familiar'] ?? null,
+                'indicadores_decision' => $validated['indicadores_decision'] ?? null,
+                'indicadores_persona' => $validated['indicadores_persona'] ?? null,
+                'indicadores_derechos' => $validated['indicadores_derechos'] ?? null,
+                'fases' => $validated['fases'] ?? null,
+                'observaciones' => $validated['observaciones'] ?? null,
+                'medidas' => $validated['medidas'] ?? null,
+                'fecha' => $validated['fecha'] ?? now(),
+                'recepcion' => $validated['recepcion'] ?? null,
+            ]);
+
+            $mensaje = 'Ficha actualizada correctamente.';
+        } else {
+            // Si no existe, creamos una nueva
+            FichaVictima::create([
+                'caso_id' => $caso->id,
+                'nro_caso' => $validated['nro_caso'] ?? $caso->nro_registro,
+                'nombres_apellidos' => $validated['nombres_apellidos'] ?? trim($caso->paciente_nombres . ' ' . $caso->paciente_apellidos),
+                'emergencia_nombre' => $validated['emergencia_nombre'] ?? null,
+                'emergencia_telefono' => $validated['emergencia_telefono'] ?? null,
+                'emergencia_parentesco' => $validated['emergencia_parentesco'] ?? null,
+                'grupo_familiar' => $validated['grupo_familiar'] ?? null,
+                'indicadores_decision' => $validated['indicadores_decision'] ?? null,
+                'indicadores_persona' => $validated['indicadores_persona'] ?? null,
+                'indicadores_derechos' => $validated['indicadores_derechos'] ?? null,
+                'fases' => $validated['fases'] ?? null,
+                'observaciones' => $validated['observaciones'] ?? null,
+                'medidas' => $validated['medidas'] ?? null,
+                'fecha' => $validated['fecha'] ?? now(),
+                'recepcion' => $validated['recepcion'] ?? null,
+            ]);
+
+            $mensaje = 'Ficha de evaluación preliminar guardada correctamente.';
+        }
+
+        return redirect()
+            ->route('casos.index')
+            ->with('success', $mensaje);
+    }
+    // 🔹 Método separado para actualización directa (si usas PUT)
+    public function updateFichaPreliminarVIF(Request $request, $id)
+    {
+        $ficha = FichaVictima::findOrFail($id);
+
+        $validated = $request->validate([
+            'emergencia_nombre' => 'nullable|string|max:255',
+            'emergencia_telefono' => 'nullable|string|max:50',
+            'emergencia_parentesco' => 'nullable|string|max:100',
+            'grupo_familiar' => 'nullable|array',
+            'indicadores_decision' => 'nullable|array',
+            'indicadores_persona' => 'nullable|array',
+            'indicadores_derechos' => 'nullable|array',
+            'fases' => 'nullable|array',
+            'observaciones' => 'nullable|string',
+            'medidas' => 'nullable|string',
+            'fecha' => 'nullable|date',
+            'recepcion' => 'nullable|string|max:255',
+        ]);
+
+        $ficha->update($validated);
+
+        return redirect()
+            ->route('casos.index')
+            ->with('success', 'Ficha actualizada correctamente.');
+    }
+
 }

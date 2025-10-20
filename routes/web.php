@@ -158,6 +158,21 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
         // Ver ficha HGV guardada
         Route::get('{caso}/ficha-preliminar-hgv/ver', [CasoController::class, 'verFichaPreliminarHGV'])
             ->name('casos.verFichaPreliminarAgresor');
+
+        // Ficha preliminar de pareja
+        Route::get('/casos/{id}/fichaPreliminarPareja', [CasoController::class, 'fichaPreliminarPareja'])
+            ->name('casos.fichaPreliminarPareja');
+
+        Route::post('/casos/{id}/fichaPreliminarPareja', [CasoController::class, 'storeFichaPreliminarPareja'])
+            ->name('casos.fichaPreliminarPareja.store');
+//**RUTA PARA FICHA PRELIMINAR DE VICTIMA */
+        Route::get('/casos/{id}/fichaPreliminarVIF', [CasoController::class, 'fichaPreliminarVIF'])
+            ->name('casos.fichaPreliminarVIF');
+
+        Route::post('/casos/{id}/fichaPreliminarVIF', [CasoController::class, 'storeFichaPreliminarVIF'])
+            ->name('casos.fichaPreliminarVIF.store');
+        Route::put('/ficha-preliminar-vif/{id}', [CasoController::class, 'updateFichaPreliminarVIF'])
+        ->name('casos.fichaPreliminarVIF.update');
     });
 });
 
