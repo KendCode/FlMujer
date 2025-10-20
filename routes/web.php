@@ -143,9 +143,22 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
         // Ruta para la ficha preliminar de víctima
         Route::get('{caso}/fichaPreliminarVictima', [CasoController::class, 'fichaPreliminarVictima'])
             ->name('casos.fichaPreliminarVictima');
+        Route::get('{caso}/fichaPreliminarPareja', [CasoController::class, 'fichaPreliminarPareja'])
+            ->name('casos.fichaPreliminarPareja');
+
+
+        // Ficha preliminar de agresor (HGV)
+        Route::get('{caso}/fichaPreliminarAgresor', [CasoController::class, 'fichaPreliminarAgresor'])
+            ->name('casos.fichaPreliminarAgresor');
+
+        // Guardar ficha HGV
+        Route::post('{caso}/ficha-preliminar-hgv', [CasoController::class, 'guardarFichaPreliminarHGV'])
+            ->name('casos.guardarFichaPreliminarAgresor');
+
+        // Ver ficha HGV guardada
+        Route::get('{caso}/ficha-preliminar-hgv/ver', [CasoController::class, 'verFichaPreliminarHGV'])
+            ->name('casos.verFichaPreliminarAgresor');
     });
-
-
 });
 
 require __DIR__ . '/auth.php';

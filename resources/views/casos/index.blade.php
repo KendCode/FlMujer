@@ -232,14 +232,14 @@
                                                         @elseif($caso->tipo_atencion === 'pareja')
                                                             <li>
                                                                 <a class="dropdown-item"
-                                                                    href="{{ route('casos.fichaAtencionPareja', $caso->id) }}">
+                                                                    href="{{ route('casos.fichaPreliminarPareja', $caso->id) }}">
                                                                     💑 Ficha - Pareja
                                                                 </a>
                                                             </li>
                                                         @elseif($caso->tipo_atencion === 'agresor')
                                                             <li>
                                                                 <a class="dropdown-item"
-                                                                    href="{{ route('casos.fichaAtencionAgresor', $caso->id) }}">
+                                                                    href="{{ route('casos.fichaPreliminarAgresor', $caso->id) }}">
                                                                     ⚠️ Ficha - Agresor
                                                                 </a>
                                                             </li>

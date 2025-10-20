@@ -186,4 +186,30 @@ class Caso extends Model
     {
         return $this->hasMany(FichaAtencionEvaluacion::class, 'caso_id');
     }
+
+
+
+    /**
+     * Relación con evaluaciones preliminares de HGV
+     */
+    public function evaluacionesHgv()
+    {
+        return $this->hasMany(FichaAgresor::class, 'caso_id');
+    }
+
+    /**
+     * Obtener la evaluación HGV más reciente
+     */
+    public function evaluacionHgvReciente()
+    {
+        return $this->hasOne(FichaAgresor::class, 'caso_id')->latestOfMany();
+    }
+
+    /**
+     * Obtener nombre completo del paciente
+     */
+    public function getNombreCompletoAttribute()
+    {
+        return trim($this->paciente_nombres . ' ' . $this->paciente_apellidos);
+    }
 }

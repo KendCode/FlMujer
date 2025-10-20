@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Pareja;
 use App\Models\Hijo;
+use App\Models\FichaAgresor;
 
 class CasoController extends Controller
 {
@@ -677,12 +678,64 @@ class CasoController extends Controller
     }
 
     //********FICHA PRELIMINAR */
-    public function fichaPreliminarVictima($id)
+    
+    // Guardar ficha
+    public function guardarFichaPreliminarHGV(Request $request, $id)
     {
-        $caso = Caso::findOrFail($id); // Buscar el caso específico
+        $caso = Caso::findOrFail($id);
 
-        return view('casos.fichaPreliminarVictima', compact('caso'));
+        $validated = $request->validate([
+            'nro_registro' => 'nullable|string|max:255',
+            'nombre_completo' => 'nullable|string|max:255',
+            'contacto_emergencia' => 'nullable|string|max:255',
+            'telf_emergencia' => 'nullable|string|max:20',
+            'relacion_emergencia' => 'nullable|string|max:255',
+            'grupo_familiar' => 'nullable|array',
+            'fase.primera' => 'nullable|string',
+            'fase.segunda' => 'nullable|string',
+            'fase.tercera' => 'nullable|string',
+            'fase.cuarta' => 'nullable|string',
+            'indicadores' => 'nullable|array',
+            'observaciones' => 'nullable|string',
+            'medidasTomar' => 'nullable|string',
+            'recepcionador' => 'nullable|string|max:255',
+            'fecha' => 'nullable|date',
+        ]);
+
+        $ficha = new FichaAgresor();
+        $ficha->caso_id = $caso->id;
+        $ficha->nro_registro = $validated['nro_registro'] ?? null;
+        $ficha->nombre_completo = $validated['nombre_completo'] ?? null;
+        $ficha->contacto_emergencia = $validated['contacto_emergencia'] ?? null;
+        $ficha->telf_emergencia = $validated['telf_emergencia'] ?? null;
+        $ficha->relacion_emergencia = $validated['relacion_emergencia'] ?? null;
+        $ficha->grupo_familiar = $validated['grupo_familiar'] ?? [];
+        $ficha->fase_primera = $validated['fase']['primera'] ?? null;
+        $ficha->fase_segunda = $validated['fase']['segunda'] ?? null;
+        $ficha->fase_tercera = $validated['fase']['tercera'] ?? null;
+        $ficha->fase_cuarta = $validated['fase']['cuarta'] ?? null;
+        $ficha->indicadores = $validated['indicadores'] ?? [];
+        $ficha->observaciones = $validated['observaciones'] ?? null;
+        $ficha->medidas_tomar = $validated['medidasTomar'] ?? null;
+        $ficha->recepcionador = $validated['recepcionador'] ?? null;
+        $ficha->fecha = $validated['fecha'] ?? now();
+
+        $ficha->save();
+
+        return redirect()
+            ->route('casos.index', $caso->id)
+            ->with('success', 'Ficha de evaluación preliminar (HGV) guardada correctamente.');
     }
+
+    // Mostrar ficha guardada
+    public function verFichaPreliminarHGV($id)
+    {
+        $caso = Caso::findOrFail($id);
+        $ficha = FichaAgresor::where('caso_id', $id)->latest()->first();
+
+        return view('casos.fichaPreliminarAgresor', compact('caso', 'ficha'));
+    }
+
     public function fichaPreliminarAgresor($id)
     {
         $caso = Caso::findOrFail($id); // Buscar el caso específico
@@ -694,5 +747,11 @@ class CasoController extends Controller
         $caso = Caso::findOrFail($id); // Buscar el caso específico
 
         return view('casos.fichaPreliminarPareja', compact('caso'));
+    }
+    public function fichaPreliminarVictima($id)
+    {
+        $caso = Caso::findOrFail($id); // Buscar el caso específico
+
+        return view('casos.fichaPreliminarVictima', compact('caso'));
     }
 }
