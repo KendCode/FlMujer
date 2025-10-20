@@ -333,12 +333,12 @@ class CasoController extends Controller
         $data['violencia_institucion_denuncia'] = $validated['violencia_institucion_denuncia'] ?? null;
         $data['violencia_institucion_derivar'] = $validated['violencia_institucion_derivar'] ?? null;
         $data['formulario_responsable_nombre'] = $validated['formulario_responsable_nombre'] ?? null;
-        
+
         // Campos legacy
         $data['violencia_frecuencia'] = $validated['violencia_frecuencia'] ?? null;
         $data['violencia_lugar_hechos'] = $validated['violencia_lugar_hechos'] ?? null;
         $data['violencia_tiempo_ocurrencia'] = $validated['violencia_tiempo_ocurrencia'] ?? null;
-      
+
         // =====================
         // CREAR CASO
         // =====================
@@ -674,5 +674,25 @@ class CasoController extends Controller
         $caso->delete();
         return redirect()->route('casos.index')
             ->with('success', 'El caso fue eliminado correctamente.');
+    }
+
+    //********FICHA PRELIMINAR */
+    public function fichaPreliminarVictima($id)
+    {
+        $caso = Caso::findOrFail($id); // Buscar el caso específico
+
+        return view('casos.fichaPreliminarVictima', compact('caso'));
+    }
+    public function fichaPreliminarAgresor($id)
+    {
+        $caso = Caso::findOrFail($id); // Buscar el caso específico
+
+        return view('casos.fichaPreliminarAgresor', compact('caso'));
+    }
+    public function fichaPreliminarPareja($id)
+    {
+        $caso = Caso::findOrFail($id); // Buscar el caso específico
+
+        return view('casos.fichaPreliminarPareja', compact('caso'));
     }
 }

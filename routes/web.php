@@ -21,6 +21,7 @@ use App\Models\FichaAtencionEvaluacion;
 use App\Http\Controllers\CasoController;
 use App\Http\Controllers\FichaAgresorController;
 use App\Http\Controllers\FichaParejaController;
+use App\Http\Controllers\FichaSeguimientoPsicologicoController;
 use App\Http\Controllers\FichaVictimaController;
 
 /*Route::get('/', function () {
@@ -117,9 +118,34 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
         Route::delete('{ficha}', [FichaAtencionEvaluacionController::class, 'destroy'])
             ->name('casos.fichaAtencionEvaluacion.destroy');
     });
-    Route::get('/casos/fichaPreliminarVictima/{caso}', [FichaVictimaController::class, 'fichaPreliminarVictima'])->name('casos.fichaPreliminarVictima');
-    Route::get('/casos/fichaAtencionAgresor/{caso}', [FichaAgresorController::class, 'fichaAtencionAgresor'])->name('casos.fichaAtencionAgresor');
-    Route::get('/casos/fichaAtencionPareja/{caso}', [FichaParejaController::class, 'fichaAtencionPareja'])->name('casos.fichaAtencionPareja');
+    Route::prefix('casos/{caso}/fichaSeguimientoPsicologico')->group(function () {
+        Route::get('/', [FichaSeguimientoPsicologicoController::class, 'index'])
+            ->name('casos.fichaSeguimientoPsicologico.index');
+
+        Route::get('create', [FichaSeguimientoPsicologicoController::class, 'create'])
+            ->name('casos.fichaSeguimientoPsicologico.create');
+
+        Route::post('store', [FichaSeguimientoPsicologicoController::class, 'store'])
+            ->name('casos.fichaSeguimientoPsicologico.store');
+
+        Route::get('{ficha}/edit', [FichaSeguimientoPsicologicoController::class, 'edit'])
+            ->name('casos.fichaSeguimientoPsicologico.edit');
+
+        Route::put('{ficha}', [FichaSeguimientoPsicologicoController::class, 'update'])
+            ->name('casos.fichaSeguimientoPsicologico.update');
+
+        // CORRECCIÓN: Solo poner {ficha}, sin repetir 'fichaSeguimientoPsicologico'
+        Route::delete('{ficha}', [FichaSeguimientoPsicologicoController::class, 'destroy'])
+            ->name('casos.fichaSeguimientoPsicologico.destroy');
+    });
+    //? Rutas para fichas preliminares de víctima, agresor y pareja
+    Route::prefix('casos')->group(function () {
+        // Ruta para la ficha preliminar de víctima
+        Route::get('{caso}/fichaPreliminarVictima', [CasoController::class, 'fichaPreliminarVictima'])
+            ->name('casos.fichaPreliminarVictima');
+    });
+
+
 });
 
 require __DIR__ . '/auth.php';
