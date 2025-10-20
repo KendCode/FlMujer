@@ -148,7 +148,7 @@
                                     <td>{{ $caso->paciente_ci ?? 'N/A' }}</td>
                                     <td>
                                         <span class="badge bg-info">
-                                            {{ ucfirst(str_replace('_', ' ', $caso->paciente_edad_rango)) }}
+                                            {{ ucfirst(str_replace('_', ' ', $caso->paciente_edad)) }}
                                         </span>
                                     </td>
                                     <td>

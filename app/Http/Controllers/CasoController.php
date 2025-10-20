@@ -753,7 +753,8 @@ class CasoController extends Controller
     public function fichaPreliminarPareja($id)
     {
         $caso = Caso::findOrFail($id);
-        return view('casos.fichaPreliminarPareja', compact('caso'));
+        $ficha = \App\Models\FichaPareja::where('caso_id', $caso->id)->first(); // Para edición
+        return view('casos.fichaPreliminarPareja', compact('caso', 'ficha'));
     }
 
     // 🔹 Guarda la ficha de pareja en la base de datos
@@ -785,29 +786,34 @@ class CasoController extends Controller
             'responsable' => 'nullable|string|max:255',
         ]);
 
-        \App\Models\FichaPareja::create([
-            'caso_id' => $caso->id,
-            'nro_caso' => $caso->nro_registro,
-            'nombres_apellidos' => trim($caso->paciente_nombres . ' ' . $caso->paciente_apellidos),
-            'observaciones' => $validated['observaciones'] ?? null,
-            'grupo_familiar' => $validated['grupo_familiar'] ?? null,
-            'indicadores_pareja' => $validated['indicadores_pareja'] ?? null,
-            'indicadores_hijos' => $validated['indicadores_hijos'] ?? null,
-            'fase_primera' => $validated['fase']['primera'] ?? null,
-            'fase_segunda' => $validated['fase']['segunda'] ?? null,
-            'fase_tercera' => $validated['fase']['tercera'] ?? null,
-            'fase_cuarta' => $validated['fase']['cuarta'] ?? null,
-            'observacion_fase' => $validated['observacion_fase'] ?? null,
-            'medidas' => $validated['medidas'] ?? null,
-            'fecha' => $validated['fecha'] ?? now(),
-            'responsable' => $validated['responsable'] ?? null,
-        ]);
+        // 🔹 updateOrCreate: actualiza si existe, crea si no
+        \App\Models\FichaPareja::updateOrCreate(
+            ['caso_id' => $caso->id],
+            [
+                'nro_caso' => $caso->nro_registro,
+                'nombres_apellidos' => trim($caso->paciente_nombres . ' ' . $caso->paciente_apellidos),
+                'observaciones' => $validated['observaciones'] ?? null,
+                'grupo_familiar' => $validated['grupo_familiar'] ?? null,
+                'indicadores_pareja' => $validated['indicadores_pareja'] ?? null,
+                'indicadores_hijos' => $validated['indicadores_hijos'] ?? null,
+                'fase_primera' => $validated['fase']['primera'] ?? null,
+                'fase_segunda' => $validated['fase']['segunda'] ?? null,
+                'fase_tercera' => $validated['fase']['tercera'] ?? null,
+                'fase_cuarta' => $validated['fase']['cuarta'] ?? null,
+                'observacion_fase' => $validated['observacion_fase'] ?? null,
+                'medidas' => $validated['medidas'] ?? null,
+                'fecha' => $validated['fecha'] ?? now(),
+                'responsable' => $validated['responsable'] ?? null,
+            ]
+        );
 
-        return redirect()
-            ->route('casos.show', $casoId)
+        return redirect()->route('casos.index', $caso->id)
             ->with('success', 'Ficha de evaluación preliminar de pareja guardada correctamente.');
     }
 
+
+
+    /*?**qe   FICHA PRELIMINAR VICTIMA */
     public function fichaPreliminarVictima($id)
     {
         $caso = Caso::findOrFail($id); // Buscar el caso específico
@@ -921,5 +927,4 @@ class CasoController extends Controller
             ->route('casos.index')
             ->with('success', 'Ficha actualizada correctamente.');
     }
-
 }

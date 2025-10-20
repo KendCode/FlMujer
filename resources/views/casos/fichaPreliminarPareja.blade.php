@@ -20,17 +20,20 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label>N° de Caso</label>
-                            <input type="text" name="nro_caso" class="form-control">
+                            <input type="text" name="nro_caso" class="form-control"value="{{ $caso->nro_registro }}"
+                                readonly>
                         </div>
                         <div class="col-md-6">
                             <label>Nombres y Apellidos</label>
-                            <input type="text" name="nombres_apellidos" class="form-control" required>
+                            <input type="text" name="nombres_apellidos" class="form-control"
+                                value="{{ $caso->paciente_nombres }} {{ $caso->paciente_apellidos }}" readonly>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label>Observaciones</label>
-                        <textarea name="observaciones" class="form-control" rows="2"></textarea>
+                        <textarea name="observaciones" class="form-control" rows="2">{{ old('observaciones', $ficha->observaciones ?? '') }}</textarea>
+
                     </div>
 
                     <h5 class="text-primary mt-4">Grupo Familiar</h5>
@@ -49,19 +52,51 @@
                             </tr>
                         </thead>
                         <tbody id="grupoFamiliar">
-                            <tr>
-                                <td><input type="text" name="grupo_familiar[0][nombre]" class="form-control"></td>
-                                <td><input type="text" name="grupo_familiar[0][parentesco]" class="form-control"></td>
-                                <td><input type="number" name="grupo_familiar[0][edad]" class="form-control"></td>
-                                <td><input type="text" name="grupo_familiar[0][sexo]" class="form-control"></td>
-                                <td><input type="text" name="grupo_familiar[0][grado]" class="form-control"></td>
-                                <td><input type="text" name="grupo_familiar[0][estado_civil]" class="form-control"></td>
-                                <td><input type="text" name="grupo_familiar[0][ocupacion]" class="form-control"></td>
-                                <td><input type="text" name="grupo_familiar[0][lugar]" class="form-control"></td>
-                                <td><input type="text" name="grupo_familiar[0][observacion]" class="form-control"></td>
-                            </tr>
+                            @php
+                                $grupo = old(
+                                    'grupo_familiar',
+                                    $ficha->grupo_familiar ?? [
+                                        [
+                                            'nombre' => null,
+                                            'parentesco' => null,
+                                            'edad' => null,
+                                            'sexo' => null,
+                                            'grado' => null,
+                                            'estado_civil' => null,
+                                            'ocupacion' => null,
+                                            'lugar' => null,
+                                            'observacion' => null,
+                                        ],
+                                    ],
+                                );
+                            @endphp
+
+                            @foreach ($grupo as $index => $miembro)
+                                <tr>
+                                    <td><input type="text" name="grupo_familiar[{{ $index }}][nombre]"
+                                            class="form-control" value="{{ $miembro['nombre'] ?? '' }}"></td>
+                                    <td><input type="text" name="grupo_familiar[{{ $index }}][parentesco]"
+                                            class="form-control" value="{{ $miembro['parentesco'] ?? '' }}"></td>
+                                    <td><input type="number" name="grupo_familiar[{{ $index }}][edad]"
+                                            class="form-control" value="{{ $miembro['edad'] ?? '' }}"></td>
+                                    <td><input type="text" name="grupo_familiar[{{ $index }}][sexo]"
+                                            class="form-control" value="{{ $miembro['sexo'] ?? '' }}"></td>
+                                    <td><input type="text" name="grupo_familiar[{{ $index }}][grado]"
+                                            class="form-control" value="{{ $miembro['grado'] ?? '' }}"></td>
+                                    <td><input type="text" name="grupo_familiar[{{ $index }}][estado_civil]"
+                                            class="form-control" value="{{ $miembro['estado_civil'] ?? '' }}"></td>
+                                    <td><input type="text" name="grupo_familiar[{{ $index }}][ocupacion]"
+                                            class="form-control" value="{{ $miembro['ocupacion'] ?? '' }}"></td>
+                                    <td><input type="text" name="grupo_familiar[{{ $index }}][lugar]"
+                                            class="form-control" value="{{ $miembro['lugar'] ?? '' }}"></td>
+                                    <td><input type="text" name="grupo_familiar[{{ $index }}][observacion]"
+                                            class="form-control" value="{{ $miembro['observacion'] ?? '' }}"></td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
+
+
                     <button type="button" class="btn btn-outline-primary btn-sm" id="addRow">+ Agregar miembro</button>
 
                     <h5 class="text-primary mt-4">Indicadores de Violencia - A nivel de pareja</h5>
@@ -85,12 +120,15 @@
                             'Falta de independencia en la toma de decisiones',
                             'No realizan actividades recreativas en familia',
                         ];
+
+                        $seleccionadosPareja = old('indicadores_pareja', $ficha->indicadores_pareja ?? []);
                     @endphp
 
                     @foreach ($indicadoresPareja as $indicador)
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="indicadores_pareja[]"
-                                value="{{ $indicador }}">
+                                value="{{ $indicador }}"
+                                {{ in_array($indicador, $seleccionadosPareja) ? 'checked' : '' }}>
                             <label class="form-check-label">{{ $indicador }}</label>
                         </div>
                     @endforeach
@@ -106,51 +144,63 @@
                             'Irresponsabilidad materna (descuido de los hijos, reproducción de la violencia)',
                             'Desigualdad en la crianza de los hijos (preferencias de un hijo u otro)',
                         ];
+
+                        $seleccionadosHijos = old('indicadores_hijos', $ficha->indicadores_hijos ?? []);
                     @endphp
 
                     @foreach ($indicadoresHijos as $indicador)
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="indicadores_hijos[]"
-                                value="{{ $indicador }}">
+                                value="{{ $indicador }}"
+                                {{ in_array($indicador, $seleccionadosHijos) ? 'checked' : '' }}>
                             <label class="form-check-label">{{ $indicador }}</label>
                         </div>
                     @endforeach
 
+
                     <!-- Evaluación por fases -->
                     <h5 class="mt-4">I. Evaluación por fases al momento del ingreso</h5>
+
                     <div class="mb-3">
                         <label class="form-label">Primera fase - Descripción</label>
-                        <textarea name="fase[primera]" class="form-control" rows="2">{{ old('fase.primera') }}</textarea>
+                        <textarea name="fase[primera]" class="form-control" rows="2">{{ old('fase.primera', $ficha->fase_primera ?? '') }}</textarea>
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Segunda fase - Descripción</label>
-                        <textarea name="fase[segunda]" class="form-control" rows="2">{{ old('fase.segunda') }}</textarea>
+                        <textarea name="fase[segunda]" class="form-control" rows="2">{{ old('fase.segunda', $ficha->fase_segunda ?? '') }}</textarea>
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Tercera fase - Descripción</label>
-                        <textarea name="fase[tercera]" class="form-control" rows="2">{{ old('fase.tercera') }}</textarea>
+                        <textarea name="fase[tercera]" class="form-control" rows="2">{{ old('fase.tercera', $ficha->fase_tercera ?? '') }}</textarea>
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Cuarta fase - Descripción</label>
-                        <textarea name="fase[cuarta]" class="form-control" rows="2">{{ old('fase.cuarta') }}</textarea>
+                        <textarea name="fase[cuarta]" class="form-control" rows="2">{{ old('fase.cuarta', $ficha->fase_cuarta ?? '') }}</textarea>
                     </div>
+
+
                     <div class="mb-3">
                         <label>Observaviones</label>
-                        <textarea name="observacion_fase" class="form-control" rows="2"></textarea>
+                        <textarea name="observacion_fase" class="form-control" rows="2">{{ old('observacion_fase', $ficha->observacion_fase ?? '') }}</textarea>
                     </div>
                     <div class="mb-3">
                         <label>Medidas a tomar</label>
-                        <textarea name="medidas" class="form-control" rows="2"></textarea>
+                        <textarea name="medidas" class="form-control" rows="2">{{ old('medidas', $ficha->medidas ?? '') }}</textarea>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label>Fecha</label>
-                            <input type="date" name="fecha" class="form-control">
+                            <input type="date" name="fecha" class="form-control"
+                                value="{{ old('fecha', $ficha->fecha ?? '') }}">
                         </div>
                         <div class="col-md-6">
                             <label>Nombre y firma del responsable</label>
-                            <input type="text" name="responsable" class="form-control">
+                            <input type="text" name="responsable" class="form-control"
+                                value="{{ old('responsable', $ficha->responsable ?? '') }}">
                         </div>
                     </div>
 
