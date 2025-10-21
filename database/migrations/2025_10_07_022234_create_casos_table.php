@@ -28,7 +28,8 @@ return new class extends Migration
             // DATOS DEL PACIENTE
             // =====================
             $table->string('paciente_nombres')->nullable();
-            $table->string('paciente_apellidos')->nullable();
+            $table->string('paciente_ap_paterno')->nullable();//nuevo
+            $table->string('paciente_ap_materno')->nullable();//nuevo
             $table->integer('paciente_edad')->nullable(); // ✅ CAMBIADO a integer
             $table->string('paciente_ci')->nullable();
             $table->string('paciente_telefono')->nullable();
@@ -54,7 +55,8 @@ return new class extends Migration
             // DATOS DE LA PAREJA
             // =====================
             $table->string('pareja_nombres')->nullable();
-            $table->string('pareja_apellidos')->nullable();
+            $table->string('pareja_ap_paterno')->nullable();
+            $table->string('pareja_ap_materno')->nullable();
             $table->string('pareja_ci')->nullable();
             $table->integer('pareja_edad')->nullable(); // ✅ CAMBIADO a integer
             $table->string('pareja_telefono')->nullable();

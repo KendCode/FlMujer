@@ -65,8 +65,8 @@
     <form action="{{ route('casos.store') }}" method="POST">
         @csrf
         <!-- =====================
-                           SECCIÓN 0: DATOS DE LA REGIONAL
-                                     ===================== -->
+                                       SECCIÓN 0: DATOS DE LA REGIONAL
+                                                 ===================== -->
         <div class="card mb-3">
             <div class="card-header">Regional</div>
             <div class="card-body">
@@ -138,8 +138,8 @@
         </div>
 
         <!-- =====================
-            SECCIÓN 1: DATOS PERSONALES PACIENTE
-                 ===================== -->
+                        SECCIÓN 1: DATOS PERSONALES PACIENTE
+                             ===================== -->
 
         <div class="card mb-3">
             <div class="card-header">Datos Personales y Más Datos</div>
@@ -149,19 +149,24 @@
                         <label class="form-label">Nombres</label>
                         <input type="text" name="paciente_nombres" class="form-control" required>
                     </div>
+
                     <div class="col-md-6">
-                        <label class="form-label">Apellidos</label>
-                        <input type="text" name="paciente_apellidos" class="form-control" required>
+                        <label class="form-label">Apellido Paterno</label>
+                        <input type="text" name="paciente_ap_paterno" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Apellido Materno</label>
+                        <input type="text" name="paciente_ap_materno" class="form-control" required>
                     </div>
                     <div class="col-md-4 mt-2">
                         <label class="form-label d-block">Edad</label>
                         <div class="form-check form-check-inline">
-                            <input type="text" name="paciente_edad" class="form-control">
+                            <input type="number" name="paciente_edad" class="form-control">
                         </div>
                     </div>
                     <div class="col-md-4 mt-2">
                         <label class="form-label">CI</label>
-                        <input type="text" name="paciente_ci" class="form-control">
+                        <input type="number" name="paciente_ci" class="form-control">
                     </div>
                     <div class="col-md-4 mt-2">
                         <label class="form-label d-block">Sexo</label>
@@ -438,21 +443,34 @@
         </div>
 
         <!-- =====================
-                                                                                                 SECCIÓN 2: DATOS PAREJA
-                                                                                            ===================== -->
+                                                                                                             SECCIÓN 2: DATOS PAREJA
+                                                                                                        ===================== -->
         <div class="card mb-3">
             <div class="card-header">2. Datos de la pareja</div>
             <div class="card-body">
+                <!-- Primera fila: Nombres, Apellidos, Edad, CI, Sexo -->
                 <div class="row g-2">
                     <div class="col-md-6">
                         <label class="form-label">Nombres</label>
                         <input type="text" name="pareja_nombres" class="form-control" required>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Apellidos</label>
-                        <input type="text" name="pareja_apellidos" class="form-control" required>
+                    <div class="col-md-3">
+                        <label class="form-label">Apellido Paterno</label>
+                        <input type="text" name="pareja_ap_paterno" class="form-control" required>
                     </div>
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-3">
+                        <label class="form-label">Apellido Materno</label>
+                        <input type="text" name="pareja_ap_materno" class="form-control" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Edad</label>
+                        <input type="number" name="pareja_edad" class="form-control">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">CI</label>
+                        <input type="number" name="pareja_ci" class="form-control">
+                    </div>
+                    <div class="col-md-8">
                         <label class="form-label d-block">Sexo</label>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="pareja_sexo" value="M" required>
@@ -463,17 +481,11 @@
                             <label class="form-check-label">Mujer</label>
                         </div>
                     </div>
-                    <div class="col-md-4 mt-2">
-                        <label class="form-label d-block">Edad</label>
-                        <div class="form-check form-check-inline">
-                            <input type="text" name="pareja_edad" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-md-4 mt-2">
-                        <label class="form-label">CI</label>
-                        <input type="text" name="pareja_ci" class="form-control">
-                    </div>
-                    <div class="col-md-8 mt-2">
+                </div>
+
+                <!-- Segunda fila: Edad (rango) -->
+                <div class="row g-2 mt-3">
+                    <div class="col-md-12">
                         <label class="form-label">Edad (rango)</label>
                         <div class="d-flex gap-2 flex-wrap">
                             <div class="form-check">
@@ -518,9 +530,12 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-md-8 mt-2">
-                        <label class="form-label">Distrito</label><br>
+                <!-- Tercera fila: Distrito y Dirección -->
+                <div class="row g-2 mt-3">
+                    <div class="col-md-8">
+                        <label class="form-label">Distrito</label>
                         <div class="d-flex flex-wrap gap-2">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="pareja_id_distrito" value="1"
@@ -611,16 +626,16 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-4">
                         <label class="form-label d-block">Lugar de Nacimiento</label>
                         <input type="text" name="pareja_lugar_nacimiento" class="form-control"
                             placeholder="Lugar de Nacimiento">
-                        <div class="form-check form-check-inline mt-2">
+                        <div class="form-check mt-2">
                             <input class="form-check-input" type="radio" name="pareja_lugar_nacimiento_op"
                                 value="dentro" required>
                             <label class="form-check-label">Dentro de municipio</label>
                         </div>
-                        <div class="form-check form-check-inline">
+                        <div class="form-check">
                             <input class="form-check-input" type="radio" name="pareja_lugar_nacimiento_op"
                                 value="fuera" required>
                             <label class="form-check-label">Fuera de municipio</label>
@@ -628,51 +643,57 @@
                     </div>
                 </div>
 
+                <!-- Cuarta fila: Residencia y Tiempo -->
                 <div class="row g-2 mt-3">
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-4">
                         <label class="form-label d-block">Residencia Habitual</label>
-                        <div class="form-check form-check-inline mt-2">
+                        <div class="form-check mt-2">
                             <input class="form-check-input" type="radio" name="pareja_lugar_residencia_op"
                                 value="dentro">
                             <label class="form-check-label">Dentro del municipio</label>
                         </div>
-                        <div class="form-check form-check-inline">
+                        <div class="form-check">
                             <input class="form-check-input" type="radio" name="pareja_lugar_residencia_op"
                                 value="fuera">
                             <label class="form-check-label">Fuera de municipio</label>
                         </div>
                     </div>
-                    <div class="col-md-4 mt-2">
+                    <div class="col-md-8">
                         <label class="form-label d-block">Tiempo de residencia en este municipio</label>
-                        <div class="form-check form-check-inline mt-2">
-                            <input class="form-check-input" type="radio" name="pareja_tiempo_residencia_op"
-                                value="menosDeUnAno">
-                            <label class="form-check-label">Menos de 1 año</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="pareja_tiempo_residencia_op"
-                                value="de2a5Anos">
-                            <label class="form-check-label">De 2 a 5 años</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="pareja_tiempo_residencia_op"
-                                value="de6a10Anos">
-                            <label class="form-check-label">De 6 a 10 años</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="pareja_tiempo_residencia_op"
-                                value="masDe10Anos">
-                            <label class="form-check-label">De 11 y más años</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="pareja_tiempo_residencia_op"
-                                value="no_sabe_no_responde">
-                            <label class="form-check-label">No sabe / no responde</label>
+                        <div class="d-flex flex-wrap gap-2 mt-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="pareja_tiempo_residencia_op"
+                                    value="menosDeUnAno">
+                                <label class="form-check-label">Menos de 1 año</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="pareja_tiempo_residencia_op"
+                                    value="de2a5Anos">
+                                <label class="form-check-label">De 2 a 5 años</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="pareja_tiempo_residencia_op"
+                                    value="de6a10Anos">
+                                <label class="form-check-label">De 6 a 10 años</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="pareja_tiempo_residencia_op"
+                                    value="masDe10Anos">
+                                <label class="form-check-label">De 11 y más años</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="pareja_tiempo_residencia_op"
+                                    value="no_sabe_no_responde">
+                                <label class="form-check-label">No sabe / no responde</label>
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-md-6 mt-2">
-                        <label for="pareja_estado_civil" class="form-label">3.9 Estado Civil</label>
+                <!-- Quinta fila: Estado Civil e Instrucción -->
+                <div class="row g-2 mt-3">
+                    <div class="col-md-6">
+                        <label for="pareja_estado_civil" class="form-label">Estado Civil</label>
                         <select class="form-select" id="pareja_estado_civil" name="pareja_estado_civil" required>
                             <option value="">Seleccione</option>
                             <option value="soltero">Soltero</option>
@@ -683,8 +704,8 @@
                         </select>
                     </div>
 
-                    <div class="col-md-6 mt-2">
-                        <label for="pareja_nivel_instruccion" class="form-label">3.10 Nivel de Instrucción</label>
+                    <div class="col-md-6">
+                        <label for="pareja_nivel_instruccion" class="form-label">Nivel de Instrucción</label>
                         <select class="form-select" id="pareja_nivel_instruccion" name="pareja_nivel_instruccion"
                             required>
                             <option value="">Seleccione</option>
@@ -699,8 +720,8 @@
                         </select>
                     </div>
 
-                    <div class="col-md-6 mt-2">
-                        <label for="pareja_idioma" class="form-label">3.11 Idioma Más Hablado</label>
+                    <div class="col-md-6">
+                        <label for="pareja_idioma" class="form-label">Idioma Más Hablado</label>
                         <select class="form-select" id="pareja_idioma" name="pareja_idioma" required>
                             <option value="">Seleccione</option>
                             <option value="castellano">Castellano</option>
@@ -711,14 +732,14 @@
                             <option value="otro">Otro</option>
                         </select>
                     </div>
-                    <div class="col-md-6 mt-2">
+                    <div class="col-md-6">
                         <label for="pareja_especificar_idioma" class="form-label">Especificar Otro Idioma</label>
                         <input type="text" class="form-control" id="pareja_especificar_idioma"
                             name="pareja_especificar_idioma" placeholder="Especifique si seleccionó 'Otro'">
                     </div>
 
-                    <div class="col-md-6 mt-2">
-                        <label for="pareja_ocupacion_principal" class="form-label">3.12 Ocupación Principal</label>
+                    <div class="col-md-6">
+                        <label for="pareja_ocupacion_principal" class="form-label">Ocupación Principal</label>
                         <select class="form-select" id="pareja_ocupacion_principal" name="pareja_ocupacion_principal"
                             required>
                             <option value="">Seleccione</option>
@@ -737,8 +758,8 @@
                         </select>
                     </div>
 
-                    <div class="col-md-6 mt-2">
-                        <label for="pareja_situacion_ocupacional" class="form-label">3.13 Situación Ocupacional</label>
+                    <div class="col-md-6">
+                        <label for="pareja_situacion_ocupacional" class="form-label">Situación Ocupacional</label>
                         <select class="form-select" id="pareja_situacion_ocupacional" name="pareja_situacion_ocupacional"
                             required>
                             <option value="">Seleccione</option>
@@ -748,13 +769,14 @@
                     </div>
                 </div>
 
+                <!-- Sexta fila: Situación Familiar -->
                 <div class="row g-2 mt-4">
                     <div class="col-12">
-                        <legend class="h5">4. Situación Familiar</legend>
+                        <legend class="h5">Situación Familiar</legend>
                     </div>
 
                     <div class="col-md-6">
-                        <label for="pareja_parentesco" class="form-label">4.1 Relación de Parentesco</label>
+                        <label for="pareja_parentesco" class="form-label">Relación de Parentesco</label>
                         <select class="form-select" id="pareja_parentesco" name="pareja_parentesco" required>
                             <option value="">Seleccione</option>
                             <option value="conyuge">Cónyuge</option>
@@ -768,8 +790,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label for="pareja_anos_convivencia" class="form-label">4.2 Años de Matrimonio o
-                            Convivencia</label>
+                        <label for="pareja_anos_convivencia" class="form-label">Años de Matrimonio o Convivencia</label>
                         <select class="form-select" id="pareja_anos_convivencia" name="pareja_anos_convivencia" required>
                             <option value="">Seleccione</option>
                             <option value="menos_de_un_ano">Menos de un año</option>
@@ -788,8 +809,8 @@
         </div>
 
         <!-- =====================
-                                                                                             SECCIÓN 3: DATOS HIJOS
-                                                                                        ===================== -->
+                                                                                                         SECCIÓN 3: DATOS HIJOS
+                                                                                                    ===================== -->
         <div class="card mb-3">
             <div class="card-header">3. Hijos</div>
             <div class="card-body">
@@ -965,8 +986,8 @@
         </div>
 
         <!-- =====================
-                                                                                         SECCIÓN 4: TIPOS DE VIOLENCIA
-                                                                                    ===================== -->
+                                                                                                     SECCIÓN 4: TIPOS DE VIOLENCIA
+                                                                                                ===================== -->
         <div class="card mb-3">
             <div class="card-header">4. Tipos de Violencia</div>
             <div class="card-body">
@@ -1170,16 +1191,11 @@
                     <input type="text" name="violencia_medidas_tomar" id="violencia_institucion_denuncia"
                         class="form-control" placeholder="medidas a tomar">
                 </div>
-                {{-- <div class="mb-3">
-                    <label for="violencia_institucion_derivar" class="form-label">Institución a derivar:</label>
-                    <input type="text" name="violencia_institucion_derivar" id="violencia_institucion_derivar"
-                        class="form-control" placeholder="institucion a derivar">
-                </div> --}}
                 <div class="mb-3">
                     <label for="violencia_institucion_denuncia" class="form-label">Nombre de la persona que lleno el
                         formulario</label>
                     <input type="text" name="formulario_responsable_nombre" id="violencia_institucion_denuncia"
-                        class="form-control" placeholder="nombre completo">
+                        class="form-control" placeholder="nombre completo" required>
                 </div>
             </div>
         </div>
@@ -1363,5 +1379,91 @@
                 helpText.style.display = 'block';
             }
         }
+
+
+
+        // Función para convertir texto a formato oración (Primera letra mayúscula)
+        function formatoOracion(texto) {
+            if (!texto) return '';
+
+            // Convertir todo a minúsculas primero
+            texto = texto.toLowerCase();
+
+            // Capitalizar la primera letra
+            return texto.charAt(0).toUpperCase() + texto.slice(1);
+        }
+
+        // Función para aplicar formato oración en tiempo real
+        function aplicarFormatoOracion(input) {
+            const cursorPos = input.selectionStart;
+            const valorOriginal = input.value;
+            const valorFormateado = formatoOracion(valorOriginal);
+
+            if (valorOriginal !== valorFormateado) {
+                input.value = valorFormateado;
+                // Mantener la posición del cursor
+                input.setSelectionRange(cursorPos, cursorPos);
+            }
+        }
+
+        // Aplicar formato a todos los campos de texto cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Seleccionar todos los inputs de texto y textareas que necesitan formato
+            const camposTexto = document.querySelectorAll(`
+        input[type="text"]:not(#numero_preview):not(#nro_registro_manual_input),
+        textarea
+    `);
+
+            camposTexto.forEach(function(campo) {
+                // Aplicar formato al salir del campo (blur)
+                campo.addEventListener('blur', function() {
+                    aplicarFormatoOracion(this);
+                });
+
+                // Opcional: También aplicar mientras escribe (con delay)
+                let timeout;
+                campo.addEventListener('input', function() {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        aplicarFormatoOracion(this);
+                    }, 500); // Esperar 500ms después de que el usuario deje de escribir
+                });
+            });
+
+            console.log('✓ Formato de oración aplicado a ' + camposTexto.length + ' campos');
+        });
+
+        // Función adicional para formatear nombres completos (cada palabra con mayúscula)
+        function formatoNombrePropio(texto) {
+            if (!texto) return '';
+
+            return texto.toLowerCase()
+                .split(' ')
+                .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1))
+                .join(' ');
+        }
+
+        // Aplicar formato especial a campos de nombres
+        document.addEventListener('DOMContentLoaded', function() {
+            const camposNombres = document.querySelectorAll(`
+        input[name="paciente_nombres"],
+        input[name="paciente_ap_paterno"],
+        input[name="paciente_ap_materno"],
+        input[name="pareja_nombres"],
+        input[name="pareja_apellidos"],
+        input[name="formulario_responsable_nombre"],
+        input[name="regional_recibe_caso"],
+        input[name="regional_institucion_derivante"]
+    `);
+
+            camposNombres.forEach(function(campo) {
+                campo.addEventListener('blur', function() {
+                    const cursorPos = this.selectionStart;
+                    this.value = formatoNombrePropio(this.value);
+                    this.setSelectionRange(cursorPos, cursorPos);
+                });
+            });
+        });
     </script>
 @endsection

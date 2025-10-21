@@ -139,9 +139,14 @@
                             value="{{ old('paciente_nombres', $caso->paciente_nombres) }}">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Apellidos</label>
-                        <input type="text" name="paciente_apellidos" class="form-control" required
-                            value="{{ old('paciente_apellidos', $caso->paciente_apellidos) }}">
+                        <label class="form-label">Apellido Paterno</label>
+                        <input type="text" name="paciente_ap_paterno" class="form-control" required
+                            value="{{ old('paciente_ap_paterno', $caso->paciente_ap_paterno) }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Apellido Materno</label>
+                        <input type="text" name="paciente_ap_materno" class="form-control" required
+                            value="{{ old('paciente_ap_materno', $caso->paciente_ap_materno) }}">
                     </div>
                     <div class="col-md-4 mt-2">
                         <label class="form-label d-block">Edad</label>
@@ -411,10 +416,16 @@
                         <input type="text" name="pareja_nombres" class="form-control" required
                             value="{{ old('pareja_nombres', $caso->pareja_nombres) }}">
                     </div>
+                    
                     <div class="col-md-6">
-                        <label class="form-label">Apellidos</label>
-                        <input type="text" name="pareja_apellidos" class="form-control" required
-                            value="{{ old('pareja_apellidos', $caso->pareja_apellidos) }}">
+                        <label class="form-label">Apellido Paterno</label>
+                        <input type="text" name="pareja_ap_paterno" class="form-control"
+                            value="{{ old('pareja_ap_paterno', $caso->pareja_ap_paterno) }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Apellido Materno</label>
+                        <input type="text" name="pareja_ap_materno" class="form-control"
+                            value="{{ old('pareja_ap_materno', $caso->pareja_ap_materno) }}">
                     </div>
                     <div class="col-md-4 mt-2">
                         <label class="form-label d-block">Sexo</label>

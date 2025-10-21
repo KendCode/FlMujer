@@ -22,7 +22,8 @@ class Caso extends Model
 
         // PACIENTE
         'paciente_nombres',
-        'paciente_apellidos',
+        'paciente_ap_paterno',               // nuevo
+        'paciente_ap_materno',               // nuevo
         'paciente_ci',
         'paciente_edad',
         'paciente_telefono',
@@ -46,7 +47,8 @@ class Caso extends Model
 
         // PAREJA
         'pareja_nombres',
-        'pareja_apellidos',
+        'pareja_ap_paterno',
+        'pareja_ap_materno',
         'pareja_edad',
         'pareja_ci',
         'pareja_telefono',

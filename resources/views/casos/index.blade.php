@@ -136,7 +136,7 @@
                                     <td>{{ \Carbon\Carbon::parse($caso->regional_fecha)->format('d/m/Y') }}</td>
                                     <td>
                                         <div>
-                                            <strong>{{ $caso->paciente_nombres }} {{ $caso->paciente_apellidos }}</strong>
+                                            <strong>{{ $caso->paciente_nombres }} {{ $caso->paciente_ap_paterno }} {{ $caso->paciente_ap_materno }}</strong>
                                             <br>
                                             <small class="text-muted">
                                                 <i

@@ -38,7 +38,7 @@
 
 @section('content')
     <div class="content py-5">
-        <div class="card shadow-lg p-4 mx-auto" style="max-width: 700px;">
+        <div class="card shadow-lg p-4 mx-auto" style="max-width: 1100px;">
             <h2 class="mb-4 text-center" style="color: #037E8C;">Crear Usuario</h2>
             <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf

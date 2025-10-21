@@ -100,7 +100,8 @@ class CasoController extends Controller
 
             // ============ PACIENTE ============
             'paciente_nombres' => 'required|string|max:255',
-            'paciente_apellidos' => 'required|string|max:255',
+            'paciente_ap_materno' => 'nullable|string|max:255',
+            'paciente_ap_paterno' => 'nullable|string|max:255',
             'paciente_sexo' => 'required|in:M,F',
             'paciente_edad_rango' => 'required|string',
             'paciente_edad' => 'nullable|integer|min:0|max:120',
@@ -124,7 +125,8 @@ class CasoController extends Controller
 
             // ============ PAREJA ============
             'pareja_nombres' => 'required|string|max:255',
-            'pareja_apellidos' => 'required|string|max:255',
+            'pareja_ap_paterno' => 'required|string|max:255',
+            'pareja_ap_materno' => 'required|string|max:255',
             'pareja_sexo' => 'required|in:M,F',
             'pareja_edad_rango' => 'required|string',
             'pareja_edad' => 'nullable|integer|min:0|max:120',
@@ -237,7 +239,8 @@ class CasoController extends Controller
 
         // DATOS DEL PACIENTE
         $data['paciente_nombres'] = $validated['paciente_nombres'];
-        $data['paciente_apellidos'] = $validated['paciente_apellidos'];
+        $data['paciente_ap_paterno'] = $validated['paciente_ap_paterno'] ?? null;
+        $data['paciente_ap_materno'] = $validated['paciente_ap_materno'] ?? null;
         $data['paciente_edad'] = $validated['paciente_edad'] ?? null;
         $data['paciente_ci'] = $validated['paciente_ci'] ?? null;
         $data['paciente_telefono'] = $validated['paciente_telefono'] ?? null;
@@ -261,7 +264,8 @@ class CasoController extends Controller
 
         // DATOS DE LA PAREJA
         $data['pareja_nombres'] = $validated['pareja_nombres'];
-        $data['pareja_apellidos'] = $validated['pareja_apellidos'];
+        $data['pareja_ap_paterno'] = $validated['pareja_ap_paterno'] ?? null;
+        $data['pareja_ap_materno'] = $validated['pareja_ap_materno'] ?? null;
         $data['pareja_edad'] = $validated['pareja_edad'] ?? null;
         $data['pareja_ci'] = $validated['pareja_ci'] ?? null;
         $data['pareja_telefono'] = $validated['pareja_telefono'] ?? null;
@@ -454,14 +458,16 @@ class CasoController extends Controller
         // Validaciones básicas
         $request->validate([
             'paciente_nombres' => 'required|string|max:255',
-            'paciente_apellidos' => 'required|string|max:255',
+            'paciente_ap_paterno' => 'nullable|string|max:255',
+            'paciente_ap_materno' => 'nullable|string|max:255',
         ]);
 
         // Actualizar todos los campos del caso
         $caso->update([
             // Datos del paciente
             'paciente_nombres' => $request->input('paciente_nombres'),
-            'paciente_apellidos' => $request->input('paciente_apellidos'),
+            'paciente_ap_paterno' => $request->input('paciente_ap_paterno'),
+            'paciente_ap_materno' => $request->input('paciente_ap_materno'),
             'paciente_ci' => $request->input('paciente_ci'),
             'paciente_telefono' => $request->input('paciente_telefono'),
             'paciente_calle' => $request->input('paciente_calle'),
@@ -480,7 +486,8 @@ class CasoController extends Controller
 
             // Datos de la pareja
             'pareja_nombres' => $request->input('pareja_nombres'),
-            'pareja_apellidos' => $request->input('pareja_apellidos'),
+            'pareja_ap_paterno' => $request->input('pareja_ap_paterno'),
+            'pareja_ap_materno' => $request->input('pareja_ap_materno'),
             'pareja_ci' => $request->input('pareja_ci'),
             'pareja_telefono' => $request->input('pareja_telefono'),
             'pareja_calle' => $request->input('pareja_calle'),
@@ -550,7 +557,9 @@ class CasoController extends Controller
 
         // DATOS DEL PACIENTE
         $data['paciente_nombres'] = $request->input('paciente_nombres');
-        $data['paciente_apellidos'] = $request->input('paciente_apellidos');
+        $data['paciente_ap_paterno'] = $request->input('paciente_ap_paterno');
+        $data['paciente_ap_materno'] = $request->input('paciente_ap_materno');
+        $data['paciente_edad'] = $request->input('paciente_edad');
         $data['paciente_ci'] = $request->input('paciente_ci');
         $data['paciente_telefono'] = $request->input('paciente_telefono');
         $data['paciente_calle'] = $request->input('paciente_calle');
@@ -572,7 +581,8 @@ class CasoController extends Controller
 
         // DATOS DE LA PAREJA
         $data['pareja_nombres'] = $request->input('pareja_nombres');
-        $data['pareja_apellidos'] = $request->input('pareja_apellidos');
+        $data['pareja_ap_paterno'] = $request->input('pareja_ap_paterno');
+        $data['pareja_ap_materno'] = $request->input('pareja_ap_materno');
         $data['pareja_ci'] = $request->input('pareja_ci');
         $data['pareja_telefono'] = $request->input('pareja_telefono');
         $data['pareja_calle'] = $request->input('pareja_calle');
