@@ -9,7 +9,7 @@
         @endif
 
         <form
-            action="{{ (isset($ficha) && $ficha && $ficha->id)
+            action="{{ isset($ficha) && $ficha && $ficha->id
                 ? route('casos.fichaPreliminarAgresor.update', ['caso' => $caso->id, 'ficha' => $ficha->id])
                 : route('casos.guardarFichaPreliminarAgresor', $caso->id) }}"
             method="POST">
@@ -67,24 +67,28 @@
                 </thead>
                 <tbody id="grupoFamiliar">
                     @php
-                        $grupo = (isset($ficha) && $ficha && isset($ficha->grupo_familiar)) 
-                            ? $ficha->grupo_familiar 
-                            : [[
-                                'nombre' => '',
-                                'parentesco' => '',
-                                'edad' => '',
-                                'sexo' => '',
-                                'grado' => '',
-                                'estado_civil' => '',
-                                'ocupacion' => '',
-                                'lugar' => '',
-                                'observacion' => '',
-                            ]];
+                        $grupo =
+                            isset($ficha) && $ficha && isset($ficha->grupo_familiar)
+                                ? $ficha->grupo_familiar
+                                : [
+                                    [
+                                        'nombre' => '',
+                                        'parentesco' => '',
+                                        'edad' => '',
+                                        'sexo' => '',
+                                        'grado' => '',
+                                        'estado_civil' => '',
+                                        'ocupacion' => '',
+                                        'lugar' => '',
+                                        'observacion' => '',
+                                    ],
+                                ];
                     @endphp
                     @foreach ($grupo as $i => $miembro)
                         <tr>
                             <td><input type="text" name="grupo_familiar[{{ $i }}][nombre]"
-                                    class="form-control" value="{{ old("grupo_familiar.$i.nombre", $miembro['nombre'] ?? '') }}">
+                                    class="form-control"
+                                    value="{{ old("grupo_familiar.$i.nombre", $miembro['nombre'] ?? '') }}">
                             </td>
                             <td><input type="text" name="grupo_familiar[{{ $i }}][parentesco]"
                                     class="form-control"
@@ -94,16 +98,19 @@
                             <td><input type="text" name="grupo_familiar[{{ $i }}][sexo]" class="form-control"
                                     value="{{ old("grupo_familiar.$i.sexo", $miembro['sexo'] ?? '') }}"></td>
                             <td><input type="text" name="grupo_familiar[{{ $i }}][grado]"
-                                    class="form-control" value="{{ old("grupo_familiar.$i.grado", $miembro['grado'] ?? '') }}">
+                                    class="form-control"
+                                    value="{{ old("grupo_familiar.$i.grado", $miembro['grado'] ?? '') }}">
                             </td>
                             <td><input type="text" name="grupo_familiar[{{ $i }}][estado_civil]"
                                     class="form-control"
-                                    value="{{ old("grupo_familiar.$i.estado_civil", $miembro['estado_civil'] ?? '') }}"></td>
+                                    value="{{ old("grupo_familiar.$i.estado_civil", $miembro['estado_civil'] ?? '') }}">
+                            </td>
                             <td><input type="text" name="grupo_familiar[{{ $i }}][ocupacion]"
                                     class="form-control"
                                     value="{{ old("grupo_familiar.$i.ocupacion", $miembro['ocupacion'] ?? '') }}"></td>
                             <td><input type="text" name="grupo_familiar[{{ $i }}][lugar]"
-                                    class="form-control" value="{{ old("grupo_familiar.$i.lugar", $miembro['lugar'] ?? '') }}">
+                                    class="form-control"
+                                    value="{{ old("grupo_familiar.$i.lugar", $miembro['lugar'] ?? '') }}">
                             </td>
                             <td><input type="text" name="grupo_familiar[{{ $i }}][observacion]"
                                     class="form-control"
@@ -167,7 +174,7 @@
                                 'Desvalorización, baja autoestima',
                                 'Descuido de la salud personal',
                             ];
-                            $indicadores = (isset($ficha) && $ficha) ? ($ficha->indicadores ?? []) : [];
+                            $indicadores = isset($ficha) && $ficha ? $ficha->indicadores ?? [] : [];
                         @endphp
                         @foreach ($a as $idx => $item)
                             <div class="col-md-6">
@@ -261,21 +268,30 @@
             <div class="row mb-3">
                 <div class="col-md-4">
                     <label class="form-label">Fecha</label>
-                    <input type="date" class="form-control" name="fecha" 
+                    <input type="date" class="form-control" name="fecha"
                         value="{{ old('fecha', isset($ficha) && $ficha ? ($ficha->fecha ? $ficha->fecha->format('Y-m-d') : date('Y-m-d')) : date('Y-m-d')) }}">
                 </div>
                 <div class="col-md-8 d-flex align-items-end">
                     <div>
                         <label class="form-label">Nombre y firma de la persona que recepcionó el caso</label>
-                        <input class="form-control" name="recepcionador" 
+                        <input class="form-control" name="recepcionador"
                             value="{{ old('recepcionador', $ficha->recepcionador ?? '') }}" />
                     </div>
                 </div>
             </div>
 
-            <button class="btn btn-success" type="submit">
-                {{ (isset($ficha) && $ficha && $ficha->id) ? 'Actualizar ficha' : 'Guardar ficha' }}
-            </button>
+            
+            <!-- Botones de acción -->
+            <div class="d-flex gap-2 mb-4">
+                <button class="btn btn-success" type="submit">
+                    <i class="bi bi-save"></i>
+                    {{ isset($ficha) && $ficha && $ficha->id ? 'Actualizar ficha' : 'Guardar ficha' }}
+                </button>
+                <a href="{{ route('casos.index') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i>
+                    Volver
+                </a>
+            </div>
         </form>
     </div>
 
