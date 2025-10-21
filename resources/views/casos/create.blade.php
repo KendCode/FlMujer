@@ -156,7 +156,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Apellido Materno</label>
-                        <input type="text" name="paciente_ap_materno" class="form-control" required>
+                        <input type="text" name="paciente_ap_materno" class="form-control">
                     </div>
                     <div class="col-md-4 mt-2">
                         <label class="form-label d-block">Edad</label>
@@ -1018,7 +1018,7 @@
                         </label>
                     </div>
 
-                    <div class="form-check">
+                    {{-- <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="violencia_tipo_economica"
                             id="violencia_tipo_economica" value="1">
                         <label class="form-check-label" for="violencia_tipo_economica">
@@ -1032,7 +1032,7 @@
                         <label class="form-check-label" for="violencia_tipo_patrimonial">
                             Violencia Patrimonial
                         </label>
-                    </div>
+                    </div> --}}
                 </div>
 
                 <div class="mb-3">

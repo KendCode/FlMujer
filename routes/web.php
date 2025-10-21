@@ -138,41 +138,40 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
         Route::delete('{ficha}', [FichaSeguimientoPsicologicoController::class, 'destroy'])
             ->name('casos.fichaSeguimientoPsicologico.destroy');
     });
+
+
+
     //? Rutas para fichas preliminares de víctima, agresor y pareja
     Route::prefix('casos')->group(function () {
-        // Ruta para la ficha preliminar de víctima
+        // ?Ruta para la ficha preliminar de víctima
         Route::get('{caso}/fichaPreliminarVictima', [CasoController::class, 'fichaPreliminarVictima'])
             ->name('casos.fichaPreliminarVictima');
         Route::get('{caso}/fichaPreliminarPareja', [CasoController::class, 'fichaPreliminarPareja'])
             ->name('casos.fichaPreliminarPareja');
-
-
-        // Ficha preliminar de agresor (HGV)
-        Route::get('{caso}/fichaPreliminarAgresor', [CasoController::class, 'fichaPreliminarAgresor'])
-            ->name('casos.fichaPreliminarAgresor');
-
-        // Guardar ficha HGV
-        Route::post('{caso}/ficha-preliminar-hgv', [CasoController::class, 'guardarFichaPreliminarHGV'])
-            ->name('casos.guardarFichaPreliminarAgresor');
-
-        // Ver ficha HGV guardada
-        Route::get('{caso}/ficha-preliminar-hgv/ver', [CasoController::class, 'verFichaPreliminarHGV'])
-            ->name('casos.verFichaPreliminarAgresor');
-
-        // Ficha preliminar de pareja
-        Route::get('/casos/{id}/fichaPreliminarPareja', [CasoController::class, 'fichaPreliminarPareja'])
-            ->name('casos.fichaPreliminarPareja');
-
-        Route::post('/casos/{id}/fichaPreliminarPareja', [CasoController::class, 'storeFichaPreliminarPareja'])
-            ->name('casos.fichaPreliminarPareja.store');
-//**RUTA PARA FICHA PRELIMINAR DE VICTIMA */
         Route::get('/casos/{id}/fichaPreliminarVIF', [CasoController::class, 'fichaPreliminarVIF'])
             ->name('casos.fichaPreliminarVIF');
 
         Route::post('/casos/{id}/fichaPreliminarVIF', [CasoController::class, 'storeFichaPreliminarVIF'])
             ->name('casos.fichaPreliminarVIF.store');
         Route::put('/ficha-preliminar-vif/{id}', [CasoController::class, 'updateFichaPreliminarVIF'])
-        ->name('casos.fichaPreliminarVIF.update');
+            ->name('casos.fichaPreliminarVIF.update');
+
+        //* Ficha preliminar de agresor (HGV)
+        Route::get('{caso}/fichaPreliminarAgresor', [CasoController::class, 'fichaPreliminarAgresor'])
+            ->name('casos.fichaPreliminarAgresor');
+        Route::post('{caso}/fichaPreliminarAgresor', [CasoController::class, 'guardarFichaPreliminarHGV'])
+            ->name('casos.guardarFichaPreliminarAgresor');
+        // Actualizar (update) con PUT
+        Route::put('{caso}/fichaPreliminarAgresor/{ficha}', [CasoController::class, 'actualizarFichaPreliminarHGV'])
+            ->name('casos.fichaPreliminarAgresor.update');
+
+
+
+        // **Ficha preliminar de pareja
+        Route::get('/casos/{id}/fichaPreliminarPareja', [CasoController::class, 'fichaPreliminarPareja'])
+            ->name('casos.fichaPreliminarPareja');
+        Route::post('/casos/{id}/fichaPreliminarPareja', [CasoController::class, 'storeFichaPreliminarPareja'])
+            ->name('casos.fichaPreliminarPareja.store');
     });
 });
 

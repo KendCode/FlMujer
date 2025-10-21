@@ -9,7 +9,7 @@ class FichaAgresor extends Model
 {
     use HasFactory;
 
-    protected $table = 'evaluacion_preliminar_hgv';
+    protected $table = 'ficha_agresores';
 
     protected $fillable = [
         'caso_id',

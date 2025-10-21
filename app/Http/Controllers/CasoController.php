@@ -688,12 +688,15 @@ class CasoController extends Controller
             ->with('success', 'El caso fue eliminado correctamente.');
     }
 
-    //********FICHA PRELIMINAR */
+
+
+
+    //********FICHA PRELIMINAR hombres - agresor */
 
     // Guardar ficha
-    public function guardarFichaPreliminarHGV(Request $request, $id)
+    public function guardarFichaPreliminarHGV(Request $request, $caso_id)
     {
-        $caso = Caso::findOrFail($id);
+        $caso = Caso::findOrFail($caso_id);
 
         $validated = $request->validate([
             'nro_registro' => 'nullable|string|max:255',
@@ -713,30 +716,73 @@ class CasoController extends Controller
             'fecha' => 'nullable|date',
         ]);
 
-        $ficha = new FichaAgresor();
-        $ficha->caso_id = $caso->id;
-        $ficha->nro_registro = $validated['nro_registro'] ?? null;
-        $ficha->nombre_completo = $validated['nombre_completo'] ?? null;
-        $ficha->contacto_emergencia = $validated['contacto_emergencia'] ?? null;
-        $ficha->telf_emergencia = $validated['telf_emergencia'] ?? null;
-        $ficha->relacion_emergencia = $validated['relacion_emergencia'] ?? null;
-        $ficha->grupo_familiar = $validated['grupo_familiar'] ?? [];
-        $ficha->fase_primera = $validated['fase']['primera'] ?? null;
-        $ficha->fase_segunda = $validated['fase']['segunda'] ?? null;
-        $ficha->fase_tercera = $validated['fase']['tercera'] ?? null;
-        $ficha->fase_cuarta = $validated['fase']['cuarta'] ?? null;
-        $ficha->indicadores = $validated['indicadores'] ?? [];
-        $ficha->observaciones = $validated['observaciones'] ?? null;
-        $ficha->medidas_tomar = $validated['medidasTomar'] ?? null;
-        $ficha->recepcionador = $validated['recepcionador'] ?? null;
-        $ficha->fecha = $validated['fecha'] ?? now();
-
-        $ficha->save();
+        FichaAgresor::create([
+            'caso_id' => $caso_id,
+            'nro_registro' => $caso->nro_registro,
+            'nombre_completo' => trim($caso->paciente_nombres . ' ' . $caso->paciente_ap_paterno . ' ' . $caso->paciente_ap_materno),
+            'contacto_emergencia' => $validated['contacto_emergencia'] ?? null,
+            'telf_emergencia' => $validated['telf_emergencia'] ?? null,
+            'relacion_emergencia' => $validated['relacion_emergencia'] ?? null,
+            'grupo_familiar' => $validated['grupo_familiar'] ?? [],
+            'fase_primera' => $validated['fase']['primera'] ?? null,
+            'fase_segunda' => $validated['fase']['segunda'] ?? null,
+            'fase_tercera' => $validated['fase']['tercera'] ?? null,
+            'fase_cuarta' => $validated['fase']['cuarta'] ?? null,
+            'indicadores' => $validated['indicadores'] ?? [],
+            'observaciones' => $validated['observaciones'] ?? null,
+            'medidas_tomar' => $validated['medidasTomar'] ?? null,
+            'recepcionador' => $validated['recepcionador'] ?? null,
+            'fecha' => $validated['fecha'] ?? now(),
+        ]);
 
         return redirect()
-            ->route('casos.index', $caso->id)
-            ->with('success', 'Ficha de evaluación preliminar (HGV) guardada correctamente.');
+            ->route('casos.fichaPreliminarAgresor', $caso_id)
+            ->with('success', 'Ficha de evaluación preliminar guardada correctamente.');
     }
+    // Para actualizar PUT
+    public function actualizarFichaPreliminarHGV(Request $request, $caso_id, $ficha_id)
+    {
+        $ficha = FichaAgresor::findOrFail($ficha_id);
+
+        $validated = $request->validate([
+            'nro_registro' => 'nullable|string|max:255',
+            'nombre_completo' => 'nullable|string|max:255',
+            'contacto_emergencia' => 'nullable|string|max:255',
+            'telf_emergencia' => 'nullable|string|max:20',
+            'relacion_emergencia' => 'nullable|string|max:255',
+            'grupo_familiar' => 'nullable|array',
+            'fase.primera' => 'nullable|string',
+            'fase.segunda' => 'nullable|string',
+            'fase.tercera' => 'nullable|string',
+            'fase.cuarta' => 'nullable|string',
+            'indicadores' => 'nullable|array',
+            'observaciones' => 'nullable|string',
+            'medidasTomar' => 'nullable|string',
+            'recepcionador' => 'nullable|string|max:255',
+            'fecha' => 'nullable|date',
+        ]);
+
+        $ficha->update([
+            'contacto_emergencia' => $validated['contacto_emergencia'] ?? null,
+            'telf_emergencia' => $validated['telf_emergencia'] ?? null,
+            'relacion_emergencia' => $validated['relacion_emergencia'] ?? null,
+            'grupo_familiar' => $validated['grupo_familiar'] ?? [],
+            'fase_primera' => $validated['fase']['primera'] ?? null,
+            'fase_segunda' => $validated['fase']['segunda'] ?? null,
+            'fase_tercera' => $validated['fase']['tercera'] ?? null,
+            'fase_cuarta' => $validated['fase']['cuarta'] ?? null,
+            'indicadores' => $validated['indicadores'] ?? [],
+            'observaciones' => $validated['observaciones'] ?? null,
+            'medidas_tomar' => $validated['medidasTomar'] ?? null,
+            'recepcionador' => $validated['recepcionador'] ?? null,
+            'fecha' => $validated['fecha'] ?? now(),
+        ]);
+
+        return redirect()->route('casos.index', $caso_id)
+            ->with('success', 'Ficha actualizada correctamente.');
+    }
+
+
 
     // Mostrar ficha guardada
     public function verFichaPreliminarHGV($id)
@@ -747,11 +793,11 @@ class CasoController extends Controller
         return view('casos.fichaPreliminarAgresor', compact('caso', 'ficha'));
     }
 
-    public function fichaPreliminarAgresor($id)
+    public function fichaPreliminarAgresor($caso_id)
     {
-        $caso = Caso::findOrFail($id); // Buscar el caso específico
-
-        return view('casos.fichaPreliminarAgresor', compact('caso'));
+        $caso = Caso::findOrFail($caso_id); // Buscar el caso específico
+        $ficha = FichaAgresor::where('caso_id', $caso_id)->latest()->first();
+        return view('casos.fichaPreliminarAgresor', compact('caso', 'ficha'));
     }
     /**
      * ========================================
