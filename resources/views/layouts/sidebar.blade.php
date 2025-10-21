@@ -176,45 +176,55 @@
             <div class="list-group list-group-flush">
                 <a href="{{ route('dashboard') }}" class="list-group-item"><i
                         class="fas fa-home"></i><span>Inicio</span></a>
-                <a href="{{ route('users.index') }}" class="list-group-item"><i
-                        class="fas fa-users"></i><span>Usuarios</span></a>
+                <a href="{{ route('users.index') }}" class="list-group-item"><i class="fas fa-users"></i><span>Lista de
+                        Usuarios</span></a>
                 <a href="{{ route('fichasConsulta.index') }}" class="list-group-item"><i
-                        class="fas fa-comments"></i><span>Consultas</span></a>
+                        class="fas fa-comments"></i><span>Formulario de Consultas</span></a>
+                <!-- En layouts/sidebar.blade.php -->
+                
+                <a href="{{ route('reportes.index') }}" class="list-group-item">
+                    <i class="fas fa-chart-bar"></i> Reportes
+                </a>
+                
 
                 <!-- Dropdown navegación estilo sidebar -->
                 <!-- Dropdown navegación estilo sidebar (solo para ADMINISTRADOR) -->
-@auth
-    @if (Auth::user()->rol === 'administrador')
-        <div class="dropdown w-100">
-            <button class="list-group-item list-group-item-action dropdown-toggle text-start w-100"
-                type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-cogs"></i> Página Web
-            </button>
-            <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
-                <li>
-                    <a class="list-group-item-action dropdown-item" href="{{ route('admin.carousels.index') }}">
-                        <i class="fas fa-images"></i> Carrusel de imágenes
-                    </a>
-                </li>
-                <li>
-                    <a class="list-group-item-action dropdown-item" href="{{ route('admin.contenidos.index') }}">
-                        <i class="fas fa-file-alt"></i> Gestión de contenidos
-                    </a>
-                </li>
-                <li>
-                    <a class="list-group-item-action dropdown-item" href="{{ route('admin.actividades.index') }}">
-                        <i class="fas fa-tasks"></i> Actividades
-                    </a>
-                </li>
-                <li>
-                    <a class="list-group-item-action dropdown-item" href="{{ route('admin.testimonios.index') }}">
-                        <i class="fas fa-comments"></i> Testimonios
-                    </a>
-                </li>
-            </ul>
-        </div>
-    @endif
-@endauth
+                @auth
+                    @if (Auth::user()->rol === 'administrador')
+                        <div class="dropdown w-100">
+                            <button class="list-group-item list-group-item-action dropdown-toggle text-start w-100"
+                                type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-cogs"></i> Página Web
+                            </button>
+                            <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
+                                <li>
+                                    <a class="list-group-item-action dropdown-item"
+                                        href="{{ route('admin.carousels.index') }}">
+                                        <i class="fas fa-images"></i> Carrusel de imágenes
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="list-group-item-action dropdown-item"
+                                        href="{{ route('admin.contenidos.index') }}">
+                                        <i class="fas fa-file-alt"></i> Gestión de contenidos
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="list-group-item-action dropdown-item"
+                                        href="{{ route('admin.actividades.index') }}">
+                                        <i class="fas fa-tasks"></i> Actividades
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="list-group-item-action dropdown-item"
+                                        href="{{ route('admin.testimonios.index') }}">
+                                        <i class="fas fa-comments"></i> Testimonios
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    @endif
+                @endauth
 
 
                 <a href="{{ route('casos.index') }}" class="list-group-item">

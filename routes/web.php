@@ -23,7 +23,7 @@ use App\Http\Controllers\FichaAgresorController;
 use App\Http\Controllers\FichaParejaController;
 use App\Http\Controllers\FichaSeguimientoPsicologicoController;
 use App\Http\Controllers\FichaVictimaController;
-
+use App\Http\Controllers\ReportesController;
 /*Route::get('/', function () {
     return view('welcome');
 });*/
@@ -173,6 +173,14 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
         Route::post('/casos/{id}/fichaPreliminarPareja', [CasoController::class, 'storeFichaPreliminarPareja'])
             ->name('casos.fichaPreliminarPareja.store');
     });
+
+
+
+    //!REPORTES GRAFICOS RUTAS
+    Route::get('/reportes', [ReportesController::class, 'index'])->name('reportes.index');
+    Route::post('/reportes/exportar/pdf', [ReportesController::class, 'exportarPDF'])->name('reportes.exportar.pdf');
+    Route::post('/reportes/exportar/word', [ReportesController::class, 'exportarWord'])->name('reportes.exportar.word');
+    Route::post('/reportes/exportar/excel', [ReportesController::class, 'exportarExcel'])->name('reportes.exportar.excel');
 });
 
 require __DIR__ . '/auth.php';
