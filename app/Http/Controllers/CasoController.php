@@ -12,6 +12,7 @@ use App\Models\Pareja;
 use App\Models\Hijo;
 use App\Models\FichaAgresor;
 use App\Models\FichaVictima;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CasoController extends Controller
 {
@@ -94,9 +95,10 @@ class CasoController extends Controller
             'nro_registro_manual_input' => [
                 'required_if:tipo_registro,manual',
                 'nullable',
-                'regex:/^CT-EA-\d{3}-\d{2}$/',
+                'regex:/^CT-\d{3}-\d{2}-EA$/',
                 'unique:casos,nro_registro',
             ],
+
 
             // ============ PACIENTE ============
             'paciente_nombres' => 'required|string|max:255',
@@ -365,20 +367,30 @@ class CasoController extends Controller
      */
     public function obtenerProximoNumero()
     {
-        try {
-            $proximoNumero = Caso::generarNumeroRegistro();
-            return response()->json([
-                'numero' => $proximoNumero,
-                'success' => true
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'numero' => 'Error',
-                'success' => false,
-                'mensaje' => 'No se pudo generar el número'
-            ], 500);
+        $anio = date('y'); // Año actual en 2 dígitos
+
+        // Obtener último número secuencial del año actual
+        $ultimoCaso = Caso::where('nro_registro', 'like', "CT-%-$anio-EA")
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if ($ultimoCaso) {
+            preg_match('/^CT-(\d{3})-\d{2}-EA$/', $ultimoCaso->nro_registro, $matches);
+            $secuencial = isset($matches[1]) ? (int)$matches[1] + 1 : 1;
+        } else {
+            $secuencial = 1;
         }
+
+        if ($secuencial > 999) {
+            return response()->json(['success' => false, 'mensaje' => 'No hay números disponibles']);
+        }
+
+        $secuencialFormateado = str_pad($secuencial, 3, '0', STR_PAD_LEFT);
+        $numero = "CT-$secuencialFormateado-$anio-EA";
+
+        return response()->json(['success' => true, 'numero' => $numero]);
     }
+
 
     /**
      * Validar número de registro manual (AJAX)
@@ -387,29 +399,22 @@ class CasoController extends Controller
     {
         $numero = strtoupper(trim($request->input('numero')));
 
-        // Validar formato CT-EA-XXX-YY
-        if (!preg_match('/^CT-EA-\d{3}-\d{2}$/', $numero)) {
+        if (!preg_match('/^CT-(\d{3})-(\d{2})-EA$/', $numero, $matches)) {
             return response()->json([
                 'valido' => false,
-                'mensaje' => 'Formato incorrecto. Debe ser: CT-EA-001-25'
+                'mensaje' => 'Formato incorrecto. Debe ser: CT-001-25-EA'
             ]);
         }
 
-        // Extraer partes del número
-        preg_match('/^CT-EA-(\d{3})-(\d{2})$/', $numero, $matches);
-        if (isset($matches[1])) {
-            $numeroSecuencial = (int)$matches[1];
+        $numeroSecuencial = (int)$matches[1];
 
-            // Validar que el número esté en el rango válido
-            if ($numeroSecuencial < 1 || $numeroSecuencial > 999) {
-                return response()->json([
-                    'valido' => false,
-                    'mensaje' => 'El número debe estar entre 001 y 999'
-                ]);
-            }
+        if ($numeroSecuencial < 1 || $numeroSecuencial > 999) {
+            return response()->json([
+                'valido' => false,
+                'mensaje' => 'El número debe estar entre 001 y 999'
+            ]);
         }
 
-        // Validar si ya existe (UNICIDAD)
         $existe = Caso::where('nro_registro', $numero)->exists();
 
         if ($existe) {
@@ -426,12 +431,14 @@ class CasoController extends Controller
     }
 
 
+
+
     /**
      * Muestra un caso específico.
      */
     public function show(Caso $caso)
     {
-        //return view('casos.show', compact('caso'));
+        return view('casos.show', compact('caso'));
     }
 
     /**
@@ -982,5 +989,12 @@ class CasoController extends Controller
         return redirect()
             ->route('casos.index')
             ->with('success', 'Ficha actualizada correctamente.');
+    }
+    public function exportarPDF($id)
+    {
+        $caso = Caso::findOrFail($id);
+        $pdf = Pdf::loadView('casos.pdf', compact('caso'))
+            ->setPaper('a4', 'portrait');
+        return $pdf->download('Ficha_Caso_' . $caso->nro_registro . '.pdf');
     }
 }

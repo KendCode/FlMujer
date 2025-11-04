@@ -186,7 +186,7 @@
                                     <td>
                                         <div class="btn-group align-items-stretch" role="group">
                                             {{-- Botón Ver --}}
-                                            <a href="#"
+                                            <a href="{{ route('casos.show', $caso->id) }}"
                                                 class="btn btn-outline-primary d-flex align-items-center justify-content-center"
                                                 title="Ver detalles">
                                                 <i class="bi bi-eye"></i>

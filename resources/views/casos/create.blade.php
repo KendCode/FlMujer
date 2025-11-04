@@ -65,8 +65,8 @@
     <form action="{{ route('casos.store') }}" method="POST">
         @csrf
         <!-- =====================
-                                       SECCIÓN 0: DATOS DE LA REGIONAL
-                                                 ===================== -->
+                                                   SECCIÓN 0: DATOS DE LA REGIONAL
+                                                             ===================== -->
         <div class="card mb-3">
             <div class="card-header">Regional</div>
             <div class="card-body">
@@ -80,7 +80,6 @@
                         <input type="date" name="regional_fecha" class="form-control">
                     </div>
 
-                    <!-- ✅ NUEVO: Opción para elegir entre automático o manual -->
                     <!-- ✅ Opción para elegir entre automático o manual -->
                     <div class="col-md-12 mt-3">
                         <label class="form-label d-block">Número de Registro</label>
@@ -117,15 +116,16 @@
                     <div class="col-md-6 mt-2" id="campo_registro_manual" style="display: none;">
                         <label class="form-label">Número de Registro Manual</label>
                         <input type="text" name="nro_registro_manual_input" id="nro_registro_manual_input"
-                            class="form-control" placeholder="CT-EA-001-25" pattern="^CT-EA-\d{3}-\d{2}$"
-                            title="Formato válido: CT-EA-001-25">
+                            class="form-control" placeholder="CT-001-25-EA" pattern="^CT-\d{3}-\d{2}-EA$"
+                            title="Formato válido: CT-001-25-EA">
                         <div id="feedback_manual" style="display: none;">
                             <small class="form-text"></small>
                         </div>
                         <small class="form-text text-muted" id="help_text">
-                            Formato: CT-EA-[número único 001-999]-[año 00-99]
+                            Formato: CT-[número único 001-999]-[año 00-99]-EA
                         </small>
                     </div>
+
 
 
 
@@ -138,8 +138,8 @@
         </div>
 
         <!-- =====================
-                        SECCIÓN 1: DATOS PERSONALES PACIENTE
-                             ===================== -->
+                                    SECCIÓN 1: DATOS PERSONALES PACIENTE
+                                         ===================== -->
 
         <div class="card mb-3">
             <div class="card-header">Datos Personales y Más Datos</div>
@@ -443,8 +443,8 @@
         </div>
 
         <!-- =====================
-                                                                                                             SECCIÓN 2: DATOS PAREJA
-                                                                                                        ===================== -->
+                                                                                                                         SECCIÓN 2: DATOS PAREJA
+                                                                                                                    ===================== -->
         <div class="card mb-3">
             <div class="card-header">2. Datos de la pareja</div>
             <div class="card-body">
@@ -456,11 +456,11 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Apellido Paterno</label>
-                        <input type="text" name="pareja_ap_paterno" class="form-control" required>
+                        <input type="text" name="pareja_ap_paterno" class="form-control">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Apellido Materno</label>
-                        <input type="text" name="pareja_ap_materno" class="form-control" required>
+                        <input type="text" name="pareja_ap_materno" class="form-control">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Edad</label>
@@ -809,8 +809,8 @@
         </div>
 
         <!-- =====================
-                                                                                                         SECCIÓN 3: DATOS HIJOS
-                                                                                                    ===================== -->
+                                                                                                                     SECCIÓN 3: DATOS HIJOS
+                                                                                                                ===================== -->
         <div class="card mb-3">
             <div class="card-header">3. Hijos</div>
             <div class="card-body">
@@ -986,8 +986,8 @@
         </div>
 
         <!-- =====================
-                                                                                                     SECCIÓN 4: TIPOS DE VIOLENCIA
-                                                                                                ===================== -->
+                                                                                                                 SECCIÓN 4: TIPOS DE VIOLENCIA
+                                                                                                            ===================== -->
         <div class="card mb-3">
             <div class="card-header">4. Tipos de Violencia</div>
             <div class="card-body">
@@ -1215,14 +1215,11 @@
 
     <!-- JavaScript para toggle del registro -->
     <script>
-        // Al cargar la página
         document.addEventListener('DOMContentLoaded', function() {
             cargarPreviewNumero();
+            inicializarFormatoCampos();
         });
 
-        /**
-         * Alternar entre modo automático y manual
-         */
         function toggleRegistroManual() {
             const esManual = document.getElementById('registro_manual').checked;
             const campoManual = document.getElementById('campo_registro_manual');
@@ -1230,13 +1227,11 @@
             const inputManual = document.getElementById('nro_registro_manual_input');
 
             if (esManual) {
-                // Mostrar campo manual
                 campoManual.style.display = 'block';
                 previewAutomatico.style.display = 'none';
                 inputManual.required = true;
                 inputManual.focus();
             } else {
-                // Mostrar preview automático
                 campoManual.style.display = 'none';
                 previewAutomatico.style.display = 'block';
                 inputManual.required = false;
@@ -1246,9 +1241,6 @@
             }
         }
 
-        /**
-         * Cargar el preview del número automático
-         */
         function cargarPreviewNumero() {
             const previewInput = document.getElementById('numero_preview');
             previewInput.value = 'Cargando...';
@@ -1261,21 +1253,15 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        previewInput.value = data.numero;
-                    } else {
-                        previewInput.value = 'Error al cargar';
-                    }
+                    previewInput.value = data.success ? data.numero : 'Error al cargar';
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error(error);
                     previewInput.value = 'Error al cargar';
                 });
         }
 
-        /**
-         * Validación en tiempo real del número manual
-         */
+        // Validación tiempo real para manual
         let timeoutValidacion;
         const inputManual = document.getElementById('nro_registro_manual_input');
 
@@ -1283,9 +1269,7 @@
             inputManual.addEventListener('input', function(e) {
                 const valor = e.target.value.toUpperCase();
                 e.target.value = valor;
-
-                // Validar formato mientras escribe
-                const regex = /^CT-EA-\d{3}-\d{2}$/;
+                const regex = /^CT-\d{3}-\d{2}-EA$/;
 
                 clearTimeout(timeoutValidacion);
 
@@ -1293,15 +1277,11 @@
                     if (!regex.test(valor)) {
                         e.target.classList.add('is-invalid');
                         e.target.classList.remove('is-valid');
-                        mostrarMensajeFeedback('Formato incorrecto: CT-EA-001-25', 'error');
+                        mostrarMensajeFeedback('Formato incorrecto: CT-001-25-EA', 'error');
                     } else {
-                        // Validar unicidad con AJAX después de 500ms
                         e.target.classList.remove('is-invalid', 'is-valid');
                         mostrarMensajeFeedback('Verificando disponibilidad...', 'info');
-
-                        timeoutValidacion = setTimeout(() => {
-                            validarNumeroAjax(valor, e.target);
-                        }, 500);
+                        timeoutValidacion = setTimeout(() => validarNumeroAjax(valor, e.target), 500);
                     }
                 } else {
                     e.target.classList.remove('is-invalid', 'is-valid');
@@ -1310,9 +1290,6 @@
             });
         }
 
-        /**
-         * Validar número mediante AJAX
-         */
         function validarNumeroAjax(numero, input) {
             fetch('{{ route('casos.validar-numero-registro') }}', {
                     method: 'POST',
@@ -1327,143 +1304,86 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.valido) {
-                        input.classList.remove('is-invalid');
                         input.classList.add('is-valid');
+                        input.classList.remove('is-invalid');
                         mostrarMensajeFeedback('✓ ' + data.mensaje, 'success');
                     } else {
-                        input.classList.remove('is-valid');
                         input.classList.add('is-invalid');
+                        input.classList.remove('is-valid');
                         mostrarMensajeFeedback('✗ ' + data.mensaje, 'error');
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error(error);
                     input.classList.add('is-invalid');
-                    mostrarMensajeFeedback('Error al validar. Intente nuevamente.', 'error');
+                    mostrarMensajeFeedback('Error al validar.', 'error');
                 });
         }
 
-        /**
-         * Mostrar mensaje de feedback
-         */
         function mostrarMensajeFeedback(mensaje, tipo) {
             const feedbackDiv = document.getElementById('feedback_manual');
             const feedbackText = feedbackDiv.querySelector('small');
             const helpText = document.getElementById('help_text');
-
-            if (feedbackDiv && feedbackText) {
-                feedbackDiv.style.display = 'block';
-                helpText.style.display = 'none';
-
-                feedbackText.textContent = mensaje;
-
-                if (tipo === 'error') {
-                    feedbackText.className = 'form-text text-danger';
-                } else if (tipo === 'success') {
-                    feedbackText.className = 'form-text text-success';
-                } else if (tipo === 'info') {
-                    feedbackText.className = 'form-text text-info';
-                }
-            }
+            feedbackDiv.style.display = 'block';
+            helpText.style.display = 'none';
+            feedbackText.textContent = mensaje;
+            feedbackText.className = tipo === 'error' ? 'form-text text-danger' : tipo === 'success' ?
+                'form-text text-success' : 'form-text text-info';
         }
 
-        /**
-         * Ocultar mensaje de feedback
-         */
         function ocultarMensajeFeedback() {
             const feedbackDiv = document.getElementById('feedback_manual');
             const helpText = document.getElementById('help_text');
-
-            if (feedbackDiv && helpText) {
-                feedbackDiv.style.display = 'none';
-                helpText.style.display = 'block';
-            }
+            feedbackDiv.style.display = 'none';
+            helpText.style.display = 'block';
         }
 
-
-
-        // Función para convertir texto a formato oración (Primera letra mayúscula)
+        // ---------------- Formato de texto y nombres
         function formatoOracion(texto) {
             if (!texto) return '';
-
-            // Convertir todo a minúsculas primero
             texto = texto.toLowerCase();
-
-            // Capitalizar la primera letra
             return texto.charAt(0).toUpperCase() + texto.slice(1);
         }
 
-        // Función para aplicar formato oración en tiempo real
         function aplicarFormatoOracion(input) {
             const cursorPos = input.selectionStart;
-            const valorOriginal = input.value;
-            const valorFormateado = formatoOracion(valorOriginal);
-
-            if (valorOriginal !== valorFormateado) {
-                input.value = valorFormateado;
-                // Mantener la posición del cursor
+            const val = input.value;
+            const f = formatoOracion(val);
+            if (val !== f) {
+                input.value = f;
                 input.setSelectionRange(cursorPos, cursorPos);
             }
         }
 
-        // Aplicar formato a todos los campos de texto cuando se carga la página
-        document.addEventListener('DOMContentLoaded', function() {
-
-            // Seleccionar todos los inputs de texto y textareas que necesitan formato
-            const camposTexto = document.querySelectorAll(`
-        input[type="text"]:not(#numero_preview):not(#nro_registro_manual_input),
-        textarea
-    `);
-
-            camposTexto.forEach(function(campo) {
-                // Aplicar formato al salir del campo (blur)
-                campo.addEventListener('blur', function() {
+        function inicializarFormatoCampos() {
+            const camposTexto = document.querySelectorAll(
+                `input[type="text"]:not(#numero_preview):not(#nro_registro_manual_input),textarea`);
+            camposTexto.forEach(c => {
+                c.addEventListener('blur', function() {
                     aplicarFormatoOracion(this);
                 });
-
-                // Opcional: También aplicar mientras escribe (con delay)
                 let timeout;
-                campo.addEventListener('input', function() {
+                c.addEventListener('input', function() {
                     clearTimeout(timeout);
-                    timeout = setTimeout(() => {
-                        aplicarFormatoOracion(this);
-                    }, 500); // Esperar 500ms después de que el usuario deje de escribir
+                    timeout = setTimeout(() => aplicarFormatoOracion(this), 500);
                 });
             });
 
-            console.log('✓ Formato de oración aplicado a ' + camposTexto.length + ' campos');
-        });
-
-        // Función adicional para formatear nombres completos (cada palabra con mayúscula)
-        function formatoNombrePropio(texto) {
-            if (!texto) return '';
-
-            return texto.toLowerCase()
-                .split(' ')
-                .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1))
-                .join(' ');
-        }
-
-        // Aplicar formato especial a campos de nombres
-        document.addEventListener('DOMContentLoaded', function() {
-            const camposNombres = document.querySelectorAll(`
-        input[name="paciente_nombres"],
-        input[name="paciente_ap_paterno"],
-        input[name="paciente_ap_materno"],
-        input[name="pareja_nombres"],
-        input[name="pareja_apellidos"],
-        input[name="formulario_responsable_nombre"],
-        input[name="regional_recibe_caso"],
-        input[name="regional_institucion_derivante"]
-    `);
-
-            camposNombres.forEach(function(campo) {
-                campo.addEventListener('blur', function() {
+            const camposNombres = document.querySelectorAll(
+                `input[name="paciente_nombres"],input[name="paciente_ap_paterno"],input[name="paciente_ap_materno"],input[name="pareja_nombres"],input[name="pareja_apellidos"],input[name="formulario_responsable_nombre"],input[name="regional_recibe_caso"],input[name="regional_institucion_derivante"]`
+                );
+            camposNombres.forEach(c => {
+                c.addEventListener('blur', function() {
                     const cursorPos = this.selectionStart;
                     this.value = formatoNombrePropio(this.value);
                     this.setSelectionRange(cursorPos, cursorPos);
                 });
             });
-        });
+        }
+
+        function formatoNombrePropio(texto) {
+            if (!texto) return '';
+            return texto.toLowerCase().split(' ').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+        }
     </script>
 @endsection

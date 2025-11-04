@@ -91,12 +91,14 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     Route::get('/casos', [CasoController::class, 'index'])->name('casos.index');
     Route::get('/casos/create', [CasoController::class, 'create'])->name('casos.create');
     Route::post('/casos', [CasoController::class, 'store'])->name('casos.store');
-    //Route::get('/casos/{caso}', [CasoController::class,'show'])->name('casos.show');
+    Route::get('/casos/{caso}', [CasoController::class, 'show'])->name('casos.show');
     Route::get('/casos/{caso}/edit', [CasoController::class, 'edit'])->name('casos.edit');
     Route::put('/casos/{caso}', [CasoController::class, 'update'])->name('casos.update');
     Route::delete('/casos/{caso}', [CasoController::class, 'destroy'])->name('casos.destroy');
     Route::get('/casos/obtener-proximo-numero', [CasoController::class, 'obtenerProximoNumero'])
         ->name('casos.obtener-proximo-numero');
+    Route::get('/caso/{id}/pdf', [CasoController::class, 'exportarPDF'])->name('caso.pdf');
+
 
     Route::post('/casos/validar-numero-registro', [CasoController::class, 'validarNumeroRegistro'])
         ->name('casos.validar-numero-registro');
