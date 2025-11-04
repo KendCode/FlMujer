@@ -105,6 +105,11 @@
                                 @if($ficha->espiritual) <span class="badge bg-dark">Espiritual</span> @endif
                             </td>
                             <td>
+                                <a href="{{route('fichasConsulta.show', $ficha->idFicha)}}">
+                                    <button class="btn btn-sm btn-info text-white">
+                                        Ver
+                                    </button>
+                                </a>
                                 <a href="{{ route('fichasConsulta.edit', $ficha->idFicha) }}" 
                                    class="btn btn-sm btn-primary">
                                    Editar

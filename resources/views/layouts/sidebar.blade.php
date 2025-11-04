@@ -181,11 +181,9 @@
                 <a href="{{ route('fichasConsulta.index') }}" class="list-group-item"><i
                         class="fas fa-comments"></i><span>Formulario de Consultas</span></a>
                 <!-- En layouts/sidebar.blade.php -->
-                
-                <a href="{{ route('reportes.index') }}" class="list-group-item">
-                    <i class="fas fa-chart-bar"></i> Reportes
-                </a>
-                
+
+
+
 
                 <!-- Dropdown navegación estilo sidebar -->
                 <!-- Dropdown navegación estilo sidebar (solo para ADMINISTRADOR) -->
@@ -229,14 +227,18 @@
 
                 <a href="{{ route('casos.index') }}" class="list-group-item">
                     <i class="fas fa-calendar-alt"></i><span>Situación de Violencia intrafamiliar</span></a>
+                <a href="{{ route('reportes.index') }}" class="list-group-item">
+                    <i class="fas fa-chart-bar"></i> Reportes
+                </a>
                 <a href="{{ route('profile.edit') }}" class="list-group-item"><i
                         class="fas fa-cog"></i><span>Configuración Perfil</span></a>
 
-                <form method="POST" action="{{ route('logout') }}">
+                <!-- Botón de cerrar sesión -->
+                <form method="POST" action="{{ route('logout') }}" id="logout-form">
                     @csrf
-                    <a href="{{ route('logout') }}" class="list-group-item"
-                        onclick="event.preventDefault(); this.closest('form').submit();">
-                        <i class="fas fa-sign-out-alt"></i><span>Cerrar Sesión</span>
+                    <a href="#" class="list-group-item" data-bs-toggle="modal"
+                        data-bs-target="#confirmLogoutModal">
+                        <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
                     </a>
                 </form>
             </div>
@@ -256,7 +258,26 @@
             </div>
         </div>
     </div>
-
+    <!-- Modal de confirmación -->
+    <div class="modal fade" id="confirmLogoutModal" tabindex="-1" aria-labelledby="confirmLogoutModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-3">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="confirmLogoutModalLabel">Confirmar cierre de sesión</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Está seguro de que desea cerrar sesión?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmLogoutBtn">Cerrar sesión</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -264,6 +285,11 @@
         document.getElementById("menu-toggle").addEventListener("click", function(e) {
             e.preventDefault();
             document.getElementById("wrapper").classList.toggle("toggled");
+        });
+
+        // Manejar el cierre de sesión con confirmación
+        document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
+            document.getElementById('logout-form').submit();
         });
     </script>
 </body>

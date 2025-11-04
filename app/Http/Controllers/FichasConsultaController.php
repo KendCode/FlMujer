@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\FichasConsulta;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 class FichasConsultaController extends Controller
 {
     /**
@@ -69,7 +71,8 @@ class FichasConsultaController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $ficha = FichasConsulta::findOrFail($id);
+        return view('fichasConsulta.show', compact('ficha'));
     }
 
     /**
@@ -135,5 +138,14 @@ class FichasConsultaController extends Controller
         $ficha->delete();
 
         return redirect()->route('fichasConsulta.index')->with('success', 'Ficha eliminada correctamente.');
+    }
+    public function pdf($id)
+    {
+        $ficha = FichasConsulta::findOrFail($id);
+
+        $pdf = Pdf::loadView('fichasConsulta.pdf', compact('ficha'))
+            ->setPaper('A4', 'portrait'); // 'portrait' si quieres VERTICAL //landscape (HORIZONTAL)
+
+        return $pdf->stream('FichaConsulta_' . $ficha->idFicha . '.pdf');
     }
 }
