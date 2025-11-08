@@ -123,7 +123,7 @@ class Caso extends Model
         'paciente_edad' => 'integer', // ✅ NUEVO
         'pareja_edad' => 'integer', // ✅ NUEVO
         // Hijos
-       
+
 
         // Violencia
         'violencia_tipo_fisica' => 'boolean',
@@ -150,13 +150,13 @@ class Caso extends Model
         // Obtener el último registro del año actual
         $añoActual = date('y'); // Ej: "25" para 2025
 
-        $ultimoCaso = self::where('nro_registro', 'like', "CT-EA-%-{$añoActual}")
+        $ultimoCaso = self::where('nro_registro', 'like', "CT-%-{$añoActual}-EA")
             ->orderBy('nro_registro', 'desc')
             ->first();
 
         if ($ultimoCaso) {
             // Extraer el número del último registro
-            preg_match('/CT-EA-(\d{3})-\d{2}/', $ultimoCaso->nro_registro, $matches);
+            preg_match('/^CT-(\d{3})-\d{2}-EA$/', $ultimoCaso->nro_registro, $matches);
             $ultimoNumero = isset($matches[1]) ? (int)$matches[1] : 0;
             $nuevoNumero = $ultimoNumero + 1;
         } else {
@@ -165,7 +165,7 @@ class Caso extends Model
         }
 
         // Formatear con ceros a la izquierda
-        return sprintf('CT-EA-%03d-%s', $nuevoNumero, $añoActual);
+        return sprintf('CT-%03d-%s-EA', $nuevoNumero, $añoActual);
     }
 
 

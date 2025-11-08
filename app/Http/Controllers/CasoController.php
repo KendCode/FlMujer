@@ -371,7 +371,7 @@ class CasoController extends Controller
 
         // Obtener último número secuencial del año actual
         $ultimoCaso = Caso::where('nro_registro', 'like', "CT-%-$anio-EA")
-            ->orderBy('id', 'desc')
+            ->orderBy('nro_registro', 'desc')
             ->first();
 
         if ($ultimoCaso) {
@@ -382,7 +382,10 @@ class CasoController extends Controller
         }
 
         if ($secuencial > 999) {
-            return response()->json(['success' => false, 'mensaje' => 'No hay números disponibles']);
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'No hay números disponibles'
+            ]);
         }
 
         $secuencialFormateado = str_pad($secuencial, 3, '0', STR_PAD_LEFT);
@@ -399,6 +402,7 @@ class CasoController extends Controller
     {
         $numero = strtoupper(trim($request->input('numero')));
 
+        // Validar formato CT-001-25-EA
         if (!preg_match('/^CT-(\d{3})-(\d{2})-EA$/', $numero, $matches)) {
             return response()->json([
                 'valido' => false,
@@ -407,7 +411,10 @@ class CasoController extends Controller
         }
 
         $numeroSecuencial = (int)$matches[1];
+        $anioIngresado = (int)$matches[2];
+        $anioActual = (int)date('y');
 
+        // Validar rango de número
         if ($numeroSecuencial < 1 || $numeroSecuencial > 999) {
             return response()->json([
                 'valido' => false,
@@ -415,8 +422,16 @@ class CasoController extends Controller
             ]);
         }
 
-        $existe = Caso::where('nro_registro', $numero)->exists();
+        // Advertencia si no es del año actual
+        if ($anioIngresado !== $anioActual) {
+            return response()->json([
+                'valido' => false,
+                'mensaje' => "El año debe ser $anioActual (año actual)"
+            ]);
+        }
 
+        // Verificar duplicados
+        $existe = Caso::where('nro_registro', $numero)->exists();
         if ($existe) {
             return response()->json([
                 'valido' => false,
@@ -426,13 +441,9 @@ class CasoController extends Controller
 
         return response()->json([
             'valido' => true,
-            'mensaje' => 'Número válido y disponible'
+            'mensaje' => 'Número válido y disponible ✓'
         ]);
     }
-
-
-
-
     /**
      * Muestra un caso específico.
      */

@@ -7,6 +7,13 @@
             color: #333;
         }
 
+        h2 {
+            color: #13C0E5;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
         .card {
             border: 1px solid #13C0E5;
             border-radius: 10px;
@@ -50,7 +57,9 @@
         }
     </style>
 
-    <h2>Registrar Caso de Violencia</h2>
+    <h2>
+        CENTRO TERAPEUTICO DE REPACIÓN DEL DAÑO A MUJERES Y PAREJAS QUE VIVEN EN SITUACIÓN DE VIOLENCIA INTRAFAMILIAR
+    </h2>
     @if (session('success'))
         <div class="alert alert-success mt-3">
             {{ session('success') }}
@@ -65,8 +74,8 @@
     <form action="{{ route('casos.store') }}" method="POST">
         @csrf
         <!-- =====================
-                                                   SECCIÓN 0: DATOS DE LA REGIONAL
-                                                             ===================== -->
+                                                               SECCIÓN 0: DATOS DE LA REGIONAL
+                                                                         ===================== -->
         <div class="card mb-3">
             <div class="card-header">Regional</div>
             <div class="card-body">
@@ -125,10 +134,6 @@
                             Formato: CT-[número único 001-999]-[año 00-99]-EA
                         </small>
                     </div>
-
-
-
-
                     <div class="col-md-6">
                         <label class="form-label">Institución que deriva</label>
                         <input type="text" name="regional_institucion_derivante" class="form-control">
@@ -138,8 +143,8 @@
         </div>
 
         <!-- =====================
-                                    SECCIÓN 1: DATOS PERSONALES PACIENTE
-                                         ===================== -->
+                                                SECCIÓN 1: DATOS PERSONALES PACIENTE
+                                                     ===================== -->
 
         <div class="card mb-3">
             <div class="card-header">Datos Personales y Más Datos</div>
@@ -443,8 +448,8 @@
         </div>
 
         <!-- =====================
-                                                                                                                         SECCIÓN 2: DATOS PAREJA
-                                                                                                                    ===================== -->
+                                                                                                                                     SECCIÓN 2: DATOS PAREJA
+                                                                                                                                ===================== -->
         <div class="card mb-3">
             <div class="card-header">2. Datos de la pareja</div>
             <div class="card-body">
@@ -809,8 +814,8 @@
         </div>
 
         <!-- =====================
-                                                                                                                     SECCIÓN 3: DATOS HIJOS
-                                                                                                                ===================== -->
+                                                                                                                                 SECCIÓN 3: DATOS HIJOS
+                                                                                                                            ===================== -->
         <div class="card mb-3">
             <div class="card-header">3. Hijos</div>
             <div class="card-body">
@@ -986,8 +991,8 @@
         </div>
 
         <!-- =====================
-                                                                                                                 SECCIÓN 4: TIPOS DE VIOLENCIA
-                                                                                                            ===================== -->
+                                                                                                                             SECCIÓN 4: TIPOS DE VIOLENCIA
+                                                                                                                        ===================== -->
         <div class="card mb-3">
             <div class="card-header">4. Tipos de Violencia</div>
             <div class="card-body">
@@ -1218,6 +1223,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             cargarPreviewNumero();
             inicializarFormatoCampos();
+            inicializarValidacionManual(); // ✅ Mejor organización
         });
 
         function toggleRegistroManual() {
@@ -1237,71 +1243,128 @@
                 inputManual.required = false;
                 inputManual.value = '';
                 inputManual.classList.remove('is-valid', 'is-invalid');
+                ocultarMensajeFeedback();
                 cargarPreviewNumero();
             }
         }
 
         function cargarPreviewNumero() {
             const previewInput = document.getElementById('numero_preview');
+
+            if (!previewInput) {
+                console.error('❌ No se encontró el input de preview');
+                return;
+            }
+
             previewInput.value = 'Cargando...';
+            previewInput.disabled = true; // ✅ Deshabilitar mientras carga
 
             fetch('{{ route('casos.obtener-proximo-numero') }}', {
                     method: 'GET',
                     headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    previewInput.value = data.success ? data.numero : 'Error al cargar';
+                    console.log('✅ Respuesta del servidor:', data);
+                    if (data.success) {
+                        previewInput.value = data.numero;
+                        previewInput.classList.add('text-success', 'fw-bold'); // ✅ Resaltar visualmente
+                    } else {
+                        previewInput.value = 'Error: ' + (data.mensaje || 'No disponible');
+                        previewInput.classList.add('text-danger');
+                    }
                 })
                 .catch(error => {
-                    console.error(error);
+                    console.error('❌ Error al cargar número:', error);
                     previewInput.value = 'Error al cargar';
+                    previewInput.classList.add('text-danger');
+                })
+                .finally(() => {
+                    previewInput.disabled = true; // ✅ Mantener deshabilitado (solo lectura)
                 });
         }
 
-        // Validación tiempo real para manual
+        // ==========================================
+        // VALIDACIÓN EN TIEMPO REAL PARA MANUAL
+        // ==========================================
         let timeoutValidacion;
-        const inputManual = document.getElementById('nro_registro_manual_input');
 
-        if (inputManual) {
+        function inicializarValidacionManual() {
+            const inputManual = document.getElementById('nro_registro_manual_input');
+
+            if (!inputManual) {
+                console.warn('⚠️ Input manual no encontrado');
+                return;
+            }
+
             inputManual.addEventListener('input', function(e) {
                 const valor = e.target.value.toUpperCase();
                 e.target.value = valor;
+
+                // ✅ Regex mejorado (más estricto)
                 const regex = /^CT-\d{3}-\d{2}-EA$/;
 
                 clearTimeout(timeoutValidacion);
 
-                if (valor) {
-                    if (!regex.test(valor)) {
-                        e.target.classList.add('is-invalid');
-                        e.target.classList.remove('is-valid');
-                        mostrarMensajeFeedback('Formato incorrecto: CT-001-25-EA', 'error');
-                    } else {
-                        e.target.classList.remove('is-invalid', 'is-valid');
-                        mostrarMensajeFeedback('Verificando disponibilidad...', 'info');
-                        timeoutValidacion = setTimeout(() => validarNumeroAjax(valor, e.target), 500);
-                    }
-                } else {
+                if (!valor) {
                     e.target.classList.remove('is-invalid', 'is-valid');
                     ocultarMensajeFeedback();
+                    return;
+                }
+
+                if (!regex.test(valor)) {
+                    e.target.classList.add('is-invalid');
+                    e.target.classList.remove('is-valid');
+                    mostrarMensajeFeedback('Formato incorrecto: CT-001-25-EA', 'error');
+                } else {
+                    e.target.classList.remove('is-invalid', 'is-valid');
+                    mostrarMensajeFeedback('Verificando disponibilidad...', 'info');
+                    timeoutValidacion = setTimeout(() => validarNumeroAjax(valor, e.target), 500);
+                }
+            });
+
+            // ✅ Validación al perder foco (por si copian/pegan)
+            inputManual.addEventListener('blur', function(e) {
+                if (e.target.value && !e.target.classList.contains('is-valid')) {
+                    const regex = /^CT-\d{3}-\d{2}-EA$/;
+                    if (regex.test(e.target.value)) {
+                        validarNumeroAjax(e.target.value, e.target);
+                    }
                 }
             });
         }
 
         function validarNumeroAjax(numero, input) {
+            // ✅ Deshabilitar input mientras valida
+            const estadoOriginal = input.disabled;
+            input.disabled = true;
+
             fetch('{{ route('casos.validar-numero-registro') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify({
                         numero: numero
                     })
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.valido) {
                         input.classList.add('is-valid');
@@ -1314,9 +1377,14 @@
                     }
                 })
                 .catch(error => {
-                    console.error(error);
+                    console.error('❌ Error al validar:', error);
                     input.classList.add('is-invalid');
-                    mostrarMensajeFeedback('Error al validar.', 'error');
+                    input.classList.remove('is-valid');
+                    mostrarMensajeFeedback('✗ Error al validar. Intente nuevamente.', 'error');
+                })
+                .finally(() => {
+                    // ✅ Rehabilitar input
+                    input.disabled = estadoOriginal;
                 });
         }
 
@@ -1324,24 +1392,42 @@
             const feedbackDiv = document.getElementById('feedback_manual');
             const feedbackText = feedbackDiv.querySelector('small');
             const helpText = document.getElementById('help_text');
+
+            if (!feedbackDiv || !feedbackText) {
+                console.error('❌ Elementos de feedback no encontrados');
+                return;
+            }
+
             feedbackDiv.style.display = 'block';
-            helpText.style.display = 'none';
+            if (helpText) helpText.style.display = 'none';
             feedbackText.textContent = mensaje;
-            feedbackText.className = tipo === 'error' ? 'form-text text-danger' : tipo === 'success' ?
-                'form-text text-success' : 'form-text text-info';
+
+            // ✅ Remover clases anteriores antes de agregar nuevas
+            feedbackText.className = 'form-text';
+
+            if (tipo === 'error') {
+                feedbackText.classList.add('text-danger');
+            } else if (tipo === 'success') {
+                feedbackText.classList.add('text-success');
+            } else {
+                feedbackText.classList.add('text-info');
+            }
         }
 
         function ocultarMensajeFeedback() {
             const feedbackDiv = document.getElementById('feedback_manual');
             const helpText = document.getElementById('help_text');
-            feedbackDiv.style.display = 'none';
-            helpText.style.display = 'block';
+
+            if (feedbackDiv) feedbackDiv.style.display = 'none';
+            if (helpText) helpText.style.display = 'block';
         }
 
-        // ---------------- Formato de texto y nombres
+        // ==========================================
+        // FORMATO DE TEXTO Y NOMBRES
+        // ==========================================
         function formatoOracion(texto) {
             if (!texto) return '';
-            texto = texto.toLowerCase();
+            texto = texto.trim().toLowerCase(); // ✅ Quitar espacios extra
             return texto.charAt(0).toUpperCase() + texto.slice(1);
         }
 
@@ -1349,6 +1435,7 @@
             const cursorPos = input.selectionStart;
             const val = input.value;
             const f = formatoOracion(val);
+
             if (val !== f) {
                 input.value = f;
                 input.setSelectionRange(cursorPos, cursorPos);
@@ -1356,24 +1443,38 @@
         }
 
         function inicializarFormatoCampos() {
+            // ✅ Excluir campos específicos de formato automático
             const camposTexto = document.querySelectorAll(
-                `input[type="text"]:not(#numero_preview):not(#nro_registro_manual_input),textarea`);
-            camposTexto.forEach(c => {
-                c.addEventListener('blur', function() {
+                'input[type="text"]:not(#numero_preview):not(#nro_registro_manual_input), textarea'
+            );
+
+            camposTexto.forEach(campo => {
+                campo.addEventListener('blur', function() {
                     aplicarFormatoOracion(this);
                 });
+
                 let timeout;
-                c.addEventListener('input', function() {
+                campo.addEventListener('input', function() {
                     clearTimeout(timeout);
                     timeout = setTimeout(() => aplicarFormatoOracion(this), 500);
                 });
             });
 
+            // ✅ Formateo especial para nombres propios
             const camposNombres = document.querySelectorAll(
-                `input[name="paciente_nombres"],input[name="paciente_ap_paterno"],input[name="paciente_ap_materno"],input[name="pareja_nombres"],input[name="pareja_apellidos"],input[name="formulario_responsable_nombre"],input[name="regional_recibe_caso"],input[name="regional_institucion_derivante"]`
-                );
-            camposNombres.forEach(c => {
-                c.addEventListener('blur', function() {
+                `input[name="paciente_nombres"],
+         input[name="paciente_ap_paterno"],
+         input[name="paciente_ap_materno"],
+         input[name="pareja_nombres"],
+         input[name="pareja_ap_paterno"],
+         input[name="pareja_ap_materno"],
+         input[name="formulario_responsable_nombre"],
+         input[name="regional_recibe_caso"],
+         input[name="regional_institucion_derivante"]`
+            );
+
+            camposNombres.forEach(campo => {
+                campo.addEventListener('blur', function() {
                     const cursorPos = this.selectionStart;
                     this.value = formatoNombrePropio(this.value);
                     this.setSelectionRange(cursorPos, cursorPos);
@@ -1383,7 +1484,35 @@
 
         function formatoNombrePropio(texto) {
             if (!texto) return '';
-            return texto.toLowerCase().split(' ').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+
+            return texto
+                .trim() // ✅ Quitar espacios al inicio/final
+                .replace(/\s+/g, ' ') // ✅ Normalizar espacios múltiples
+                .toLowerCase()
+                .split(' ')
+                .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1))
+                .join(' ');
         }
+
+        // ✅ Prevenir envío del formulario si hay errores de validación
+        document.querySelector('form')?.addEventListener('submit', function(e) {
+            const inputManual = document.getElementById('nro_registro_manual_input');
+            const esManual = document.getElementById('registro_manual')?.checked;
+
+            if (esManual && inputManual) {
+                if (inputManual.classList.contains('is-invalid')) {
+                    e.preventDefault();
+                    mostrarMensajeFeedback('✗ Corrija el número de registro antes de continuar', 'error');
+                    inputManual.focus();
+                    return false;
+                }
+
+                if (!inputManual.classList.contains('is-valid') && inputManual.value) {
+                    e.preventDefault();
+                    mostrarMensajeFeedback('✗ Espere a que se valide el número de registro', 'error');
+                    return false;
+                }
+            }
+        });
     </script>
 @endsection

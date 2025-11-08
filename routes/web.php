@@ -86,6 +86,11 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     Route::delete('fichasConsulta/{ficha}', [FichasConsultaController::class, 'destroy'])->name('fichasConsulta.destroy');
     Route::get('/fichasConsulta/{id}/pdf', [FichasConsultaController::class, 'pdf'])->name('fichasConsulta.pdf');
 
+    //nuemro automatico de casos
+    Route::get('/casos/obtener-proximo-numero', [CasoController::class, 'obtenerProximoNumero'])
+        ->name('casos.obtener-proximo-numero');
+    Route::post('/casos/validar-numero-registro', [CasoController::class, 'validarNumeroRegistro'])
+            ->name('casos.validar-numero-registro');
 
     // Ruta FORMULARIO SITUACION DE VIOLENCIA INTRAFAMILIAR
     Route::get('/casos', [CasoController::class, 'index'])->name('casos.index');
@@ -95,13 +100,7 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     Route::get('/casos/{caso}/edit', [CasoController::class, 'edit'])->name('casos.edit');
     Route::put('/casos/{caso}', [CasoController::class, 'update'])->name('casos.update');
     Route::delete('/casos/{caso}', [CasoController::class, 'destroy'])->name('casos.destroy');
-    Route::get('/casos/obtener-proximo-numero', [CasoController::class, 'obtenerProximoNumero'])
-        ->name('casos.obtener-proximo-numero');
     Route::get('/caso/{id}/pdf', [CasoController::class, 'exportarPDF'])->name('caso.pdf');
-
-
-    Route::post('/casos/validar-numero-registro', [CasoController::class, 'validarNumeroRegistro'])
-        ->name('casos.validar-numero-registro');
 
     // Ruta específica para Ficha de Atención si la necesitas
     Route::prefix('casos/{caso}/fichaAtencion')->group(function () {
