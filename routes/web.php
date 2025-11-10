@@ -24,6 +24,9 @@ use App\Http\Controllers\FichaParejaController;
 use App\Http\Controllers\FichaSeguimientoPsicologicoController;
 use App\Http\Controllers\FichaVictimaController;
 use App\Http\Controllers\ReportesController;
+use App\Http\Controllers\CitaController;
+
+
 /*Route::get('/', function () {
     return view('welcome');
 });*/
@@ -101,6 +104,9 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     Route::put('/casos/{caso}', [CasoController::class, 'update'])->name('casos.update');
     Route::delete('/casos/{caso}', [CasoController::class, 'destroy'])->name('casos.destroy');
     Route::get('/caso/{id}/pdf', [CasoController::class, 'exportarPDF'])->name('caso.pdf');
+
+    // Rutas para la gestión de citas
+    Route::resource('citas', CitaController::class);
 
     // Ruta específica para Ficha de Atención si la necesitas
     Route::prefix('casos/{caso}/fichaAtencion')->group(function () {

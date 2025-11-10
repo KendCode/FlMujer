@@ -181,11 +181,6 @@
                 <a href="{{ route('fichasConsulta.index') }}" class="list-group-item"><i
                         class="fas fa-comments"></i><span>Formulario de Consultas</span></a>
                 <!-- En layouts/sidebar.blade.php -->
-
-
-
-
-                <!-- Dropdown navegación estilo sidebar -->
                 <!-- Dropdown navegación estilo sidebar (solo para ADMINISTRADOR) -->
                 @auth
                     @if (Auth::user()->rol === 'administrador')
@@ -227,6 +222,21 @@
 
                 <a href="{{ route('casos.index') }}" class="list-group-item">
                     <i class="fas fa-calendar-alt"></i><span>Situación de Violencia intrafamiliar</span></a>
+                <!-- 🔔 Gestión de Citas -->
+                @auth
+                    @if (Auth::user()->rol === 'administrador')
+                        <a href="{{ route('citas.index') }}" class="list-group-item">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Control de Citas</span>
+                        </a>
+                    @elseif (Auth::user()->rol === 'psicologo')
+                        <a href="{{ route('citas.index') }}" class="list-group-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Mis Citas</span>
+                        </a>
+                    @endif
+                @endauth
+
                 <a href="{{ route('reportes.index') }}" class="list-group-item">
                     <i class="fas fa-chart-bar"></i> Reportes
                 </a>
