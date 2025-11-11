@@ -140,12 +140,12 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Apellido Paterno</label>
-                        <input type="text" name="paciente_ap_paterno" class="form-control" required
+                        <input type="text" name="paciente_ap_paterno" class="form-control" 
                             value="{{ old('paciente_ap_paterno', $caso->paciente_ap_paterno) }}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Apellido Materno</label>
-                        <input type="text" name="paciente_ap_materno" class="form-control" required
+                        <input type="text" name="paciente_ap_materno" class="form-control" 
                             value="{{ old('paciente_ap_materno', $caso->paciente_ap_materno) }}">
                     </div>
                     <div class="col-md-4 mt-2">

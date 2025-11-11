@@ -127,8 +127,8 @@ class CasoController extends Controller
 
             // ============ PAREJA ============
             'pareja_nombres' => 'required|string|max:255',
-            'pareja_ap_paterno' => 'required|string|max:255',
-            'pareja_ap_materno' => 'required|string|max:255',
+            'pareja_ap_paterno' => 'nullable|string|max:255',
+            'pareja_ap_materno' => 'nullable|string|max:255',
             'pareja_sexo' => 'required|in:M,F',
             'pareja_edad_rango' => 'required|string',
             'pareja_edad' => 'nullable|integer|min:0|max:120',
@@ -201,6 +201,7 @@ class CasoController extends Controller
             'violencia_institucion_derivar' => 'nullable|string|max:500',
 
             // ============ RESPONSABLE ============
+            'violencia_medidas_tomar' => 'nullable|string|max:500',
             'formulario_responsable_nombre' => 'nullable|string|max:255',
 
             // ============ CAMPOS LEGACY ============
@@ -340,6 +341,7 @@ class CasoController extends Controller
         // CAMPOS FINALES
         $data['violencia_institucion_denuncia'] = $validated['violencia_institucion_denuncia'] ?? null;
         $data['violencia_institucion_derivar'] = $validated['violencia_institucion_derivar'] ?? null;
+        $data['violencia_medidas_tomar'] = $validated['violencia_medidas_tomar'] ?? null;
         $data['formulario_responsable_nombre'] = $validated['formulario_responsable_nombre'] ?? null;
 
         // Campos legacy
@@ -552,6 +554,8 @@ class CasoController extends Controller
             'violencia_lugar_hechos' => $request->input('violencia_lugar_hechos'),
             'violencia_tiempo_ocurrencia' => $request->input('violencia_tiempo_ocurrencia'),
             'violencia_descripcion_hechos' => $request->input('violencia_descripcion_hechos'),
+            'violencia_frecuancia_agresion' => $request->input('violencia_frecuancia_agresion'),
+            'violencia_medidas_tomar' => $request->input('violencia_medidas_tomar'),
             'violencia_denuncia_previa' => $request->boolean('violencia_denuncia_previa'),
             'violencia_institucion_denuncia' => $request->input('violencia_institucion_denuncia'),
         ]);

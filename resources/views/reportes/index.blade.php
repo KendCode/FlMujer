@@ -129,8 +129,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .format-info {
@@ -268,6 +273,97 @@
                     <canvas id="graficoMes" width="400" height="300"></canvas>
                 </div>
             </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="chart-title">Casos por Regional</div>
+                    <canvas id="graficoRegional" width="400" height="300"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="chart-title">Casos por Estado Civil</div>
+                    <canvas id="graficoEstadoCivil" width="400" height="300"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="chart-title">Casos por Nivel de Instrucción</div>
+                    <canvas id="graficoNivelInstruccion" width="400" height="300"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="chart-title">Casos por Ocupación</div>
+                    <canvas id="graficoOcupacion" width="400" height="300"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="chart-title">Casos por Idioma</div>
+                    <canvas id="graficoIdioma" width="400" height="300"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="chart-title">Frecuencia de Violencia</div>
+                    <canvas id="graficoFrecuenciaViolencia" width="400" height="300"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="chart-title">Lugar de los Hechos</div>
+                    <canvas id="graficoLugarHechos" width="400" height="300"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="chart-title">Denuncias Previas</div>
+                    <canvas id="graficoDenunciasPrevias" width="400" height="300"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="chart-title">Motivos de Agresión</div>
+                    <canvas id="graficoMotivoAgresion" width="400" height="300"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="chart-title">Razones para No Denunciar</div>
+                    <canvas id="graficoRazonesNoDenuncia" width="400" height="300"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="chart-title">Instituciones Derivantes</div>
+                    <canvas id="graficoInstituciones" width="400" height="300"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="chart-title">Hijos</div>
+                    <canvas id="graficoHijos" width="400" height="300"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="chart-title">Tipo de Violencia Intrafamiliar</div>
+                    <canvas id="graficoTipoViolenciaIntrafamiliar" width="400" height="300"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="chart-title">Edad Pareja vs Víctima</div>
+                    <canvas id="graficoEdadParejaVsVictima" width="400" height="300"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="chart-title">Atención Demandada</div>
+                    <canvas id="graficoAtencionDemandada" width="400" height="300"></canvas>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -287,6 +383,22 @@
         const violencia = @json($tiposViolencia);
         const atencion = @json($atencion);
         const porMes = @json($porMes);
+        const regional = @json($regional);
+        const estadoCivil = @json($estadoCivil);
+        const nivelInstruccion = @json($nivelInstruccion);
+        const ocupacion = @json($ocupacion);
+        const idioma = @json($idioma);
+        const frecuenciaViolencia = @json($frecuenciaViolencia);
+        const lugarHechos = @json($lugarHechos);
+        const denunciasPrevias = @json($denunciasPrevia);
+        const motivoAgresion = @json($motivoAgresion);
+        const razonesNoDenuncia = @json($razonesNoDenuncia);
+        const instituciones = @json($instituciones);
+        const hijos = @json($hijos);
+        const tipoViolenciaIntrafamiliar = @json($tipoViolenciaIntrafamiliar);
+        const edadParejaVsVictima = @json($edadParejaVsVictima);
+        const atencionDemandada = @json($atencionDemandada);
+
 
         // Configuración común para todos los gráficos
         const commonOptions = {
@@ -299,6 +411,7 @@
 
         // Crear gráficos
         const charts = {
+
             graficoSexo: new Chart(document.getElementById('graficoSexo'), {
                 type: 'pie',
                 data: {
@@ -316,14 +429,18 @@
                         legend: {
                             position: 'bottom',
                             labels: {
-                                font: { size: 14 },
+                                font: {
+                                    size: 14
+                                },
                                 padding: 15
                             }
                         },
                         title: {
                             display: true,
                             text: 'Distribución por Sexo',
-                            font: { size: 16 }
+                            font: {
+                                size: 16
+                            }
                         }
                     }
                 }
@@ -343,17 +460,23 @@
                 options: {
                     ...commonOptions,
                     plugins: {
-                        legend: { display: false },
+                        legend: {
+                            display: false
+                        },
                         title: {
                             display: true,
                             text: 'Casos por Rango de Edad',
-                            font: { size: 16 }
+                            font: {
+                                size: 16
+                            }
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            ticks: { precision: 0 }
+                            ticks: {
+                                precision: 0
+                            }
                         }
                     }
                 }
@@ -373,17 +496,23 @@
                 options: {
                     ...commonOptions,
                     plugins: {
-                        legend: { display: false },
+                        legend: {
+                            display: false
+                        },
                         title: {
                             display: true,
                             text: 'Tipos de Violencia',
-                            font: { size: 16 }
+                            font: {
+                                size: 16
+                            }
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            ticks: { precision: 0 }
+                            ticks: {
+                                precision: 0
+                            }
                         }
                     }
                 }
@@ -403,17 +532,23 @@
                 options: {
                     ...commonOptions,
                     plugins: {
-                        legend: { display: false },
+                        legend: {
+                            display: false
+                        },
                         title: {
                             display: true,
                             text: 'Tipos de Atención',
-                            font: { size: 16 }
+                            font: {
+                                size: 16
+                            }
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            ticks: { precision: 0 }
+                            ticks: {
+                                precision: 0
+                            }
                         }
                     }
                 }
@@ -440,17 +575,99 @@
                         title: {
                             display: true,
                             text: 'Evolución Mensual',
-                            font: { size: 16 }
+                            font: {
+                                size: 16
+                            }
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            ticks: { precision: 0 }
+                            ticks: {
+                                precision: 0
+                            }
                         }
                     }
                 }
-            })
+            }),
+
+            // Agregar aquí los demás gráficos siguiendo el mismo patrón
+            graficoRegional: new Chart(document.getElementById('graficoRegional'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(regional),
+                    datasets: [{
+                        label: 'Casos',
+                        data: Object.values(regional),
+                        backgroundColor: '#34d399',
+                        borderColor: '#059669',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Casos por Regional',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            }),
+            graficoEstadoCivil: new Chart(document.getElementById('graficoEstadoCivil'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(estadoCivil),
+                    datasets: [{
+                        label: 'Casos',
+                        data: Object.values(estadoCivil),
+                        backgroundColor: '#fbbf24',
+                        borderColor: '#b45309',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Casos por Estado Civil',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            }),
+
+
+
+
         };
 
         // Función principal de exportación
@@ -458,30 +675,30 @@
             const loadingOverlay = document.getElementById('loadingOverlay');
             const loadingTitle = document.getElementById('loadingTitle');
             const loadingText = document.getElementById('loadingText');
-            
+
             // Deshabilitar botones
             document.querySelectorAll('.btn-export').forEach(btn => btn.disabled = true);
-            
+
             // Configurar mensajes según formato
             const mensajes = {
                 pdf: {
                     titulo: 'Generando PDF...',
                     texto: 'Capturando gráficos y creando documento',
-                    ruta: '{{ route("reportes.exportar.pdf") }}',
+                    ruta: '{{ route('reportes.exportar.pdf') }}',
                     extension: 'pdf',
                     icono: '📄'
                 },
                 excel: {
                     titulo: 'Generando Excel...',
                     texto: 'Creando hojas de cálculo y gráficos',
-                    ruta: '{{ route("reportes.exportar.excel") }}',
+                    ruta: '{{ route('reportes.exportar.excel') }}',
                     extension: 'xlsx',
                     icono: '📊'
                 },
                 word: {
                     titulo: 'Generando Word...',
                     texto: 'Creando documento con tablas e imágenes',
-                    ruta: '{{ route("reportes.exportar.word") }}',
+                    ruta: '{{ route('reportes.exportar.word') }}',
                     extension: 'docx',
                     icono: '📝'
                 }
@@ -494,7 +711,7 @@
 
             try {
                 console.log(`🔄 Iniciando exportación ${formato.toUpperCase()}...`);
-                
+
                 // Esperar renderizado completo
                 await new Promise(resolve => setTimeout(resolve, 500));
 
@@ -539,11 +756,12 @@
                 // Descargar archivo
                 const blob = await response.blob();
                 console.log(`💾 Archivo recibido: ${blob.size} bytes`);
-                
+
                 const downloadUrl = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = downloadUrl;
-                a.download = `reporte_violencia_{{ $periodo }}meses_${new Date().toISOString().split('T')[0]}.${config.extension}`;
+                a.download =
+                    `reporte_violencia_{{ $periodo }}meses_${new Date().toISOString().split('T')[0]}.${config.extension}`;
                 document.body.appendChild(a);
                 a.click();
                 a.remove();
@@ -554,7 +772,9 @@
 
             } catch (error) {
                 console.error('❌ Error:', error);
-                alert(`❌ Error al generar el reporte ${formato.toUpperCase()}:\n${error.message}\n\nRevisa la consola (F12) para más detalles.`);
+                alert(
+                    `❌ Error al generar el reporte ${formato.toUpperCase()}:\n${error.message}\n\nRevisa la consola (F12) para más detalles.`
+                );
             } finally {
                 loadingOverlay.style.display = 'none';
                 // Rehabilitar botones
