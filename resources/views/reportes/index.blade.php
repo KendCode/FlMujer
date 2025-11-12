@@ -213,14 +213,6 @@
                         <li>Manipular números</li>
                     </ul>
                 </div>
-                <div class="col-md-4">
-                    <strong>📝 Word:</strong>
-                    <ul>
-                        <li>Informes editables</li>
-                        <li>Agregar comentarios</li>
-                        <li>Formato flexible</li>
-                    </ul>
-                </div>
             </div>
         </div>
 
@@ -233,10 +225,6 @@
             <button type="button" onclick="exportarReporte('excel')" class="btn-export btn-excel" id="btnExcel">
                 <i class="fas fa-file-excel fa-2x"></i>
                 <span>Exportar a Excel</span>
-            </button>
-            <button type="button" onclick="exportarReporte('word')" class="btn-export btn-word" id="btnWord">
-                <i class="fas fa-file-word fa-2x"></i>
-                <span>Exportar a Word</span>
             </button>
         </div>
 
@@ -309,34 +297,22 @@
                     <canvas id="graficoFrecuenciaViolencia" width="400" height="300"></canvas>
                 </div>
             </div>
-            <div class="col-md-6">
+            {{-- <div class="col-md-6">
                 <div class="chart-container">
                     <div class="chart-title">Lugar de los Hechos</div>
                     <canvas id="graficoLugarHechos" width="400" height="300"></canvas>
                 </div>
-            </div>
-            <div class="col-md-6">
+            </div> --}}
+            {{-- <div class="col-md-6">
                 <div class="chart-container">
                     <div class="chart-title">Denuncias Previas</div>
                     <canvas id="graficoDenunciasPrevias" width="400" height="300"></canvas>
                 </div>
-            </div>
+            </div> --}}
             <div class="col-md-6">
                 <div class="chart-container">
                     <div class="chart-title">Motivos de Agresión</div>
                     <canvas id="graficoMotivoAgresion" width="400" height="300"></canvas>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="chart-container">
-                    <div class="chart-title">Razones para No Denunciar</div>
-                    <canvas id="graficoRazonesNoDenuncia" width="400" height="300"></canvas>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="chart-container">
-                    <div class="chart-title">Instituciones Derivantes</div>
-                    <canvas id="graficoInstituciones" width="400" height="300"></canvas>
                 </div>
             </div>
             <div class="col-md-6">
@@ -351,7 +327,20 @@
                     <canvas id="graficoTipoViolenciaIntrafamiliar" width="400" height="300"></canvas>
                 </div>
             </div>
+            {{-- <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="chart-title">Razones para No Denunciar</div>
+                    <canvas id="graficoRazonesNoDenuncia" width="400" height="300"></canvas>
+                </div>
+            </div> --}}
             <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="chart-title">Instituciones Derivantes</div>
+                    <canvas id="graficoInstituciones" width="400" height="300"></canvas>
+                </div>
+            </div>
+            
+            {{-- <div class="col-md-6">
                 <div class="chart-container">
                     <div class="chart-title">Edad Pareja vs Víctima</div>
                     <canvas id="graficoEdadParejaVsVictima" width="400" height="300"></canvas>
@@ -362,7 +351,7 @@
                     <div class="chart-title">Atención Demandada</div>
                     <canvas id="graficoAtencionDemandada" width="400" height="300"></canvas>
                 </div>
-            </div>
+            </div> --}}
 
         </div>
     </div>
@@ -629,12 +618,138 @@
                 }
             }),
             graficoEstadoCivil: new Chart(document.getElementById('graficoEstadoCivil'), {
-                type: 'bar',
+                type: 'pie',
                 data: {
-                    labels: Object.keys(estadoCivil),
+                    labels: estadoCivil.labels, // <-- CORREGIDO
                     datasets: [{
                         label: 'Casos',
-                        data: Object.values(estadoCivil),
+                        data: estadoCivil.data, // <-- CORREGIDO
+                        backgroundColor: [
+                            '#fbbf24',
+                            '#f59e0b',
+                            '#fcd34d',
+                            '#fde68a',
+                            '#ca8a04'
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom'
+                        },
+                    }
+                }
+            }),
+
+
+            // Casos por Nivel de Instrucción
+            graficoNivelInstruccion: new Chart(document.getElementById('graficoNivelInstruccion'), {
+                type: 'pie',
+                data: {
+                    labels: nivelInstruccion.labels,
+                    datasets: [{
+                        label: 'Casos',
+                        data: nivelInstruccion.data,
+                        backgroundColor: ['#60a5fa', '#3b82f6', '#2563eb', '#1d4ed8', '#1e40af'],
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom'
+                        },
+                    }
+                }
+            }),
+
+            // Casos por Ocupación
+            graficoOcupacion: new Chart(document.getElementById('graficoOcupacion'), {
+                type: 'pie',
+                data: {
+                    labels: ocupacion.labels,
+                    datasets: [{
+                        label: 'Casos',
+                        data: ocupacion.data,
+                        backgroundColor: ['#f87171', '#b91c1c', '#fca5a5', '#fef2f2'],
+                        borderColor: '#b91c1c',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom'
+                        },
+                    }
+                }
+            }),
+
+            // Casos por Idioma
+            graficoIdioma: new Chart(document.getElementById('graficoIdioma'), {
+                type: 'pie',
+                data: {
+                    labels: idioma.labels,
+                    datasets: [{
+                        label: 'Casos',
+                        data: idioma.data,
+                        backgroundColor: ['#a78bfa', '#c4b5fd', '#e0b7fd', '#f3e8ff'],
+                        borderColor: '#5b21b6',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom'
+                        },
+                    }
+                }
+            }),
+
+            // Casos por Frecuencia de Violencia
+            graficoFrecuenciaViolencia: new Chart(document.getElementById('graficoFrecuenciaViolencia'), {
+                type: 'pie',
+                data: {
+                    labels: frecuenciaViolencia.labels,
+                    datasets: [{
+                        label: 'Casos',
+                        data: frecuenciaViolencia.data,
+                        backgroundColor: ['#fbbf24', '#f97316', '#ef4444', '#be185d'],
+                        borderColor: '#be185d',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom'
+                        },
+                    }
+                }
+            }),
+            // Casos por Lugar de los Hechos
+            /*graficoLugarHechos: new Chart(document.getElementById('graficoLugarHechos'), {
+                type: 'pie',
+                data: {
+                    labels: lugarHechos.labels,
+                    datasets: [{
+                        label: 'Casos',
+                        data: lugarHechos.data,
                         backgroundColor: '#fbbf24',
                         borderColor: '#b45309',
                         borderWidth: 2
@@ -648,7 +763,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Casos por Estado Civil',
+                            text: 'Lugar de los Hechos',
                             font: {
                                 size: 16
                             }
@@ -663,10 +778,179 @@
                         }
                     }
                 }
+            })*/
+            graficoMotivoAgresion: new Chart(document.getElementById('graficoMotivoAgresion'), {
+                type: 'pie',
+                data: {
+                    labels: motivoAgresion.labels,
+                    datasets: [{
+                        data: motivoAgresion.data,
+                        backgroundColor: ['#f87171', '#fbbf24', '#34d399', '#60a5fa'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Motivos de Agresión',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                }
+            }),
+            // Casos por Razones para No Denunciar
+            graficoRazonesNoDenuncia: new Chart(document.getElementById('graficoRazonesNoDenuncia'), {
+                type: 'pie',
+                data: {
+                    labels: razonesNoDenuncia.labels,
+                    datasets: [{
+                        data: razonesNoDenuncia.data,
+                        backgroundColor: ['#34d399', '#fbbf24', '#f87171'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Razones para No Denunciar',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                }
             }),
 
+            // Casos por Instituciones Derivantes
+            graficoInstituciones: new Chart(document.getElementById('graficoInstituciones'), {
+                type: 'pie',
+                data: {
+                    labels: instituciones.labels,
+                    datasets: [{
+                        data: instituciones.data,
+                        backgroundColor: ['#fcd34d', '#34d399', '#60a5fa', '#f87171'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Instituciones Derivantes',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                }
+            }),
 
+            // Casos por Hijos
+            graficoHijos: new Chart(document.getElementById('graficoHijos'), {
+                type: 'pie',
+                data: {
+                    labels: hijos.labels,
+                    datasets: [{
+                        data: hijos.data,
+                        backgroundColor: ['#a78bfa', '#34d399', '#fbbf24'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Casos por Hijos',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                }
+            }),
 
+            // Casos por Tipo de Violencia Intrafamiliar
+            graficoTipoViolenciaIntrafamiliar: new Chart(document.getElementById(
+                'graficoTipoViolenciaIntrafamiliar'), {
+                type: 'pie',
+                data: {
+                    labels: tipoViolenciaIntrafamiliar.labels,
+                    datasets: [{
+                        data: tipoViolenciaIntrafamiliar.data,
+                        backgroundColor: ['#fb923c', '#f87171', '#34d399'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Tipo de Violencia Intrafamiliar',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                }
+            }),
+
+            // Casos por Atención Demandada
+            graficoAtencionDemandada: new Chart(document.getElementById('graficoAtencionDemandada'), {
+                type: 'pie',
+                data: {
+                    labels: atencionDemandada.labels,
+                    datasets: [{
+                        data: atencionDemandada.data,
+                        backgroundColor: ['#10b981', '#34d399', '#60a5fa'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Atención Demandada',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                }
+            })
 
         };
 
