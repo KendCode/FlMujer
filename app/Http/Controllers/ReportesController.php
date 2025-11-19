@@ -15,9 +15,13 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ReporteMensualExport;
 
 class ReportesController extends Controller
 {
+    // =============== MÉTODO PRINCIPAL ===============
+
     public function index(Request $request)
     {
         $periodo = $request->get('periodo', 3);
@@ -30,7 +34,7 @@ class ReportesController extends Controller
         $atencion = $this->getCasosPorTipoAtencion($fechaInicio);
         $porMes = $this->getCasosPorMes($fechaInicio);
 
-        // 🆕 NUEVOS REPORTES
+        // Nuevos reportes
         $regional = $this->getCasosPorRegional($fechaInicio);
         $estadoCivil = $this->getCasosPorEstadoCivil($fechaInicio);
         $nivelInstruccion = $this->getCasosPorNivelInstruccion($fechaInicio);
@@ -41,7 +45,14 @@ class ReportesController extends Controller
         $denunciasPrevia = $this->getCasosPorDenunciasPrevia($fechaInicio);
         $motivoAgresion = $this->getCasosPorMotivoAgresion($fechaInicio);
         $razonesNoDenuncia = $this->getRazonesNoDenuncia($fechaInicio);
-        $instituciones = $this->getCasosPorInstitucion($fechaInicio);
+
+        // Instituciones (corregido)
+        $institucionesData = $this->getCasosPorInstitucion($fechaInicio);
+        $instituciones = [
+            'labels' => $institucionesData['derivante']['labels'] ?? [],
+            'data' => $institucionesData['derivante']['data'] ?? []
+        ];
+
         $hijos = $this->getEstadisticasHijos($fechaInicio);
         $tipoViolenciaIntrafamiliar = $this->getCasosPorTipoViolenciaEspecifica($fechaInicio);
         $edadParejaVsVictima = $this->getComparativaEdades($fechaInicio);
@@ -49,6 +60,7 @@ class ReportesController extends Controller
 
         return view('reportes.index', compact(
             'periodo',
+            'fechaInicio',
             'sexo',
             'edad',
             'tiposViolencia',
@@ -72,9 +84,27 @@ class ReportesController extends Controller
         ));
     }
 
+    // =============== MÉTODOS AUXILIARES DE CONVERSIÓN ===============
+
+    /**
+     * Convierte array asociativo a formato labels/data
+     */
+    private function convertirALabelData($collection)
+    {
+        // Asegurar que sea colección
+        if (is_array($collection)) {
+            $collection = collect($collection);
+        }
+
+        return [
+            'labels' => $collection->keys()->toArray(),
+            'data'   => $collection->values()->toArray(),
+        ];
+    }
+
+
     // =============== MÉTODOS DE OBTENCIÓN DE DATOS ===============
 
-    // REPORTES ORIGINALES
     private function getCasosPorTipoViolencia($fechaInicio)
     {
         return [
@@ -85,24 +115,16 @@ class ReportesController extends Controller
             'Económica' => Caso::where('created_at', '>=', $fechaInicio)->where('violencia_tipo_economica', 1)->count(),
         ];
     }
+
     private function getCasosPorEdad($fechaInicio)
     {
         return collect([
-            'Menores de 18' => Caso::where('created_at', '>=', $fechaInicio)
-                ->where('paciente_edad', '<', 18)
-                ->count(),
-            '18 a 29' => Caso::where('created_at', '>=', $fechaInicio)
-                ->whereBetween('paciente_edad', [18, 29])
-                ->count(),
-            '30 a 59' => Caso::where('created_at', '>=', $fechaInicio)
-                ->whereBetween('paciente_edad', [30, 59])
-                ->count(),
-            '60 o más' => Caso::where('created_at', '>=', $fechaInicio)
-                ->where('paciente_edad', '>=', 60)
-                ->count(),
+            'Menores de 18' => Caso::where('created_at', '>=', $fechaInicio)->where('paciente_edad', '<', 18)->count(),
+            '18 a 29' => Caso::where('created_at', '>=', $fechaInicio)->whereBetween('paciente_edad', [18, 29])->count(),
+            '30 a 59' => Caso::where('created_at', '>=', $fechaInicio)->whereBetween('paciente_edad', [30, 59])->count(),
+            '60 o más' => Caso::where('created_at', '>=', $fechaInicio)->where('paciente_edad', '>=', 60)->count(),
         ]);
     }
-
 
     private function getCasosPorMes($fechaInicio)
     {
@@ -126,12 +148,8 @@ class ReportesController extends Controller
     private function getCasosPorSexo($fechaInicio)
     {
         return collect([
-            'Masculino' => Caso::where('created_at', '>=', $fechaInicio)
-                ->where('paciente_sexo', 'M')
-                ->count(),
-            'Femenino' => Caso::where('created_at', '>=', $fechaInicio)
-                ->where('paciente_sexo', 'F')
-                ->count(),
+            'Masculino' => Caso::where('created_at', '>=', $fechaInicio)->where('paciente_sexo', 'M')->count(),
+            'Femenino' => Caso::where('created_at', '>=', $fechaInicio)->where('paciente_sexo', 'F')->count(),
         ]);
     }
 
@@ -160,8 +178,6 @@ class ReportesController extends Controller
 
         return ['labels' => $labels, 'data' => $data];
     }
-
-    // 🆕 NUEVOS REPORTES
 
     private function getCasosPorRegional($fechaInicio)
     {
@@ -306,12 +322,12 @@ class ReportesController extends Controller
 
     private function getCasosPorDenunciasPrevia($fechaInicio)
     {
-        return [
-            'Con denuncia previa' => Caso::where('created_at', '>=', $fechaInicio)
-                ->where('violencia_denuncia_previa', 'si')->count(),
-            'Sin denuncia previa' => Caso::where('created_at', '>=', $fechaInicio)
-                ->where('violencia_denuncia_previa', 'no')->count(),
+        $datos = [
+            'Con denuncia previa' => Caso::where('created_at', '>=', $fechaInicio)->where('violencia_denuncia_previa', 'si')->count(),
+            'Sin denuncia previa' => Caso::where('created_at', '>=', $fechaInicio)->where('violencia_denuncia_previa', 'no')->count(),
         ];
+
+        return $this->convertirALabelData($datos);
     }
 
     private function getCasosPorMotivoAgresion($fechaInicio)
@@ -336,18 +352,15 @@ class ReportesController extends Controller
 
     private function getRazonesNoDenuncia($fechaInicio)
     {
-        return [
-            'Amenaza' => Caso::where('created_at', '>=', $fechaInicio)
-                ->where('violencia_no_denuncia_por_amenaza', 1)->count(),
-            'Temor' => Caso::where('created_at', '>=', $fechaInicio)
-                ->where('violencia_no_denuncia_por_temor', 1)->count(),
-            'Vergüenza' => Caso::where('created_at', '>=', $fechaInicio)
-                ->where('violencia_no_denuncia_por_verguenza', 1)->count(),
-            'Desconocimiento' => Caso::where('created_at', '>=', $fechaInicio)
-                ->where('violencia_no_denuncia_por_desconocimiento', 1)->count(),
-            'No sabe/No responde' => Caso::where('created_at', '>=', $fechaInicio)
-                ->where('violencia_no_denuncia_no_sabe_no_responde', 1)->count(),
+        $datos = [
+            'Amenaza' => Caso::where('created_at', '>=', $fechaInicio)->where('violencia_no_denuncia_por_amenaza', 1)->count(),
+            'Temor' => Caso::where('created_at', '>=', $fechaInicio)->where('violencia_no_denuncia_por_temor', 1)->count(),
+            'Vergüenza' => Caso::where('created_at', '>=', $fechaInicio)->where('violencia_no_denuncia_por_verguenza', 1)->count(),
+            'Desconocimiento' => Caso::where('created_at', '>=', $fechaInicio)->where('violencia_no_denuncia_por_desconocimiento', 1)->count(),
+            'No sabe/No responde' => Caso::where('created_at', '>=', $fechaInicio)->where('violencia_no_denuncia_no_sabe_no_responde', 1)->count(),
         ];
+
+        return $this->convertirALabelData($datos);
     }
 
     private function getCasosPorInstitucion($fechaInicio)
@@ -441,16 +454,14 @@ class ReportesController extends Controller
 
     private function getAtencionDemandada($fechaInicio)
     {
-        return [
-            'Apoyo a víctima' => Caso::where('created_at', '>=', $fechaInicio)
-                ->where('violencia_atencion_apoyo_victima', 1)->count(),
-            'Apoyo a pareja' => Caso::where('created_at', '>=', $fechaInicio)
-                ->where('violencia_atencion_apoyo_pareja', 1)->count(),
-            'Apoyo a agresor' => Caso::where('created_at', '>=', $fechaInicio)
-                ->where('violencia_atencion_apoyo_agresor', 1)->count(),
-            'Apoyo a hijos' => Caso::where('created_at', '>=', $fechaInicio)
-                ->where('violencia_atencion_apoyo_hijos', 1)->count(),
+        $datos = [
+            'Apoyo a víctima' => Caso::where('created_at', '>=', $fechaInicio)->where('violencia_atencion_apoyo_victima', 1)->count(),
+            'Apoyo a pareja' => Caso::where('created_at', '>=', $fechaInicio)->where('violencia_atencion_apoyo_pareja', 1)->count(),
+            'Apoyo a agresor' => Caso::where('created_at', '>=', $fechaInicio)->where('violencia_atencion_apoyo_agresor', 1)->count(),
+            'Apoyo a hijos' => Caso::where('created_at', '>=', $fechaInicio)->where('violencia_atencion_apoyo_hijos', 1)->count(),
         ];
+
+        return $this->convertirALabelData($datos);
     }
 
     // =============== EXPORTACIONES ===============
@@ -523,6 +534,7 @@ class ReportesController extends Controller
         }
     }
 
+
     public function exportarExcel(Request $request)
     {
         try {
@@ -537,20 +549,18 @@ class ReportesController extends Controller
             $spreadsheet = new Spreadsheet();
             $spreadsheet->removeSheetByIndex(0);
 
-            // Crear todas las hojas con los nuevos reportes
             $this->crearHojaResumen($spreadsheet, $fechaInicio, $periodo);
-            $this->crearHojaConDatos($spreadsheet, 'Tipos de Violencia', $this->getCasosPorTipoViolencia($fechaInicio));
+            $this->crearHojaConDatos($spreadsheet, 'Tipos de Violencia', $this->convertirALabelData($this->getCasosPorTipoViolencia($fechaInicio)));
             $this->crearHojaConDatos($spreadsheet, 'Evolución Mensual', $this->getCasosPorMes($fechaInicio));
-            $this->crearHojaConDatos($spreadsheet, 'Por Edad', $this->getCasosPorEdad($fechaInicio));
-            $this->crearHojaConDatos($spreadsheet, 'Por Sexo', $this->getCasosPorSexo($fechaInicio));
+            $this->crearHojaConDatos($spreadsheet, 'Por Edad', $this->convertirALabelData($this->getCasosPorEdad($fechaInicio)));
+            $this->crearHojaConDatos($spreadsheet, 'Por Sexo', $this->convertirALabelData($this->getCasosPorSexo($fechaInicio)));
             $this->crearHojaConDatos($spreadsheet, 'Regional', $this->getCasosPorRegional($fechaInicio));
             $this->crearHojaConDatos($spreadsheet, 'Estado Civil', $this->getCasosPorEstadoCivil($fechaInicio));
             $this->crearHojaConDatos($spreadsheet, 'Nivel Instrucción', $this->getCasosPorNivelInstruccion($fechaInicio));
             $this->crearHojaConDatos($spreadsheet, 'Frecuencia Violencia', $this->getCasosPorFrecuenciaViolencia($fechaInicio));
-            $this->crearHojaConDatos($spreadsheet, 'Lugar de Hechos', $this->getCasosPorLugarHechos($fechaInicio));
+            $this->crearHojaConDatos($spreadsheet, 'Motivos Agresión', $this->getCasosPorMotivoAgresion($fechaInicio));
             $this->crearHojaConDatos($spreadsheet, 'Razones No Denuncia', $this->getRazonesNoDenuncia($fechaInicio));
 
-            // Agregar gráficos
             if (count($graficosRutas) > 0) {
                 $this->agregarHojaGraficos($spreadsheet, $graficosRutas);
             }
@@ -569,94 +579,14 @@ class ReportesController extends Controller
             return response()->download($tempFile)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
             Log::error('❌ ERROR EN EXCEL: ' . $e->getMessage());
-            return response()->json(['error' => 'Error al generar Excel', 'message' => $e->getMessage()], 500);
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json(['error' => 'Error al generar Excel', 'message' => $e->getMessage(), 'line' => $e->getLine()], 500);
         }
     }
 
-    public function exportarWord(Request $request)
-    {
-        try {
-            Log::info('🔵 INICIANDO EXPORTACIÓN WORD');
 
-            $periodo = $request->input('periodo', 3);
-            $fechaInicio = Carbon::now()->subMonths($periodo);
 
-            $graficos = json_decode($request->input('graficos', '{}'), true);
-            $graficosRutas = $this->guardarGraficos($graficos);
-
-            $phpWord = new PhpWord();
-            $section = $phpWord->addSection([
-                'marginLeft' => 1000,
-                'marginRight' => 1000,
-                'marginTop' => 1000,
-                'marginBottom' => 1000
-            ]);
-
-            $phpWord->addFontStyle('titulo', ['bold' => true, 'size' => 18, 'color' => '037E8C']);
-            $phpWord->addFontStyle('subtitulo', ['bold' => true, 'size' => 14, 'color' => '7EC544']);
-            $phpWord->addFontStyle('normal', ['size' => 11]);
-
-            // Encabezado
-            $section->addText(
-                '📊 REPORTE COMPLETO DE CASOS DE VIOLENCIA',
-                'titulo',
-                ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceAfter' => 200]
-            );
-
-            $section->addText(
-                'Fundación Levántate Mujer',
-                'subtitulo',
-                ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceAfter' => 100]
-            );
-
-            // Agregar todas las secciones
-            $totalCasos = Caso::where('created_at', '>=', $fechaInicio)->count();
-            $section->addText("Total de casos: {$totalCasos}", 'normal', ['spaceAfter' => 400]);
-
-            $this->agregarSeccionWord($section, 'TIPOS DE VIOLENCIA', $this->getCasosPorTipoViolencia($fechaInicio));
-            $this->agregarSeccionWord($section, 'DISTRIBUCIÓN REGIONAL', $this->getCasosPorRegional($fechaInicio));
-            $this->agregarSeccionWord($section, 'ESTADO CIVIL', $this->getCasosPorEstadoCivil($fechaInicio));
-            $this->agregarSeccionWord($section, 'NIVEL DE INSTRUCCIÓN', $this->getCasosPorNivelInstruccion($fechaInicio));
-            $this->agregarSeccionWord($section, 'FRECUENCIA DE VIOLENCIA', $this->getCasosPorFrecuenciaViolencia($fechaInicio));
-            $this->agregarSeccionWord($section, 'RAZONES DE NO DENUNCIA', $this->getRazonesNoDenuncia($fechaInicio));
-
-            // Agregar gráficos
-            if (count($graficosRutas) > 0) {
-                $section->addPageBreak();
-                $section->addText('GRÁFICOS ESTADÍSTICOS', 'subtitulo', ['spaceAfter' => 400]);
-
-                foreach ($graficosRutas as $key => $rutaImagen) {
-                    if (file_exists($rutaImagen)) {
-                        $section->addImage($rutaImagen, [
-                            'width' => 450,
-                            'height' => 300,
-                            'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER
-                        ]);
-                        $section->addTextBreak(2);
-                        Log::info("✅ Gráfico agregado a Word: {$key}");
-                    }
-                }
-            }
-
-            $fileName = "reporte_completo_{$periodo}meses_" . date('Y-m-d') . ".docx";
-            $tempFile = storage_path("app/public/{$fileName}");
-
-            $writer = IOFactory::createWriter($phpWord, 'Word2007');
-            $writer->save($tempFile);
-
-            foreach ($graficosRutas as $ruta) {
-                if (file_exists($ruta)) unlink($ruta);
-            }
-
-            Log::info('✅ WORD COMPLETADO');
-            return response()->download($tempFile)->deleteFileAfterSend(true);
-        } catch (\Exception $e) {
-            Log::error('❌ ERROR EN WORD: ' . $e->getMessage());
-            return response()->json(['error' => 'Error al generar Word', 'message' => $e->getMessage()], 500);
-        }
-    }
-
-    // =============== MÉTODOS AUXILIARES ===============
+    // =============== MÉTODOS AUXILIARES PARA EXPORTACIONES ===============
 
     private function prepararDatosCompletos($fechaInicio, $periodo)
     {
@@ -665,11 +595,25 @@ class ReportesController extends Controller
             'fecha_inicio' => $fechaInicio->format('d/m/Y'),
             'fecha_fin' => Carbon::now()->format('d/m/Y'),
             'total_casos' => Caso::where('created_at', '>=', $fechaInicio)->count(),
+
+            // LOS QUE LA VISTA USA DIRECTAMENTE
             'violencia' => $this->getCasosPorTipoViolencia($fechaInicio),
-            'meses' => $this->getCasosPorMes($fechaInicio),
+
+            'meses' => $this->convertirALabelData(
+                $this->getCasosPorMes($fechaInicio)
+            ),
+
+            'edad' => $this->convertirALabelData(
+                $this->getCasosPorEdad($fechaInicio)
+            ),
+
+            'atencion' => $this->convertirALabelData(
+                $this->getCasosPorTipoAtencion($fechaInicio)
+            ),
+
             'sexo' => $this->getCasosPorSexo($fechaInicio),
-            'edad' => $this->getCasosPorEdad($fechaInicio),
-            'atencion' => $this->getCasosPorTipoAtencion($fechaInicio),
+
+            // otros datos (no usados en el PDF por ahora)
             'regional' => $this->getCasosPorRegional($fechaInicio),
             'estadoCivil' => $this->getCasosPorEstadoCivil($fechaInicio),
             'nivelInstruccion' => $this->getCasosPorNivelInstruccion($fechaInicio),
@@ -688,37 +632,7 @@ class ReportesController extends Controller
         ];
     }
 
-    private function agregarSeccionWord($section, $titulo, $datos)
-    {
-        $section->addText($titulo, 'subtitulo', ['spaceAfter' => 200]);
 
-        $table = $section->addTable([
-            'borderSize' => 6,
-            'borderColor' => '7EC544',
-            'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER,
-            'width' => 100 * 50
-        ]);
-
-        $table->addRow(400);
-        $table->addCell(4000, ['bgColor' => '037E8C'])->addText('Categoría', ['bold' => true, 'color' => 'FFFFFF']);
-        $table->addCell(2000, ['bgColor' => '037E8C'])->addText('Cantidad', ['bold' => true, 'color' => 'FFFFFF']);
-
-        if (isset($datos['labels'])) {
-            foreach ($datos['labels'] as $index => $label) {
-                $table->addRow();
-                $table->addCell(4000)->addText($label);
-                $table->addCell(2000)->addText($datos['data'][$index] ?? 0);
-            }
-        } else {
-            foreach ($datos as $key => $value) {
-                $table->addRow();
-                $table->addCell(4000)->addText(ucfirst($key));
-                $table->addCell(2000)->addText($value);
-            }
-        }
-
-        $section->addTextBreak(2);
-    }
 
     private function crearHojaResumen($spreadsheet, $fechaInicio, $periodo)
     {
@@ -754,7 +668,6 @@ class ReportesController extends Controller
         $sheet->getStyle('B9')->getFont()->setBold(true)->setSize(14);
         $sheet->getStyle('B9')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('7EC544');
 
-        // Estadísticas adicionales
         $conDenuncia = Caso::where('created_at', '>=', $fechaInicio)->where('violencia_denuncia_previa', 'si')->count();
         $sheet->setCellValue('A11', 'Casos con denuncia previa:');
         $sheet->setCellValue('B11', $conDenuncia);
@@ -848,15 +761,15 @@ class ReportesController extends Controller
             'graficoRegional' => 'Distribución Regional',
             'graficoEstadoCivil' => 'Estado Civil',
             'graficoNivelInstruccion' => 'Nivel de Instrucción',
-            'graficoFrecuencia' => 'Frecuencia de Violencia',
-            'graficoLugar' => 'Lugar de los Hechos',
-            'graficoDenuncias' => 'Denuncias Previas',
+            'graficoFrecuenciaViolencia' => 'Frecuencia de Violencia',
+            'graficoLugarHechos' => 'Lugar de los Hechos',
             'graficoRazonesNoDenuncia' => 'Razones de No Denuncia',
             'graficoHijos' => 'Distribución de Hijos',
-            'graficoAtencionDemandada' => 'Atención Demandada',
+            'graficoMotivoAgresion' => 'Motivos de Agresión',
+            'graficoInstituciones' => 'Instituciones Derivantes',
             'graficoOcupacion' => 'Ocupaciones Principales',
             'graficoIdioma' => 'Idioma Más Hablado',
-            'graficoMotivo' => 'Motivos de Agresión'
+            'graficoTipoViolenciaIntrafamiliar' => 'Tipo de Violencia Intrafamiliar'
         ];
 
         foreach ($graficosRutas as $key => $rutaImagen) {
@@ -915,7 +828,6 @@ class ReportesController extends Controller
         $periodo = $request->get('periodo', 3);
         $fechaInicio = now()->subMonths($periodo);
 
-        // Cruce: Tipo de violencia x Edad
         $cruce = Caso::where('created_at', '>=', $fechaInicio)
             ->select(
                 'paciente_edad_rango',

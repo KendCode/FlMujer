@@ -171,6 +171,21 @@
             <p class="lead">Análisis estadístico de los últimos {{ $periodo }} meses</p>
         </div>
 
+        {{-- <!-- Selector de Período -->
+        <div class="periodo-selector">
+            <h4>🗓️ Selecciona el Período de Análisis</h4>
+            <div>
+                <button class="btn-periodo {{ $periodo == 3 ? 'active' : '' }}" onclick="cambiarPeriodo(3)">
+                    3 Meses
+                </button>
+                <button class="btn-periodo {{ $periodo == 6 ? 'active' : '' }}" onclick="cambiarPeriodo(6)">
+                    6 Meses
+                </button>
+                <button class="btn-periodo {{ $periodo == 12 ? 'active' : '' }}" onclick="cambiarPeriodo(12)">
+                    12 Meses
+                </button>
+            </div>
+        </div> --}}
         <!-- Estadísticas generales -->
         <div class="row mb-4">
             <div class="col-md-4">
@@ -339,7 +354,7 @@
                     <canvas id="graficoInstituciones" width="400" height="300"></canvas>
                 </div>
             </div>
-            
+
             {{-- <div class="col-md-6">
                 <div class="chart-container">
                     <div class="chart-title">Edad Pareja vs Víctima</div>
@@ -367,6 +382,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // ============================================
+        // TODAS LAS VARIABLES Y FUNCIONES EN UN SOLO BLOQUE
+        // ============================================
+
+        if (typeof $denunciasPrevia !== 'undefined') {
+            console.log("Variable denunciasPrevia encontrada:", $denunciasPrevia);
+        } else {
+            console.warn("La variable $denunciasPrevia NO está viniendo del servidor 🚨");
+        }
+        // 1. DATOS DEL SERVIDOR
         const sexo = @json($sexo);
         const edad = @json($edad);
         const violencia = @json($tiposViolencia);
@@ -388,8 +413,7 @@
         const edadParejaVsVictima = @json($edadParejaVsVictima);
         const atencionDemandada = @json($atencionDemandada);
 
-
-        // Configuración común para todos los gráficos
+        // 2. CONFIGURACIÓN COMÚN
         const commonOptions = {
             responsive: true,
             maintainAspectRatio: true,
@@ -398,572 +422,511 @@
             }
         };
 
-        // Crear gráficos
-        const charts = {
-
-            graficoSexo: new Chart(document.getElementById('graficoSexo'), {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(sexo),
-                    datasets: [{
-                        data: Object.values(sexo),
-                        backgroundColor: ['#ff6384', '#36a2eb'],
-                        borderWidth: 2,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                font: {
-                                    size: 14
-                                },
-                                padding: 15
-                            }
-                        },
-                        title: {
-                            display: true,
-                            text: 'Distribución por Sexo',
-                            font: {
-                                size: 16
-                            }
-                        }
-                    }
+        // 3. FUNCIÓN AUXILIAR PARA OBTENER DATOS CORRECTAMENTE
+        function obtenerLabelsYData(datos) {
+            if (datos && typeof datos === 'object') {
+                if (datos.labels && datos.data) {
+                    return {
+                        labels: datos.labels,
+                        data: datos.data
+                    };
                 }
-            }),
-            graficoEdad: new Chart(document.getElementById('graficoEdad'), {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(edad),
-                    datasets: [{
-                        label: 'Casos',
-                        data: Object.values(edad),
-                        backgroundColor: '#4bc0c0',
-                        borderColor: '#36a2a2',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            text: 'Casos por Rango de Edad',
+                return {
+                    labels: Object.keys(datos),
+                    data: Object.values(datos)
+                };
+            }
+            return {
+                labels: [],
+                data: []
+            };
+        }
+
+        // 4. CREAR TODOS LOS GRÁFICOS
+        const charts = {};
+
+        // Gráfico de Sexo
+        const datosSexo = obtenerLabelsYData(sexo);
+        charts.graficoSexo = new Chart(document.getElementById('graficoSexo'), {
+            type: 'pie',
+            data: {
+                labels: datosSexo.labels,
+                datasets: [{
+                    data: datosSexo.data,
+                    backgroundColor: ['#ff6384', '#36a2eb'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
                             font: {
-                                size: 16
-                            }
+                                size: 14
+                            },
+                            padding: 15
                         }
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
+                    title: {
+                        display: true,
+                        text: 'Distribución por Sexo',
+                        font: {
+                            size: 16
                         }
                     }
                 }
-            }),
-            graficoViolencia: new Chart(document.getElementById('graficoViolencia'), {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(violencia),
-                    datasets: [{
-                        label: 'Casos',
-                        data: Object.values(violencia),
-                        backgroundColor: ['#f87171', '#facc15', '#34d399', '#60a5fa', '#a78bfa'],
-                        borderWidth: 2,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            text: 'Tipos de Violencia',
-                            font: {
-                                size: 16
-                            }
-                        }
+            }
+        });
+
+        // Gráfico de Edad
+        const datosEdad = obtenerLabelsYData(edad);
+        charts.graficoEdad = new Chart(document.getElementById('graficoEdad'), {
+            type: 'bar',
+            data: {
+                labels: datosEdad.labels,
+                datasets: [{
+                    label: 'Casos',
+                    data: datosEdad.data,
+                    backgroundColor: '#4bc0c0',
+                    borderColor: '#36a2a2',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    legend: {
+                        display: false
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
+                    title: {
+                        display: true,
+                        text: 'Casos por Rango de Edad',
+                        font: {
+                            size: 16
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
                         }
                     }
                 }
-            }),
-            graficoAtencion: new Chart(document.getElementById('graficoAtencion'), {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(atencion),
-                    datasets: [{
-                        label: 'Casos',
-                        data: Object.values(atencion),
-                        backgroundColor: '#fb923c',
-                        borderColor: '#ea580c',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            text: 'Tipos de Atención',
-                            font: {
-                                size: 16
-                            }
-                        }
+            }
+        });
+
+        // Gráfico de Violencia
+        const datosViolencia = obtenerLabelsYData(violencia);
+        charts.graficoViolencia = new Chart(document.getElementById('graficoViolencia'), {
+            type: 'bar',
+            data: {
+                labels: datosViolencia.labels,
+                datasets: [{
+                    label: 'Casos',
+                    data: datosViolencia.data,
+                    backgroundColor: ['#f87171', '#facc15', '#34d399', '#60a5fa', '#a78bfa'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    legend: {
+                        display: false
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
+                    title: {
+                        display: true,
+                        text: 'Tipos de Violencia',
+                        font: {
+                            size: 16
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
                         }
                     }
                 }
-            }),
-            graficoMes: new Chart(document.getElementById('graficoMes'), {
-                type: 'line',
-                data: {
-                    labels: Object.keys(porMes),
-                    datasets: [{
-                        label: 'Casos por mes',
-                        data: Object.values(porMes),
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        borderWidth: 3,
-                        pointRadius: 5,
-                        pointBackgroundColor: '#10b981'
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Evolución Mensual',
-                            font: {
-                                size: 16
-                            }
-                        }
+            }
+        });
+
+        // Gráfico de Atención
+        const datosAtencion = obtenerLabelsYData(atencion);
+        charts.graficoAtencion = new Chart(document.getElementById('graficoAtencion'), {
+            type: 'bar',
+            data: {
+                labels: datosAtencion.labels,
+                datasets: [{
+                    label: 'Casos',
+                    data: datosAtencion.data,
+                    backgroundColor: '#fb923c',
+                    borderColor: '#ea580c',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    legend: {
+                        display: false
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
+                    title: {
+                        display: true,
+                        text: 'Tipos de Atención',
+                        font: {
+                            size: 16
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
                         }
                     }
                 }
-            }),
+            }
+        });
 
-            // Agregar aquí los demás gráficos siguiendo el mismo patrón
-            graficoRegional: new Chart(document.getElementById('graficoRegional'), {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(regional),
-                    datasets: [{
-                        label: 'Casos',
-                        data: Object.values(regional),
-                        backgroundColor: '#34d399',
-                        borderColor: '#059669',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            text: 'Casos por Regional',
-                            font: {
-                                size: 16
-                            }
+        // Gráfico Mensual
+        const datosMes = obtenerLabelsYData(porMes);
+        charts.graficoMes = new Chart(document.getElementById('graficoMes'), {
+            type: 'line',
+            data: {
+                labels: datosMes.labels,
+                datasets: [{
+                    label: 'Casos por mes',
+                    data: datosMes.data,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#10b981'
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Evolución Mensual',
+                        font: {
+                            size: 16
                         }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico Regional
+        const datosRegional = obtenerLabelsYData(regional);
+        charts.graficoRegional = new Chart(document.getElementById('graficoRegional'), {
+            type: 'bar',
+            data: {
+                labels: datosRegional.labels,
+                datasets: [{
+                    label: 'Casos',
+                    data: datosRegional.data,
+                    backgroundColor: '#34d399',
+                    borderColor: '#059669',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    legend: {
+                        display: false
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
+                    title: {
+                        display: true,
+                        text: 'Casos por Regional',
+                        font: {
+                            size: 16
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
                         }
                     }
                 }
-            }),
-            graficoEstadoCivil: new Chart(document.getElementById('graficoEstadoCivil'), {
-                type: 'pie',
-                data: {
-                    labels: estadoCivil.labels, // <-- CORREGIDO
-                    datasets: [{
-                        label: 'Casos',
-                        data: estadoCivil.data, // <-- CORREGIDO
-                        backgroundColor: [
-                            '#fbbf24',
-                            '#f59e0b',
-                            '#fcd34d',
-                            '#fde68a',
-                            '#ca8a04'
-                        ],
-                        borderColor: '#ffffff',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'bottom'
-                        },
+            }
+        });
+
+        // Gráfico Estado Civil
+        const datosEstadoCivil = obtenerLabelsYData(estadoCivil);
+        charts.graficoEstadoCivil = new Chart(document.getElementById('graficoEstadoCivil'), {
+            type: 'pie',
+            data: {
+                labels: datosEstadoCivil.labels,
+                datasets: [{
+                    data: datosEstadoCivil.data,
+                    backgroundColor: ['#fbbf24', '#f59e0b', '#fcd34d', '#fde68a', '#ca8a04'],
+                    borderColor: '#ffffff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
                     }
                 }
-            }),
+            }
+        });
 
-
-            // Casos por Nivel de Instrucción
-            graficoNivelInstruccion: new Chart(document.getElementById('graficoNivelInstruccion'), {
-                type: 'pie',
-                data: {
-                    labels: nivelInstruccion.labels,
-                    datasets: [{
-                        label: 'Casos',
-                        data: nivelInstruccion.data,
-                        backgroundColor: ['#60a5fa', '#3b82f6', '#2563eb', '#1d4ed8', '#1e40af'],
-                        borderColor: '#ffffff',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'bottom'
-                        },
+        // Gráfico Nivel Instrucción
+        const datosNivelInstruccion = obtenerLabelsYData(nivelInstruccion);
+        charts.graficoNivelInstruccion = new Chart(document.getElementById('graficoNivelInstruccion'), {
+            type: 'pie',
+            data: {
+                labels: datosNivelInstruccion.labels,
+                datasets: [{
+                    data: datosNivelInstruccion.data,
+                    backgroundColor: ['#60a5fa', '#3b82f6', '#2563eb', '#1d4ed8', '#1e40af'],
+                    borderColor: '#ffffff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
                     }
                 }
-            }),
+            }
+        });
 
-            // Casos por Ocupación
-            graficoOcupacion: new Chart(document.getElementById('graficoOcupacion'), {
-                type: 'pie',
-                data: {
-                    labels: ocupacion.labels,
-                    datasets: [{
-                        label: 'Casos',
-                        data: ocupacion.data,
-                        backgroundColor: ['#f87171', '#b91c1c', '#fca5a5', '#fef2f2'],
-                        borderColor: '#b91c1c',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'bottom'
-                        },
+        // Gráfico Ocupación
+        const datosOcupacion = obtenerLabelsYData(ocupacion);
+        charts.graficoOcupacion = new Chart(document.getElementById('graficoOcupacion'), {
+            type: 'pie',
+            data: {
+                labels: datosOcupacion.labels,
+                datasets: [{
+                    data: datosOcupacion.data,
+                    backgroundColor: ['#f87171', '#b91c1c', '#fca5a5', '#fef2f2'],
+                    borderColor: '#b91c1c',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
                     }
                 }
-            }),
+            }
+        });
 
-            // Casos por Idioma
-            graficoIdioma: new Chart(document.getElementById('graficoIdioma'), {
-                type: 'pie',
-                data: {
-                    labels: idioma.labels,
-                    datasets: [{
-                        label: 'Casos',
-                        data: idioma.data,
-                        backgroundColor: ['#a78bfa', '#c4b5fd', '#e0b7fd', '#f3e8ff'],
-                        borderColor: '#5b21b6',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'bottom'
-                        },
+        // Gráfico Idioma
+        const datosIdioma = obtenerLabelsYData(idioma);
+        charts.graficoIdioma = new Chart(document.getElementById('graficoIdioma'), {
+            type: 'pie',
+            data: {
+                labels: datosIdioma.labels,
+                datasets: [{
+                    data: datosIdioma.data,
+                    backgroundColor: ['#a78bfa', '#c4b5fd', '#e0b7fd', '#f3e8ff'],
+                    borderColor: '#5b21b6',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
                     }
                 }
-            }),
+            }
+        });
 
-            // Casos por Frecuencia de Violencia
-            graficoFrecuenciaViolencia: new Chart(document.getElementById('graficoFrecuenciaViolencia'), {
-                type: 'pie',
-                data: {
-                    labels: frecuenciaViolencia.labels,
-                    datasets: [{
-                        label: 'Casos',
-                        data: frecuenciaViolencia.data,
-                        backgroundColor: ['#fbbf24', '#f97316', '#ef4444', '#be185d'],
-                        borderColor: '#be185d',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'bottom'
-                        },
+        // Gráfico Frecuencia Violencia
+        const datosFrecuencia = obtenerLabelsYData(frecuenciaViolencia);
+        charts.graficoFrecuenciaViolencia = new Chart(document.getElementById('graficoFrecuenciaViolencia'), {
+            type: 'pie',
+            data: {
+                labels: datosFrecuencia.labels,
+                datasets: [{
+                    data: datosFrecuencia.data,
+                    backgroundColor: ['#fbbf24', '#f97316', '#ef4444', '#be185d'],
+                    borderColor: '#be185d',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
                     }
                 }
-            }),
-            // Casos por Lugar de los Hechos
-            /*graficoLugarHechos: new Chart(document.getElementById('graficoLugarHechos'), {
-                type: 'pie',
-                data: {
-                    labels: lugarHechos.labels,
-                    datasets: [{
-                        label: 'Casos',
-                        data: lugarHechos.data,
-                        backgroundColor: '#fbbf24',
-                        borderColor: '#b45309',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            text: 'Lugar de los Hechos',
-                            font: {
-                                size: 16
-                            }
-                        }
+            }
+        });
+
+        // Gráfico Motivo Agresión
+        const datosMotivo = obtenerLabelsYData(motivoAgresion);
+        charts.graficoMotivoAgresion = new Chart(document.getElementById('graficoMotivoAgresion'), {
+            type: 'pie',
+            data: {
+                labels: datosMotivo.labels,
+                datasets: [{
+                    data: datosMotivo.data,
+                    backgroundColor: ['#f87171', '#fbbf24', '#34d399', '#60a5fa'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
+                    title: {
+                        display: true,
+                        text: 'Motivos de Agresión',
+                        font: {
+                            size: 16
                         }
                     }
                 }
-            })*/
-            graficoMotivoAgresion: new Chart(document.getElementById('graficoMotivoAgresion'), {
-                type: 'pie',
-                data: {
-                    labels: motivoAgresion.labels,
-                    datasets: [{
-                        data: motivoAgresion.data,
-                        backgroundColor: ['#f87171', '#fbbf24', '#34d399', '#60a5fa'],
-                        borderWidth: 2,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Motivos de Agresión',
-                            font: {
-                                size: 16
-                            }
-                        }
-                    }
-                }
-            }),
-            // Casos por Razones para No Denunciar
-            graficoRazonesNoDenuncia: new Chart(document.getElementById('graficoRazonesNoDenuncia'), {
-                type: 'pie',
-                data: {
-                    labels: razonesNoDenuncia.labels,
-                    datasets: [{
-                        data: razonesNoDenuncia.data,
-                        backgroundColor: ['#34d399', '#fbbf24', '#f87171'],
-                        borderWidth: 2,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Razones para No Denunciar',
-                            font: {
-                                size: 16
-                            }
-                        }
-                    }
-                }
-            }),
+            }
+        });
 
-            // Casos por Instituciones Derivantes
-            graficoInstituciones: new Chart(document.getElementById('graficoInstituciones'), {
-                type: 'pie',
-                data: {
-                    labels: instituciones.labels,
-                    datasets: [{
-                        data: instituciones.data,
-                        backgroundColor: ['#fcd34d', '#34d399', '#60a5fa', '#f87171'],
-                        borderWidth: 2,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Instituciones Derivantes',
-                            font: {
-                                size: 16
-                            }
+        // Gráfico Hijos
+        const datosHijos = obtenerLabelsYData(hijos);
+        charts.graficoHijos = new Chart(document.getElementById('graficoHijos'), {
+            type: 'pie',
+            data: {
+                labels: datosHijos.labels,
+                datasets: [{
+                    data: datosHijos.data,
+                    backgroundColor: ['#a78bfa', '#34d399', '#fbbf24'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Distribución de Hijos',
+                        font: {
+                            size: 16
                         }
                     }
                 }
-            }),
+            }
+        });
 
-            // Casos por Hijos
-            graficoHijos: new Chart(document.getElementById('graficoHijos'), {
-                type: 'pie',
-                data: {
-                    labels: hijos.labels,
-                    datasets: [{
-                        data: hijos.data,
-                        backgroundColor: ['#a78bfa', '#34d399', '#fbbf24'],
-                        borderWidth: 2,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Casos por Hijos',
-                            font: {
-                                size: 16
-                            }
+        // Gráfico Tipo Violencia Intrafamiliar
+        const datosTipoViolencia = obtenerLabelsYData(tipoViolenciaIntrafamiliar);
+        charts.graficoTipoViolenciaIntrafamiliar = new Chart(document.getElementById('graficoTipoViolenciaIntrafamiliar'), {
+            type: 'pie',
+            data: {
+                labels: datosTipoViolencia.labels,
+                datasets: [{
+                    data: datosTipoViolencia.data,
+                    backgroundColor: ['#fb923c', '#f87171', '#34d399'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Tipo de Violencia Intrafamiliar',
+                        font: {
+                            size: 16
                         }
                     }
                 }
-            }),
+            }
+        });
 
-            // Casos por Tipo de Violencia Intrafamiliar
-            graficoTipoViolenciaIntrafamiliar: new Chart(document.getElementById(
-                'graficoTipoViolenciaIntrafamiliar'), {
-                type: 'pie',
-                data: {
-                    labels: tipoViolenciaIntrafamiliar.labels,
-                    datasets: [{
-                        data: tipoViolenciaIntrafamiliar.data,
-                        backgroundColor: ['#fb923c', '#f87171', '#34d399'],
-                        borderWidth: 2,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Tipo de Violencia Intrafamiliar',
-                            font: {
-                                size: 16
-                            }
+        // Gráfico Instituciones (simplificado)
+        const datosInstituciones = instituciones.derivante || obtenerLabelsYData(instituciones);
+        charts.graficoInstituciones = new Chart(document.getElementById('graficoInstituciones'), {
+            type: 'pie',
+            data: {
+                labels: datosInstituciones.labels || [],
+                datasets: [{
+                    data: datosInstituciones.data || [],
+                    backgroundColor: ['#fcd34d', '#34d399', '#60a5fa', '#f87171'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Instituciones Derivantes',
+                        font: {
+                            size: 16
                         }
                     }
                 }
-            }),
+            }
+        });
 
-            // Casos por Atención Demandada
-            graficoAtencionDemandada: new Chart(document.getElementById('graficoAtencionDemandada'), {
-                type: 'pie',
-                data: {
-                    labels: atencionDemandada.labels,
-                    datasets: [{
-                        data: atencionDemandada.data,
-                        backgroundColor: ['#10b981', '#34d399', '#60a5fa'],
-                        borderWidth: 2,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    ...commonOptions,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Atención Demandada',
-                            font: {
-                                size: 16
-                            }
-                        }
-                    }
-                }
-            })
+        console.log('✅ Todos los gráficos creados exitosamente');
 
-        };
-
-        // Función principal de exportación
+        // 5. FUNCIÓN DE EXPORTACIÓN
         async function exportarReporte(formato) {
             const loadingOverlay = document.getElementById('loadingOverlay');
             const loadingTitle = document.getElementById('loadingTitle');
             const loadingText = document.getElementById('loadingText');
 
-            // Deshabilitar botones
             document.querySelectorAll('.btn-export').forEach(btn => btn.disabled = true);
 
-            // Configurar mensajes según formato
             const mensajes = {
                 pdf: {
                     titulo: 'Generando PDF...',
@@ -978,13 +941,6 @@
                     ruta: '{{ route('reportes.exportar.excel') }}',
                     extension: 'xlsx',
                     icono: '📊'
-                },
-                word: {
-                    titulo: 'Generando Word...',
-                    texto: 'Creando documento con tablas e imágenes',
-                    ruta: '{{ route('reportes.exportar.word') }}',
-                    extension: 'docx',
-                    icono: '📝'
                 }
             };
 
@@ -996,10 +952,8 @@
             try {
                 console.log(`🔄 Iniciando exportación ${formato.toUpperCase()}...`);
 
-                // Esperar renderizado completo
                 await new Promise(resolve => setTimeout(resolve, 500));
 
-                // Capturar gráficos en base64
                 const graficosBase64 = {};
                 for (const [key, chart] of Object.entries(charts)) {
                     try {
@@ -1013,14 +967,12 @@
 
                 console.log(`📊 ${Object.keys(graficosBase64).length} gráficos capturados`);
 
-                // Preparar datos
                 const formData = new FormData();
                 formData.append('periodo', {{ $periodo }});
                 formData.append('graficos', JSON.stringify(graficosBase64));
 
                 console.log(`📤 Enviando a ${config.ruta}...`);
 
-                // Realizar petición
                 const response = await fetch(config.ruta, {
                     method: 'POST',
                     headers: {
@@ -1033,11 +985,11 @@
 
                 if (!response.ok) {
                     const errorText = await response.text();
-                    console.error('❌ Error servidor:', errorText);
-                    throw new Error(`Error ${response.status}: No se pudo generar el archivo`);
+                    console.error('❌ Error servidor completo:', errorText);
+                    throw new Error(`Error ${response.status}: ${errorText}`);
                 }
 
-                // Descargar archivo
+
                 const blob = await response.blob();
                 console.log(`💾 Archivo recibido: ${blob.size} bytes`);
 
@@ -1061,12 +1013,14 @@
                 );
             } finally {
                 loadingOverlay.style.display = 'none';
-                // Rehabilitar botones
                 document.querySelectorAll('.btn-export').forEach(btn => btn.disabled = false);
             }
         }
 
-        // Verificar carga
+        // 6. EXPONER LA FUNCIÓN GLOBALMENTE
+        window.exportarReporte = exportarReporte;
+
+        // 7. VERIFICACIÓN DE CARGA
         window.addEventListener('load', () => {
             console.log('✅ Sistema de reportes cargado');
             console.log('📊 Gráficos disponibles:', Object.keys(charts));
