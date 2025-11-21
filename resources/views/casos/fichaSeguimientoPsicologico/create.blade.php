@@ -2,7 +2,6 @@
 
 @section('content')
     <div class="container">
-        <h3 class="mb-4">Nueva Ficha de Seguimiento Psicológico</h3>
 
         <form action="{{ route('casos.fichaSeguimientoPsicologico.store', $caso->id) }}" method="POST"
             style="background-color: #F4F4F2; padding: 20px; border-radius: 10px;">

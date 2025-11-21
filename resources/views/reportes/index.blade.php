@@ -209,7 +209,7 @@
         </div>
 
         <!-- Información de formatos -->
-        <div class="format-info">
+        {{-- <div class="format-info">
             <h4>💡 ¿Qué formato elegir?</h4>
             <div class="row">
                 <div class="col-md-4">
@@ -229,7 +229,7 @@
                     </ul>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Botones de exportación -->
         <div class="export-buttons">
@@ -348,12 +348,7 @@
                     <canvas id="graficoRazonesNoDenuncia" width="400" height="300"></canvas>
                 </div>
             </div> --}}
-            <div class="col-md-6">
-                <div class="chart-container">
-                    <div class="chart-title">Instituciones Derivantes</div>
-                    <canvas id="graficoInstituciones" width="400" height="300"></canvas>
-                </div>
-            </div>
+            
 
             {{-- <div class="col-md-6">
                 <div class="chart-container">
@@ -887,35 +882,7 @@
             }
         });
 
-        // Gráfico Instituciones (simplificado)
-        const datosInstituciones = instituciones.derivante || obtenerLabelsYData(instituciones);
-        charts.graficoInstituciones = new Chart(document.getElementById('graficoInstituciones'), {
-            type: 'pie',
-            data: {
-                labels: datosInstituciones.labels || [],
-                datasets: [{
-                    data: datosInstituciones.data || [],
-                    backgroundColor: ['#fcd34d', '#34d399', '#60a5fa', '#f87171'],
-                    borderWidth: 2,
-                    borderColor: '#fff'
-                }]
-            },
-            options: {
-                ...commonOptions,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    },
-                    title: {
-                        display: true,
-                        text: 'Instituciones Derivantes',
-                        font: {
-                            size: 16
-                        }
-                    }
-                }
-            }
-        });
+        
 
         console.log('✅ Todos los gráficos creados exitosamente');
 

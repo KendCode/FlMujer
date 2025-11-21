@@ -2,6 +2,17 @@
 @extends('layouts.sidebar') {{-- o tu layout --}}
 
 @section('content')
+    <style>
+        .text-primary { color: #037E8C !important; }
+        .btn-primary { background-color: #13C0E5; border-color: #13C0E5; }
+        .btn-primary:hover { background-color: #037E8C; border-color: #037E8C; }
+        .btn-outline-primary { color: #13C0E5; border-color: #13C0E5; }
+        .btn-outline-primary:hover { background-color: #13C0E5; color: white; }
+        .table-light { background-color: #F4F4F2 !important; }
+        .btn-danger { background-color: #7EC544; border-color: #7EC544; }
+        .btn-danger:hover { background-color: #6AAF39; border-color: #6AAF39; }
+    </style>
+
     <div class="container mt-4">
         <h3 class="text-primary mb-4">Ficha de Evaluación Preliminar - Mujeres Víctimas de Violencia Intrafamiliar</h3>
 
@@ -28,7 +39,7 @@
             <div class="mb-3">
                 <label for="nombres_apellidos" class="form-label">Nombres y Apellidos</label>
                 <input type="text" class="form-control" id="nombres_apellidos" name="nombres_apellidos"
-                    value="{{ $caso->paciente_nombres }} {{ $caso->paciente_apellidos }}" readonly>
+                    value="{{ $caso->paciente_nombres }} {{ $caso->paciente_ap_paterno }} {{ $caso->paciente_ap_materno }}" readonly>
             </div>
 
             <div class="mb-3 row">
@@ -114,7 +125,7 @@
             <button type="button" class="btn btn-outline-primary btn-sm" id="addRow">+ Agregar miembro</button>
 
             {{-- Indicadores de violencia --}}
-            <h5 class="mt-4">Indicadores de violencia</h5>
+            <h5 class="mt-4" style="color: #037E8C;">Indicadores de violencia</h5>
 
             @php
                 $decisionesSeleccionadas = $ficha->indicadores_decision ?? [];
@@ -215,7 +226,7 @@
 
 
             {{-- Evaluación por fases --}}
-            <h5 class="mt-4">Evaluación por fases al momento del ingreso</h5>
+            <h5 class="mt-4" style="color: #037E8C;">Evaluación por fases al momento del ingreso</h5>
             @php
                 $fases_nombres = ['Primera Fase', 'Segunda Fase', 'Tercera Fase', 'Cuarta Fase'];
                 $fases_guardadas = $ficha->fases ?? []; // Array guardado en DB
@@ -247,11 +258,11 @@
                     <input type="date" class="form-control" name="fecha"
                         value="{{ old('fecha', $ficha->fecha ?? '') }}">
                 </div>
-                <div class="col-md-9">
+                {{-- <div class="col-md-9">
                     <label class="form-label">Nombre y firma de la persona que recepcionó el caso</label>
                     <input type="text" class="form-control" name="recepcion"
                         value="{{ old('recepcion', $ficha->recepcion ?? '') }}">
-                </div>
+                </div> --}}
             </div>
 
             {{-- BOTONES --}}
