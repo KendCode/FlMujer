@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cita;
+use App\Models\Caso;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,10 +23,16 @@ class CitaController extends Controller
         return view('citas.index', compact('citas'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        $caso = null;
+
+        if ($request->caso_id) {
+            $caso = Caso::find($request->caso_id);
+        }
         $psicologos = User::where('rol', 'psicologo')->get();
-        return view('citas.create', compact('psicologos'));
+
+        return view('citas.create', compact('psicologos', 'caso'));
     }
 
     public function store(Request $request)

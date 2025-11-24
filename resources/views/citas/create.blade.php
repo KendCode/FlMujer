@@ -27,22 +27,18 @@
                         <i class="bi bi-person-fill"></i> Datos del Paciente
                     </h5>
                 </div>
+                @if (isset($caso))
+                    <input type="hidden" name="caso_id" value="{{ $caso->id }}">
+                @endif
 
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label" style="color: #037E8C;">
                             Nombre <span class="text-danger">*</span>
                         </label>
-                        <input 
-                            type="text" 
-                            name="nombre" 
-                            class="form-control shadow-sm @error('nombre') is-invalid @enderror" 
-                            value="{{ old('nombre') }}"
-                            required
-                            maxlength="50"
-                            pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+"
-                            title="Solo se permiten letras y espacios"
-                        >
+                        <input type="text" name="nombre"
+                            class="form-control shadow-sm @error('nombre') is-invalid @enderror"
+                            value="{{ $caso->paciente_nombres ?? old('nombre') }}" required>
                         @error('nombre')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -52,16 +48,10 @@
                         <label class="form-label" style="color: #037E8C;">
                             Apellido Paterno <span class="text-danger">*</span>
                         </label>
-                        <input 
-                            type="text" 
-                            name="apellido_paterno" 
+                        <input type="text" name="apellido_paterno"
                             class="form-control shadow-sm @error('apellido_paterno') is-invalid @enderror"
-                            value="{{ old('apellido_paterno') }}"
-                            required
-                            maxlength="50"
-                            pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+"
-                            title="Solo se permiten letras y espacios"
-                        >
+                            value="{{ $caso->paciente_ap_paterno ?? old('apellido_paterno') }}" required>
+
                         @error('apellido_paterno')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -71,16 +61,10 @@
                         <label class="form-label" style="color: #037E8C;">
                             Apellido Materno <span class="text-danger">*</span>
                         </label>
-                        <input 
-                            type="text" 
-                            name="apellido_materno" 
+                        <input type="text" name="apellido_materno"
                             class="form-control shadow-sm @error('apellido_materno') is-invalid @enderror"
-                            value="{{ old('apellido_materno') }}"
-                            required
-                            maxlength="50"
-                            pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+"
-                            title="Solo se permiten letras y espacios"
-                        >
+                            value="{{ $caso->paciente_ap_materno ?? old('apellido_materno') }}" required>
+
                         @error('apellido_materno')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -103,14 +87,9 @@
                             <span class="input-group-text" style="background-color: #13C0E5; color: white;">
                                 <i class="bi bi-calendar-event"></i>
                             </span>
-                            <input 
-                                type="date" 
-                                name="proxima_atencion" 
-                                id="fecha_atencion"
+                            <input type="date" name="proxima_atencion" id="fecha_atencion"
                                 class="form-control @error('proxima_atencion') is-invalid @enderror"
-                                value="{{ old('proxima_atencion') }}"
-                                required
-                            >
+                                value="{{ old('proxima_atencion') }}" required>
                             @error('proxima_atencion')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -126,16 +105,9 @@
                             <span class="input-group-text" style="background-color: #7EC544; color: white;">
                                 <i class="bi bi-clock"></i>
                             </span>
-                            <input 
-                                type="time" 
-                                name="hora" 
-                                id="hora_atencion"
-                                class="form-control @error('hora') is-invalid @enderror"
-                                value="{{ old('hora') }}"
-                                required
-                                min="08:00"
-                                max="18:00"
-                            >
+                            <input type="time" name="hora" id="hora_atencion"
+                                class="form-control @error('hora') is-invalid @enderror" value="{{ old('hora') }}"
+                                required min="08:00" max="18:00">
                             @error('hora')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -148,11 +120,8 @@
                     <label class="form-label" style="color: #037E8C;">
                         Asignar Psicólogo <span class="text-danger">*</span>
                     </label>
-                    <select 
-                        name="usuario_id" 
-                        class="form-select shadow-sm @error('usuario_id') is-invalid @enderror" 
-                        required
-                    >
+                    <select name="usuario_id" class="form-select shadow-sm @error('usuario_id') is-invalid @enderror"
+                        required>
                         <option value="">-- Seleccione un psicólogo --</option>
                         @foreach ($psicologos as $p)
                             <option value="{{ $p->id }}" {{ old('usuario_id') == $p->id ? 'selected' : '' }}>
@@ -170,7 +139,8 @@
                     <button type="submit" class="btn text-white px-4 shadow-sm" style="background-color: #13C0E5;">
                         <i class="bi bi-save"></i> Guardar Cita
                     </button>
-                    <a href="{{ route('citas.index') }}" class="btn text-white px-4 shadow-sm" style="background-color: #037E8C;">
+                    <a href="{{ route('citas.index') }}" class="btn text-white px-4 shadow-sm"
+                        style="background-color: #037E8C;">
                         <i class="bi bi-x-circle"></i> Cancelar
                     </a>
                 </div>
@@ -216,7 +186,7 @@
                     if (hora) {
                         const [horas, minutos] = hora.split(':');
                         const horaNum = parseInt(horas);
-                        
+
                         if (horaNum < 8 || horaNum >= 18) {
                             e.preventDefault();
                             alert('Por favor seleccione una hora entre 08:00 y 18:00');

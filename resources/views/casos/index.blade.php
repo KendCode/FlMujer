@@ -136,7 +136,8 @@
                                     <td>{{ \Carbon\Carbon::parse($caso->regional_fecha)->format('d/m/Y') }}</td>
                                     <td>
                                         <div>
-                                            <strong>{{ $caso->paciente_nombres }} {{ $caso->paciente_ap_paterno }} {{ $caso->paciente_ap_materno }}</strong>
+                                            <strong>{{ $caso->paciente_nombres }} {{ $caso->paciente_ap_paterno }}
+                                                {{ $caso->paciente_ap_materno }}</strong>
                                             <br>
                                             <small class="text-muted">
                                                 <i
@@ -178,11 +179,6 @@
                                     <td>
                                         <small>{{ Str::limit($caso->regional_recibe_caso, 20) }}</small>
                                     </td>
-                                    {{-- <td>
-                                        <span class="badge bg-{{ $caso->estado == 'activo' ? 'success' : 'secondary' }}">
-                                            {{ ucfirst($caso->estado ?? 'activo') }}
-                                        </span>
-                                    </td> --}}
                                     <td>
                                         <div class="btn-group align-items-stretch" role="group">
                                             {{-- Botón Ver --}}
@@ -208,7 +204,8 @@
                                                         </a>
                                                     </li>
                                                     <li>
-                                                        <a class="dropdown-item" href="{{ route('casos.fichaSeguimientoPsicologico.create', $caso->id) }}">
+                                                        <a class="dropdown-item"
+                                                            href="{{ route('casos.fichaSeguimientoPsicologico.create', $caso->id) }}">
                                                             📝 Ficha de Seguimiento
                                                         </a>
                                                     </li>
@@ -262,31 +259,36 @@
                                                     @endif
                                                 </ul>
                                             </div>
+                                            @if (Auth::user()->rol === 'administrador')
+                                                {{-- Botón Editar --}}
+                                                <a href="{{ route('casos.edit', $caso->id) }}"
+                                                    class="btn btn-outline-warning d-flex align-items-center justify-content-center"
+                                                    title="Editar">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
 
-                                            {{-- Botón Editar --}}
-                                            <a href="{{ route('casos.edit', $caso->id) }}"
-                                                class="btn btn-outline-warning d-flex align-items-center justify-content-center"
-                                                title="Editar">
-                                                <i class="bi bi-pencil"></i>
+                                                {{-- Botón Eliminar --}}
+                                                <form id="delete-form-{{ $caso->id }}"
+                                                    action="{{ route('casos.destroy', $caso->id) }}" method="POST"
+                                                    style="margin: 0;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="btn btn-outline-danger d-flex align-items-center justify-content-center"
+                                                        title="Eliminar"
+                                                        onclick="return confirm('¿Estás seguro de que quieres eliminar este caso?');">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+                                            {{-- Botón para crear una cita --}}
+                                            <a href="{{ route('citas.create', ['caso_id' => $caso->id]) }}"
+                                                class="btn btn-outline-info d-flex align-items-center justify-content-center"
+                                                title="Crear Cita">
+                                                <i class="bi bi-calendar-plus"></i>
                                             </a>
-
-                                            {{-- Botón Eliminar --}}
-                                            <form id="delete-form-{{ $caso->id }}"
-                                                action="{{ route('casos.destroy', $caso->id) }}" method="POST"
-                                                style="margin: 0;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="btn btn-outline-danger d-flex align-items-center justify-content-center"
-                                                    title="Eliminar"
-                                                    onclick="return confirm('¿Estás seguro de que quieres eliminar este caso?');">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
                                         </div>
-
                                     </td>
-
                                 </tr>
                             @empty
                                 <tr>
