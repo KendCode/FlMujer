@@ -25,7 +25,7 @@ use App\Http\Controllers\FichaSeguimientoPsicologicoController;
 use App\Http\Controllers\FichaVictimaController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\CitaController;
-
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 /*Route::get('/', function () {
     return view('welcome');
@@ -45,6 +45,9 @@ Route::get('/contacto', [PageController::class, 'contacto'])->name('contacto');
 Route::get('/testimonios', [PageController::class, 'testimonios'])->name('testimonios');
 Route::get('/actividades', [PageController::class, 'actividades'])->name('actividades');
 
+/*Route::post('login', [AuthenticatedSessionController::class, 'store'])
+    ->middleware('throttle:login')
+    ->name('login');*/
 // Dashboard protegido: autenticado, email verificado y usuario activo
 Route::get('/dashboard', function () {
     return view('dashboard');
