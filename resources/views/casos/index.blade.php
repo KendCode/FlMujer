@@ -281,12 +281,14 @@
                                                     </button>
                                                 </form>
                                             @endif
+                                            @if (Auth::user()->rol === 'administrador' || Auth::user()->rol === 'psicologo')
                                             {{-- Botón para crear una cita --}}
                                             <a href="{{ route('citas.create', ['caso_id' => $caso->id]) }}"
                                                 class="btn btn-outline-info d-flex align-items-center justify-content-center"
                                                 title="Crear Cita">
                                                 <i class="bi bi-calendar-plus"></i>
                                             </a>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
