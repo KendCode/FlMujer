@@ -72,8 +72,8 @@
         @method('PUT')
 
         <!-- =====================
-                                                 SECCIÓN 0: DATOS DE LA REGIONAL
-                                            ===================== -->
+                                                                 SECCIÓN 0: DATOS DE LA REGIONAL
+                                                            ===================== -->
         <div class="card mb-3">
             <div class="card-header">Regional</div>
             <div class="card-body">
@@ -127,8 +127,8 @@
         </div>
 
         <!-- =====================
-                                                 SECCIÓN 1: DATOS PERSONALES PACIENTE
-                                            ===================== -->
+                                                                 SECCIÓN 1: DATOS PERSONALES PACIENTE
+                                                            ===================== -->
         <div class="card mb-3">
             <div class="card-header">Datos Personales y Más Datos</div>
             <div class="card-body">
@@ -140,12 +140,12 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Apellido Paterno</label>
-                        <input type="text" name="paciente_ap_paterno" class="form-control" 
+                        <input type="text" name="paciente_ap_paterno" class="form-control"
                             value="{{ old('paciente_ap_paterno', $caso->paciente_ap_paterno) }}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Apellido Materno</label>
-                        <input type="text" name="paciente_ap_materno" class="form-control" 
+                        <input type="text" name="paciente_ap_materno" class="form-control"
                             value="{{ old('paciente_ap_materno', $caso->paciente_ap_materno) }}">
                     </div>
                     <div class="col-md-4 mt-2">
@@ -405,8 +405,8 @@
         </div>
 
         <!-- =====================
-                                                 SECCIÓN 2: DATOS PAREJA
-                                            ===================== -->
+                                                                 SECCIÓN 2: DATOS PAREJA
+                                                            ===================== -->
         <div class="card mb-3">
             <div class="card-header">2. Datos de la pareja</div>
             <div class="card-body">
@@ -416,7 +416,7 @@
                         <input type="text" name="pareja_nombres" class="form-control" required
                             value="{{ old('pareja_nombres', $caso->pareja_nombres) }}">
                     </div>
-                    
+
                     <div class="col-md-6">
                         <label class="form-label">Apellido Paterno</label>
                         <input type="text" name="pareja_ap_paterno" class="form-control"
@@ -743,8 +743,8 @@
         </div>
 
         <!-- =====================
-                                                 SECCIÓN 3: DATOS HIJOS
-                                            ===================== -->
+                                                                 SECCIÓN 3: DATOS HIJOS
+                                                            ===================== -->
 
         <div class="card mb-3">
             <div class="card-header">3. Hijos</div>
@@ -764,10 +764,12 @@
                             {{ old('hijos_num_gestacion', $caso->hijos_num_gestacion) == '2_a_3' ? 'selected' : '' }}>2 a 3
                         </option>
                         <option value="4_a_5"
-                            {{ old('hijos_num_gestacion', $caso->hijos_num_gestacion) == '4_a_5' ? 'selected' : '' }}>4 a 5
+                            {{ old('hijos_num_gestacion', $caso->hijos_num_gestacion) == '4_a_5' ? 'selected' : '' }}>4 a
+                            5
                         </option>
                         <option value="6_a_7"
-                            {{ old('hijos_num_gestacion', $caso->hijos_num_gestacion) == '6_a_7' ? 'selected' : '' }}>6 a 7
+                            {{ old('hijos_num_gestacion', $caso->hijos_num_gestacion) == '6_a_7' ? 'selected' : '' }}>6 a
+                            7
                         </option>
                         <option value="8_mas"
                             {{ old('hijos_num_gestacion', $caso->hijos_num_gestacion) == '8_mas' ? 'selected' : '' }}>8 a
@@ -850,8 +852,8 @@
 
 
         <!-- =====================
-                                                 SECCIÓN 4: TIPOS DE VIOLENCIA
-                                            ===================== -->
+                                                                 SECCIÓN 4: TIPOS DE VIOLENCIA
+                                                            ===================== -->
         <div class="card mb-3">
             <div class="card-header">4. Tipos de Violencia</div>
             <div class="card-body">
@@ -1100,11 +1102,42 @@
 
 
                 <div class="mb-3">
-                    <label for="violencia_institucion_denuncia" class="form-label">Nombre de la persona que llenó el
-                        formulario</label>
-                    <input type="text" name="formulario_responsable_nombre" id="violencia_institucion_denuncia"
-                        class="form-control" placeholder="nombre completo"
-                        value="{{ old('formulario_responsable_nombre', $caso->formulario_responsable_nombre) }}">
+                    <label for="select_psicologo" class="form-label">
+                        Psicólogo asignado al caso <span class="text-danger">*</span>
+                    </label>
+                    <label class="form-label" style="color: #037E8C;">
+                        <i class="bi bi-person-badge"></i> Psicólogo Asignado
+                    </label>
+                    <select name="usuario_id" id="select_psicologo"
+                        class="form-select shadow-sm select2 @error('usuario_id') is-invalid @enderror">
+                        <option value="">-- Sin asignar --</option>
+                        @foreach ($psicologos as $p)
+                            <option value="{{ $p->id }}"
+                                {{ old('usuario_id', $caso->formulario_responsable_nombre) == $p->id ? 'selected' : '' }}>
+                                {{ $p->name }} {{ $p->apellido }}
+                                @if ($p->especialidad)
+                                    - {{ $p->especialidad }}
+                                @endif
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('usuario_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+
+                    {{-- Mostrar psicólogo actualmente asignado --}}
+                    @if ($caso->formulario_responsable_nombre)
+                        @php
+                            $psicologoAsignado = \App\Models\User::find($caso->formulario_responsable_nombre);
+                        @endphp
+                        @if ($psicologoAsignado)
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle"></i>
+                                Actualmente asignado: <strong>{{ $psicologoAsignado->name }}
+                                    {{ $psicologoAsignado->apellido }}</strong>
+                            </small>
+                        @endif
+                    @endif
                 </div>
             </div>
         </div>

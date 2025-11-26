@@ -13,6 +13,7 @@ use App\Models\Hijo;
 use App\Models\FichaAgresor;
 use App\Models\FichaVictima;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\User;
 
 class CasoController extends Controller
 {
@@ -73,8 +74,12 @@ class CasoController extends Controller
      */
     public function create()
     {
+        // 🔹 AGREGAR: Obtener psicólogos
+        $psicologos = User::where('rol', 'psicologo')
+            ->orderBy('name', 'asc')
+            ->get();
         // Si tienes catálogos (distritos, etc.) puedes enviarlos aquí
-        return view('casos.create');
+        return view('casos.create', compact('psicologos'));
     }
 
     /**
@@ -203,6 +208,7 @@ class CasoController extends Controller
             // ============ RESPONSABLE ============
             'violencia_medidas_tomar' => 'nullable|string|max:500',
             'formulario_responsable_nombre' => 'nullable|string|max:255',
+            'usuario_id' => 'nullable|exists:users,id', // 🔹 Validar psicólogo
 
             // ============ CAMPOS LEGACY ============
             'violencia_frecuencia' => 'nullable|string',
@@ -342,8 +348,7 @@ class CasoController extends Controller
         $data['violencia_institucion_denuncia'] = $validated['violencia_institucion_denuncia'] ?? null;
         $data['violencia_institucion_derivar'] = $validated['violencia_institucion_derivar'] ?? null;
         $data['violencia_medidas_tomar'] = $validated['violencia_medidas_tomar'] ?? null;
-        $data['formulario_responsable_nombre'] = $validated['formulario_responsable_nombre'] ?? null;
-
+        $data['formulario_responsable_nombre'] = $validated['usuario_id'] ?? null; // 🔹 Guardar ID del psicólogo
         // Campos legacy
         $data['violencia_frecuencia'] = $validated['violencia_frecuencia'] ?? null;
         $data['violencia_lugar_hechos'] = $validated['violencia_lugar_hechos'] ?? null;
@@ -465,8 +470,12 @@ class CasoController extends Controller
         } elseif ($caso->violencia_denuncia_previa === 0 || $caso->violencia_denuncia_previa === '0' || $caso->violencia_denuncia_previa === false) {
             $caso->violencia_denuncia_previa = 'no';
         }
+        // 🔹 Obtener psicólogos para el select
+        $psicologos = User::where('rol', 'psicologo')
+            ->orderBy('name', 'asc')
+            ->get();
 
-        return view('casos.edit', compact('caso'));
+        return view('casos.edit', compact('caso', 'psicologos'));
     }
 
 
@@ -480,6 +489,7 @@ class CasoController extends Controller
             'paciente_nombres' => 'required|string|max:255',
             'paciente_ap_paterno' => 'nullable|string|max:255',
             'paciente_ap_materno' => 'nullable|string|max:255',
+            'usuario_id' => 'nullable|exists:users,id', // 🔹 Validar psicólogo
         ]);
 
         // Actualizar todos los campos del caso
@@ -683,8 +693,7 @@ class CasoController extends Controller
         $data['violencia_descripcion_hechos'] = $request->input('violencia_descripcion_hechos');
         $data['violencia_institucion_denuncia'] = $request->input('violencia_institucion_denuncia');
         $data['violencia_medidas_tomar'] = $request->input('violencia_medidas_tomar');
-        $data['formulario_responsable_nombre'] = $request->input('formulario_responsable_nombre');
-
+        $data['formulario_responsable_nombre'] = $request->input('usuario_id'); // 🔹 Guardar ID del psicólogo
         try {
             $caso->update($data);
 

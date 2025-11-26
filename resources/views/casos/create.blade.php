@@ -65,7 +65,7 @@
 
         .form-control:required,
         .form-select:required {
-            border-left: 3px solid #dc3545;
+            border-left: 3px solid #73ff00;
         }
     </style>
 
@@ -86,8 +86,8 @@
     <form action="{{ route('casos.store') }}" method="POST">
         @csrf
         <!-- =====================
-                                                                   SECCIÓN 0: DATOS DE LA REGIONAL
-                                                                             ===================== -->
+                    SECCIÓN 0: DATOS DE LA REGIONAL
+                            ===================== -->
         <div class="card mb-3">
             <div class="card-header">Regional</div>
             <div class="card-body">
@@ -155,8 +155,8 @@
         </div>
 
         <!-- =====================
-                                                    SECCIÓN 1: DATOS PERSONALES PACIENTE
-                                                         ===================== -->
+                            SECCIÓN 1: DATOS PERSONALES PACIENTE
+                             ===================== -->
 
         <div class="card mb-3">
             <div class="card-header">Datos Personales y Más Datos</div>
@@ -168,7 +168,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Apellido Paterno</label>
+                        <label class="form-label required-label">Apellido Paterno</label>
                         <input type="text" name="paciente_ap_paterno" class="form-control" required>
                     </div>
                     <div class="col-md-6">
@@ -176,7 +176,7 @@
                         <input type="text" name="paciente_ap_materno" class="form-control">
                     </div>
                     <div class="col-md-4 mt-2">
-                        <label class="form-label d-block">Edad</label>
+                        <label class="form-label d-block required-label">Edad</label>
                         <div class="form-check form-check-inline">
                             <input type="number" name="paciente_edad" class="form-control">
                         </div>
@@ -186,7 +186,7 @@
                         <input type="number" name="paciente_ci" class="form-control">
                     </div>
                     <div class="col-md-4 mt-2">
-                        <label class="form-label d-block">Sexo</label>
+                        <label class="form-label d-block required-label">Sexo</label>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="paciente_sexo" value="M" required>
                             <label class="form-check-label">Varón</label>
@@ -238,7 +238,7 @@
                     </div>
 
                     <div class="col-md-8 mt-2">
-                        <label class="form-label">Distrito</label><br>
+                        <label class="form-label required-label">Distrito</label><br>
                         <div class="d-flex flex-wrap gap-2">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="paciente_id_distrito"
@@ -329,22 +329,22 @@
                         </div>
                     </div>
                     <div class="col-md-4 mt-2">
-                        <label class="form-label d-block">Lugar de Nacimiento</label>
+                        <label class="form-label d-block required-label">Lugar de Nacimiento</label>
                         <input type="text" name="paciente_lugar_nacimiento" class="form-control"
                             placeholder="Lugar de Nacimiento">
                         <div class="form-check form-check-inline mt-2">
                             <input class="form-check-input" type="radio" name="paciente_lugar_nacimiento_op"
-                                value="dentro" required>
+                                value="dentro">
                             <label class="form-check-label">Dentro de municipio</label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="paciente_lugar_nacimiento_op"
-                                value="fuera" required>
+                                value="fuera">
                             <label class="form-check-label">Fuera de municipio</label>
                         </div>
                     </div>
                     <div class="col-md-4 mt-2">
-                        <label class="form-label d-block">Residencia Habitual</label>
+                        <label class="form-label d-block required-label">Residencia Habitual</label>
                         <div class="form-check form-check-inline mt-2">
                             <input class="form-check-input" type="radio" name="paciente_lugar_residencia_op"
                                 value="dentro">
@@ -357,7 +357,7 @@
                         </div>
                     </div>
                     <div class="col-md-4 mt-2">
-                        <label class="form-label d-block">Tiempo de residencia en este municipio</label>
+                        <label class="form-label d-block required-label">Tiempo de residencia en este municipio</label>
                         <div class="form-check form-check-inline mt-2">
                             <input class="form-check-input" type="radio" name="paciente_tiempo_residencia_op"
                                 value="menosDeUnAno">
@@ -388,7 +388,7 @@
 
                 <div class="row g-2 mt-3">
                     <div class="col-md-6">
-                        <label for="paciente_estado_civil" class="form-label">Estado Civil</label>
+                        <label for="paciente_estado_civil" class="form-label required-label">Estado Civil</label>
                         <select class="form-select" id="paciente_estado_civil" name="paciente_estado_civil" required>
                             <option value="">Seleccione...</option>
                             <option value="soltero">Soltero</option>
@@ -400,7 +400,7 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label for="paciente_nivel_instruccion" class="form-label">Nivel de Instrucción</label>
+                        <label for="paciente_nivel_instruccion" class="form-label required-label">Nivel de Instrucción</label>
                         <select class="form-select" id="paciente_nivel_instruccion" name="paciente_nivel_instruccion"
                             required>
                             <option value="">Seleccione...</option>
@@ -413,7 +413,7 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label for="paciente_idioma_mas_hablado" class="form-label">Idioma más hablado</label>
+                        <label for="paciente_idioma_mas_hablado" class="form-label required-label">Idioma más hablado</label>
                         <select class="form-select" id="paciente_idioma_mas_hablado" name="paciente_idioma_mas_hablado">
                             <option value="">Seleccione...</option>
                             <option value="castellano">Castellano</option>
@@ -425,12 +425,12 @@
                         </select>
                     </div>
                     <div class="col-md-6 mt-2">
-                        <label for="paciente_idioma_especificar" class="form-label">Especificar Otro Idioma</label>
+                        <label for="paciente_idioma_especificar" class="form-label required-label">Especificar Otro Idioma</label>
                         <input type="text" name="paciente_idioma_especificar" class="form-control"
                             placeholder="Especificar si seleccionó 'Otro'">
                     </div>
                     <div class="col-md-6 mt-2">
-                        <label for="paciente_ocupacion" class="form-label">Ocupación Principal</label>
+                        <label for="paciente_ocupacion" class="form-label required-label">Ocupación Principal</label>
                         <select class="form-select" id="paciente_ocupacion" name="paciente_ocupacion" required>
                             <option value="">Seleccione...</option>
                             <option value="obrero">Obrero</option>
@@ -447,7 +447,7 @@
                         </select>
                     </div>
                     <div class="col-md-6 mt-2">
-                        <label for="paciente_situacion_ocupacional" class="form-label">Situación Ocupacional</label>
+                        <label for="paciente_situacion_ocupacional" class="form-label required-label">Situación Ocupacional</label>
                         <select class="form-select" id="paciente_situacion_ocupacional"
                             name="paciente_situacion_ocupacional" required>
                             <option value="">Seleccione...</option>
@@ -460,19 +460,19 @@
         </div>
 
         <!-- =====================
-                                                                                                                                         SECCIÓN 2: DATOS PAREJA
-                                                                                                                                    ===================== -->
+                                                                                                                                                 SECCIÓN 2: DATOS PAREJA
+                                                                                                                                            ===================== -->
         <div class="card mb-3">
             <div class="card-header">2. Datos de la pareja</div>
             <div class="card-body">
                 <!-- Primera fila: Nombres, Apellidos, Edad, CI, Sexo -->
                 <div class="row g-2">
                     <div class="col-md-6">
-                        <label class="form-label">Nombres</label>
+                        <label class="form-label required-label">Nombres</label>
                         <input type="text" name="pareja_nombres" class="form-control" required>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label">Apellido Paterno</label>
+                        <label class="form-label required-label">Apellido Paterno</label>
                         <input type="text" name="pareja_ap_paterno" class="form-control">
                     </div>
                     <div class="col-md-3">
@@ -480,7 +480,7 @@
                         <input type="text" name="pareja_ap_materno" class="form-control">
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label">Edad</label>
+                        <label class="form-label required-label">Edad</label>
                         <input type="number" name="pareja_edad" class="form-control">
                     </div>
                     <div class="col-md-2">
@@ -488,7 +488,7 @@
                         <input type="number" name="pareja_ci" class="form-control">
                     </div>
                     <div class="col-md-8">
-                        <label class="form-label d-block">Sexo</label>
+                        <label class="form-label d-block required-label">Sexo</label>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="pareja_sexo" value="M" required>
                             <label class="form-check-label">Varón</label>
@@ -649,12 +649,12 @@
                             placeholder="Lugar de Nacimiento">
                         <div class="form-check mt-2">
                             <input class="form-check-input" type="radio" name="pareja_lugar_nacimiento_op"
-                                value="dentro" required>
+                                value="dentro">
                             <label class="form-check-label">Dentro de municipio</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="pareja_lugar_nacimiento_op"
-                                value="fuera" required>
+                                value="fuera">
                             <label class="form-check-label">Fuera de municipio</label>
                         </div>
                     </div>
@@ -663,7 +663,7 @@
                 <!-- Cuarta fila: Residencia y Tiempo -->
                 <div class="row g-2 mt-3">
                     <div class="col-md-4">
-                        <label class="form-label d-block">Residencia Habitual</label>
+                        <label class="form-label d-block required-label">Residencia Habitual</label>
                         <div class="form-check mt-2">
                             <input class="form-check-input" type="radio" name="pareja_lugar_residencia_op"
                                 value="dentro">
@@ -676,7 +676,7 @@
                         </div>
                     </div>
                     <div class="col-md-8">
-                        <label class="form-label d-block">Tiempo de residencia en este municipio</label>
+                        <label class="form-label d-block required-label">Tiempo de residencia en este municipio</label>
                         <div class="d-flex flex-wrap gap-2 mt-2">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="pareja_tiempo_residencia_op"
@@ -710,7 +710,7 @@
                 <!-- Quinta fila: Estado Civil e Instrucción -->
                 <div class="row g-2 mt-3">
                     <div class="col-md-6">
-                        <label for="pareja_estado_civil" class="form-label">Estado Civil</label>
+                        <label for="pareja_estado_civil" class="form-label required-label">Estado Civil</label>
                         <select class="form-select" id="pareja_estado_civil" name="pareja_estado_civil" required>
                             <option value="">Seleccione</option>
                             <option value="soltero">Soltero</option>
@@ -722,7 +722,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label for="pareja_nivel_instruccion" class="form-label">Nivel de Instrucción</label>
+                        <label for="pareja_nivel_instruccion" class="form-label required-label">Nivel de Instrucción</label>
                         <select class="form-select" id="pareja_nivel_instruccion" name="pareja_nivel_instruccion"
                             required>
                             <option value="">Seleccione</option>
@@ -738,7 +738,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label for="pareja_idioma" class="form-label">Idioma Más Hablado</label>
+                        <label for="pareja_idioma" class="form-label required-label">Idioma Más Hablado</label>
                         <select class="form-select" id="pareja_idioma" name="pareja_idioma" required>
                             <option value="">Seleccione</option>
                             <option value="castellano">Castellano</option>
@@ -756,7 +756,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label for="pareja_ocupacion_principal" class="form-label">Ocupación Principal</label>
+                        <label for="pareja_ocupacion_principal" class="form-label required-label">Ocupación Principal</label>
                         <select class="form-select" id="pareja_ocupacion_principal" name="pareja_ocupacion_principal"
                             required>
                             <option value="">Seleccione</option>
@@ -776,7 +776,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label for="pareja_situacion_ocupacional" class="form-label">Situación Ocupacional</label>
+                        <label for="pareja_situacion_ocupacional" class="form-label required-label">Situación Ocupacional</label>
                         <select class="form-select" id="pareja_situacion_ocupacional" name="pareja_situacion_ocupacional"
                             required>
                             <option value="">Seleccione</option>
@@ -793,7 +793,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label for="pareja_parentesco" class="form-label">Relación de Parentesco</label>
+                        <label for="pareja_parentesco" class="form-label required-label">Relación de Parentesco</label>
                         <select class="form-select" id="pareja_parentesco" name="pareja_parentesco" required>
                             <option value="">Seleccione</option>
                             <option value="conyuge">Cónyuge</option>
@@ -807,7 +807,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label for="pareja_anos_convivencia" class="form-label">Años de Matrimonio o Convivencia</label>
+                        <label for="pareja_anos_convivencia" class="form-label required-label">Años de Matrimonio o Convivencia</label>
                         <select class="form-select" id="pareja_anos_convivencia" name="pareja_anos_convivencia" required>
                             <option value="">Seleccione</option>
                             <option value="menos_de_un_ano">Menos de un año</option>
@@ -826,13 +826,13 @@
         </div>
 
         <!-- =====================
-                                                                                                                                     SECCIÓN 3: DATOS HIJOS
-                                                                                                                                ===================== -->
+                    SECCIÓN 3: DATOS HIJOS
+                    ===================== -->
         <div class="card mb-3">
             <div class="card-header">3. Hijos</div>
             <div class="card-body">
                 <div class="mb-3">
-                    <label for="hijos_num_gestacion" class="form-label">Número de hijos en gestación</label>
+                    <label for="hijos_num_gestacion" class="form-label required-label">Número de hijos</label>
                     <select name="hijos_num_gestacion" id="hijos_num_gestacion" class="form-select">
                         <option value="">--Seleccione--</option>
                         <option value="en_gestacion">En gestación</option>
@@ -1003,8 +1003,8 @@
         </div>
 
         <!-- =====================
-                                                                                                                                 SECCIÓN 4: TIPOS DE VIOLENCIA
-                                                                                                                            ===================== -->
+                                                                                                                                         SECCIÓN 4: TIPOS DE VIOLENCIA
+                                                                                                                                    ===================== -->
         <div class="card mb-3">
             <div class="card-header">4. Tipos de Violencia</div>
             <div class="card-body">
@@ -1209,10 +1209,18 @@
                         class="form-control" placeholder="medidas a tomar">
                 </div>
                 <div class="mb-3">
-                    <label for="violencia_institucion_denuncia" class="form-label">Nombre de la persona que lleno el
-                        formulario</label>
-                    <input type="text" name="formulario_responsable_nombre" id="violencia_institucion_denuncia"
-                        class="form-control" placeholder="nombre completo" required>
+                    <select name="usuario_id" id="psicologo_select"
+                        class="form-select shadow-sm @error('usuario_id') is-invalid @enderror" required>
+                        <option value="">-- Seleccione un psicólogo --</option>
+                        @foreach ($psicologos as $p)
+                            <option value="{{ $p->id }}" {{ old('usuario_id') == $p->id ? 'selected' : '' }}>
+                                {{ $p->name }} {{ $p->apellido }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('usuario_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
         </div>
@@ -1523,6 +1531,54 @@
                     e.preventDefault();
                     mostrarMensajeFeedback('✗ Espere a que se valide el número de registro', 'error');
                     return false;
+                }
+            }
+        });
+
+        // ==========================================
+        // PARA LA EDAD
+        document.addEventListener('DOMContentLoaded', function() {
+            // Para el paciente (víctima)
+            const edadInput1 = document.querySelector('input[name="paciente_edad"]');
+            const rangoEdad1 = document.querySelectorAll('input[name="paciente_edad_rango"]');
+
+            if (edadInput1) {
+                edadInput1.addEventListener('input', function() {
+                    seleccionarRangoEdad(this.value, rangoEdad1);
+                });
+            }
+
+            // Para la pareja (agresor)
+            const edadInput2 = document.querySelector('input[name="pareja_edad"]');
+            const rangoEdad2 = document.querySelectorAll('input[name="pareja_edad_rango"]');
+
+            if (edadInput2) {
+                edadInput2.addEventListener('input', function() {
+                    seleccionarRangoEdad(this.value, rangoEdad2);
+                });
+            }
+
+            function seleccionarRangoEdad(edad, radios) {
+                edad = parseInt(edad);
+
+                // Limpiar selección previa
+                radios.forEach(r => r.checked = false);
+
+                // Seleccionar el rango correspondiente
+                if (edad < 15) {
+                    radios[0].checked = true; // Menor de 15 años
+                } else if (edad >= 16 && edad <= 20) {
+                    radios[1].checked = true; // 16 a 20 años
+                } else if (edad >= 21 && edad <= 25) {
+                    radios[2].checked = true; // 21 a 25 años
+                } else if (edad >= 26 && edad <= 30) {
+                    radios[3].checked = true; // 26 a 30 años
+                } else if (edad >= 31 && edad <= 35) {
+                    radios[4].checked = true; // 31 a 35 años
+                } else if (edad >= 36 && edad <= 50) {
+                    radios[5].checked = true; // 36 a 50 años
+                } else if (edad > 50) {
+                    radios[6].checked = true; // Más de 50 años
                 }
             }
         });

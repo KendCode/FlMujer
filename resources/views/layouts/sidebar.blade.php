@@ -180,8 +180,8 @@
                         class="fas fa-home"></i><span>Inicio</span></a>
                 <a href="{{ route('users.index') }}" class="list-group-item"><i class="fas fa-users"></i><span>Lista de
                         Usuarios</span></a>
-                <a href="{{ route('fichasConsulta.index') }}" class="list-group-item"><i
-                        class="fas fa-comments"></i><span>Formulario de Consultas</span></a>
+                {{-- <a href="{{ route('fichasConsulta.index') }}" class="list-group-item"><i
+                        class="fas fa-comments"></i><span>Formulario de Consultas</span></a> --}}
                 <!-- En layouts/sidebar.blade.php -->
                 <!-- Dropdown navegación estilo sidebar (solo para ADMINISTRADOR) -->
                 @auth
@@ -240,7 +240,7 @@
                 @endauth
 
                 <a href="{{ route('reportes.index') }}" class="list-group-item">
-                    <i class="fas fa-chart-bar"></i> Reportes
+                    <i class="fas fa-chart-bar"></i> Gráficos estadísticos
                 </a>
                 <a href="{{ route('profile.edit') }}" class="list-group-item"><i
                         class="fas fa-cog"></i><span>Configuración Perfil</span></a>

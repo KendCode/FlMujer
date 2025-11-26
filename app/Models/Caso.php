@@ -12,6 +12,7 @@ class Caso extends Model
     protected $table = 'casos';
 
     protected $fillable = [
+        'usuario_id', // 🔹 Agregar este campo
         // REGIONAL
         'tipo_atencion',
         'regional_recibe_caso',
@@ -213,5 +214,15 @@ class Caso extends Model
     public function getNombreCompletoAttribute()
     {
         return trim($this->paciente_nombres . ' ' . $this->paciente_apellidos);
+    }
+    /**
+     * Relación con el psicólogo asignado
+     */
+    /**
+     * Relación con el psicólogo asignado
+     */
+    public function psicologo()
+    {
+        return $this->belongsTo(User::class, 'formulario_responsable_nombre', 'id');
     }
 }
