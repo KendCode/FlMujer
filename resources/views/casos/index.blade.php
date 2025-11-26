@@ -99,9 +99,9 @@
                     <div class="col-md-3 d-flex gap-2">
                         <button type="submit" class="btn btn-primary mt-2">Buscar</button>
                         <a href="{{ route('casos.index') }}" class="btn btn-secondary mt-2">Limpiar</a>
-                        <a href="#" class="btn btn-success mt-2">
+                        {{-- <a href="#" class="btn btn-success mt-2">
                             <i class="bi bi-file-earmark-excel"></i> Exportar
-                        </a>
+                        </a> --}}
                         {{-- <a href="{{ route('casos.export') }}" class="btn btn-success mt-2">
                             <i class="bi bi-file-earmark-excel"></i> Exportar
                         </a> --}}

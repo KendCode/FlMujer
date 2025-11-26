@@ -89,7 +89,7 @@
             <form action="{{ route('fichasConsulta.store') }}" method="POST">
                 @csrf
 
-                <h5>Datos del Paciente</h5>
+                <h5>Datos del Beneficiario</h5>
                 <div class="row">
                     <div class="col mb-3">
                         <label for="ci" class="form-label">CI</label>

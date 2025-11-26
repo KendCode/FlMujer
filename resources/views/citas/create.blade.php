@@ -63,7 +63,7 @@
                         </label>
                         <input type="text" name="apellido_materno"
                             class="form-control shadow-sm @error('apellido_materno') is-invalid @enderror"
-                            value="{{ $caso->paciente_ap_materno ?? old('apellido_materno') }}" required>
+                            value="{{ $caso->paciente_ap_materno ?? old('apellido_materno') }}">
 
                         @error('apellido_materno')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -94,7 +94,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <small class="text-muted">Seleccione una fecha futura</small>
+                        <small class="text-muted">Solo de lunes a viernes</small>
                     </div>
 
                     <div class="col-md-6 mb-3">
@@ -120,18 +120,24 @@
                     <label class="form-label" style="color: #037E8C;">
                         Asignar Psicólogo <span class="text-danger">*</span>
                     </label>
-                    <select name="usuario_id" class="form-select shadow-sm @error('usuario_id') is-invalid @enderror"
+                    <select name="usuario_id" id="psicologo_select" class="form-select shadow-sm @error('usuario_id') is-invalid @enderror"
                         required>
                         <option value="">-- Seleccione un psicólogo --</option>
                         @foreach ($psicologos as $p)
                             <option value="{{ $p->id }}" {{ old('usuario_id') == $p->id ? 'selected' : '' }}>
-                                {{ $p->name }}
+                                {{ $p->name }} {{ $p->apellido }}
                             </option>
                         @endforeach
                     </select>
                     @error('usuario_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
+                </div>
+
+                {{-- Alerta de disponibilidad --}}
+                <div id="alertaDisponibilidad" class="alert alert-warning d-none" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <strong>Advertencia:</strong> <span id="mensajeDisponibilidad"></span>
                 </div>
 
                 {{-- Botones de Acción --}}
@@ -170,18 +176,82 @@
                     maxDate: new Date().fp_incr(90), // Máximo 90 días adelante
                     disable: [
                         function(date) {
-                            // Deshabilitar domingos (0 = domingo)
-                            return (date.getDay() === 0);
+                            // Deshabilitar sábados (6) y domingos (0)
+                            return (date.getDay() === 0 || date.getDay() === 6);
                         }
                     ],
                     onChange: function(selectedDates, dateStr, instance) {
                         console.log('Fecha seleccionada:', dateStr);
+                        verificarDisponibilidad();
                     }
                 });
+
+                // Verificar disponibilidad cuando cambie la hora o el psicólogo
+                document.getElementById('hora_atencion').addEventListener('change', verificarDisponibilidad);
+                document.getElementById('psicologo_select').addEventListener('change', verificarDisponibilidad);
+
+                // Función para verificar disponibilidad via AJAX
+                function verificarDisponibilidad() {
+                    const fecha = document.getElementById('fecha_atencion').value;
+                    const hora = document.getElementById('hora_atencion').value;
+                    const psicologoId = document.getElementById('psicologo_select').value;
+
+                    // Limpiar alerta anterior
+                    const alerta = document.getElementById('alertaDisponibilidad');
+                    alerta.classList.add('d-none');
+
+                    // Si no hay todos los datos, no validar
+                    if (!fecha || !hora || !psicologoId) {
+                        return;
+                    }
+
+                    // Verificar que sea día de semana (lunes a viernes)
+                    const fechaObj = new Date(fecha + 'T00:00:00');
+                    const diaSemana = fechaObj.getDay();
+                    
+                    if (diaSemana === 0 || diaSemana === 6) {
+                        mostrarAlerta('Solo se pueden agendar citas de lunes a viernes', 'danger');
+                        return;
+                    }
+
+                    // Realizar petición AJAX para verificar disponibilidad
+                    fetch('{{ route("citas.verificar-disponibilidad") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            fecha: fecha,
+                            hora: hora,
+                            usuario_id: psicologoId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.disponible) {
+                            mostrarAlerta(data.mensaje, 'danger');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al verificar disponibilidad:', error);
+                    });
+                }
+
+                // Función para mostrar alertas
+                function mostrarAlerta(mensaje, tipo = 'warning') {
+                    const alerta = document.getElementById('alertaDisponibilidad');
+                    const mensajeSpan = document.getElementById('mensajeDisponibilidad');
+                    
+                    alerta.classList.remove('d-none', 'alert-warning', 'alert-danger');
+                    alerta.classList.add('alert-' + tipo);
+                    mensajeSpan.textContent = mensaje;
+                }
 
                 // Validación adicional del formulario
                 const form = document.getElementById('formCita');
                 form.addEventListener('submit', function(e) {
+                    // Validar horario
                     const hora = document.getElementById('hora_atencion').value;
                     if (hora) {
                         const [horas, minutos] = hora.split(':');
@@ -192,6 +262,17 @@
                             alert('Por favor seleccione una hora entre 08:00 y 18:00');
                             return false;
                         }
+                    }
+
+                    // Validar día de semana
+                    const fecha = document.getElementById('fecha_atencion').value;
+                    const fechaObj = new Date(fecha + 'T00:00:00');
+                    const diaSemana = fechaObj.getDay();
+                    
+                    if (diaSemana === 0 || diaSemana === 6) {
+                        e.preventDefault();
+                        alert('Solo se pueden agendar citas de lunes a viernes');
+                        return false;
                     }
                 });
 

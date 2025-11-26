@@ -61,7 +61,7 @@
                     <tr>
                         <th>#</th>
                         <th>CI</th>
-                        <th>Paciente</th>
+                        <th>Beneficiario</th>
                         <th>Fecha</th>
                         <th>Institución Deriva</th>
                         <th>Problemática</th>

@@ -7,6 +7,8 @@ use App\Models\Caso;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class CitaController extends Controller
 {
@@ -21,6 +23,51 @@ class CitaController extends Controller
         }
 
         return view('citas.index', compact('citas'));
+    }
+    public function verificarDisponibilidad(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'fecha' => 'required|date',
+            'hora' => 'required',
+            'usuario_id' => 'required|exists:users,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'disponible' => false,
+                'mensaje' => 'Datos incompletos'
+            ]);
+        }
+
+        // Verificar si es día de semana (lunes a viernes)
+        $fecha = Carbon::parse($request->fecha);
+        $diaSemana = $fecha->dayOfWeek;
+
+        if ($diaSemana === Carbon::SUNDAY || $diaSemana === Carbon::SATURDAY) {
+            return response()->json([
+                'disponible' => false,
+                'mensaje' => 'Solo se pueden agendar citas de lunes a viernes'
+            ]);
+        }
+
+        // Verificar si ya existe una cita en ese horario para ese psicólogo
+        $citaExistente = Cita::where('usuario_id', $request->usuario_id)
+            ->whereDate('proxima_atencion', $request->fecha)
+            ->where('hora', $request->hora)
+            ->where('estado', '!=', 'cancelada') // No contar citas canceladas
+            ->first();
+
+        if ($citaExistente) {
+            return response()->json([
+                'disponible' => false,
+                'mensaje' => 'El psicólogo ya tiene una cita agendada en ese horario. Por favor seleccione otra hora.'
+            ]);
+        }
+
+        return response()->json([
+            'disponible' => true,
+            'mensaje' => 'Horario disponible'
+        ]);
     }
 
     public function create(Request $request)
@@ -45,6 +92,17 @@ class CitaController extends Controller
             'hora' => 'required',
             'usuario_id' => 'required|exists:users,id',
         ]);
+        // Validar disponibilidad del psicólogo
+        $existe = Cita::where('usuario_id', $request->usuario_id)
+            ->where('proxima_atencion', $request->proxima_atencion)
+            ->where('hora', $request->hora)
+            ->exists();
+
+        if ($existe) {
+            return back()->withErrors([
+                'hora' => 'El psicólogo ya tiene una cita en esta fecha y hora.'
+            ])->withInput();
+        }
 
         Cita::create($request->all());
 

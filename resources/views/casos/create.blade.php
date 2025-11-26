@@ -55,6 +55,18 @@
         button:hover {
             background-color: #13C0E5;
         }
+
+        /* Estilos para campos obligatorios */
+        .required-label::after {
+            content: " *";
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .form-control:required,
+        .form-select:required {
+            border-left: 3px solid #dc3545;
+        }
     </style>
 
     <h2>
@@ -74,8 +86,8 @@
     <form action="{{ route('casos.store') }}" method="POST">
         @csrf
         <!-- =====================
-                                                               SECCIÓN 0: DATOS DE LA REGIONAL
-                                                                         ===================== -->
+                                                                   SECCIÓN 0: DATOS DE LA REGIONAL
+                                                                             ===================== -->
         <div class="card mb-3">
             <div class="card-header">Regional</div>
             <div class="card-body">
@@ -143,15 +155,15 @@
         </div>
 
         <!-- =====================
-                                                SECCIÓN 1: DATOS PERSONALES PACIENTE
-                                                     ===================== -->
+                                                    SECCIÓN 1: DATOS PERSONALES PACIENTE
+                                                         ===================== -->
 
         <div class="card mb-3">
             <div class="card-header">Datos Personales y Más Datos</div>
             <div class="card-body">
                 <div class="row g-2">
                     <div class="col-md-6">
-                        <label class="form-label">Nombres</label>
+                        <label class="form-label required-label">Nombres</label>
                         <input type="text" name="paciente_nombres" class="form-control" required>
                     </div>
 
@@ -448,8 +460,8 @@
         </div>
 
         <!-- =====================
-                                                                                                                                     SECCIÓN 2: DATOS PAREJA
-                                                                                                                                ===================== -->
+                                                                                                                                         SECCIÓN 2: DATOS PAREJA
+                                                                                                                                    ===================== -->
         <div class="card mb-3">
             <div class="card-header">2. Datos de la pareja</div>
             <div class="card-body">
@@ -814,8 +826,8 @@
         </div>
 
         <!-- =====================
-                                                                                                                                 SECCIÓN 3: DATOS HIJOS
-                                                                                                                            ===================== -->
+                                                                                                                                     SECCIÓN 3: DATOS HIJOS
+                                                                                                                                ===================== -->
         <div class="card mb-3">
             <div class="card-header">3. Hijos</div>
             <div class="card-body">
@@ -991,8 +1003,8 @@
         </div>
 
         <!-- =====================
-                                                                                                                             SECCIÓN 4: TIPOS DE VIOLENCIA
-                                                                                                                        ===================== -->
+                                                                                                                                 SECCIÓN 4: TIPOS DE VIOLENCIA
+                                                                                                                            ===================== -->
         <div class="card mb-3">
             <div class="card-header">4. Tipos de Violencia</div>
             <div class="card-body">

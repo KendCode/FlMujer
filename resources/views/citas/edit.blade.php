@@ -171,7 +171,7 @@
                                     value="{{ $p->id }}" 
                                     {{ old('usuario_id', $cita->usuario_id) == $p->id ? 'selected' : '' }}
                                 >
-                                    {{ $p->name }}
+                                    {{ $p->name }} {{ $p->apellido }}
                                 </option>
                             @endforeach
                         </select>

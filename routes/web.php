@@ -109,7 +109,10 @@ Route::middleware(['auth', CheckActiveUser::class])->group(function () {
     Route::get('/caso/{id}/pdf', [CasoController::class, 'exportarPDF'])->name('caso.pdf');
 
     // Rutas para la gestión de citas
+    Route::post('/citas/verificar-disponibilidad', [CitaController::class, 'verificarDisponibilidad'])
+        ->name('citas.verificar-disponibilidad');
     Route::resource('citas', CitaController::class);
+    
 
     // Ruta específica para Ficha de Atención si la necesitas
     Route::prefix('casos/{caso}/fichaAtencion')->group(function () {
